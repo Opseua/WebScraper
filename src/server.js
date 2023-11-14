@@ -9,7 +9,7 @@ async function run(inf) {
         const browser = await puppeteer.launch({ headless: false });
         const page = await browser.newPage();
         await page.setViewport({ width: 1280, height: 800 });
-        // FECHAR ABA EM BRANCO
+        // FECHAR ABA EM BRANCO 
         await (await browser.pages())[0].close();
 
         // NAVIGATE
