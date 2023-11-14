@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+	  "type":"module",
+    "cheerio": "^1.0.0-rc.12",
+    "node-html-parser": "^6.1.11",
+    "puppeteer": "^21.5.1",
+    "request": "^2.88.2"
+  }
+}
