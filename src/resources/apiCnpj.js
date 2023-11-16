@@ -25,6 +25,7 @@ async function apiCnpj(inf) {
             const sec = ("0" + time2.getSeconds()).slice(-2);
             criacao = `${day}/${mon} ${hou}:${min}:${sec}`;
         }
+
         const razaoSocial = !retApi.company.name ? 'null' : retApi.company.name
 
         // TELEFONE
@@ -98,6 +99,9 @@ async function apiCnpj(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
+        let infSendData = { 'stop': false, 'status': 'TRYCATCH [apiCnpj] Script erro!' }
+        let retSendData = await sendData(infSendData)
+        process.exit();
     };
     return ret
 }

@@ -7,8 +7,6 @@ async function sendData(inf) {
     await import('../../../Chrome_Extension/src/resources/@functions.js');
     let ret = { 'ret': false };
     try {
-        let browser = inf.browser
-        let page = inf.page
         let time = dateHour().res
 
         // ENVIAR DADOS DA PLANILHA
@@ -16,36 +14,39 @@ async function sendData(inf) {
             // [STATUS]
             if (inf.status) {
                 let sheetData = typeof inf.status === 'object' ? JSON.parse(inf.status) : inf.status
-                infGoogleSheet = {
+                let infGoogleSheet = {
                     'action': 'send',
                     'id': '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8',
                     'tab': 'RESULTADOS_CNPJ_NEW',
                     'range': 'A40',
                     'values': [[`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} | ${sheetData.replace('KEEP ', '')}`]]
                 }
-                retGoogleSheet = await googleSheet(infGoogleSheet); if (!retGoogleSheet.ret) { return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
+                let retGoogleSheet = await googleSheet(infGoogleSheet);
+                if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
             }
 
             // [RESULTS]
             if (inf.results) {
                 let sheetData = typeof inf.results === 'object' ? JSON.parse(inf.results) : inf.results
-                infGoogleSheet = {
+                let infGoogleSheet = {
                     'action': 'send',
                     'id': '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8',
                     'tab': 'RESULTADOS_CNPJ_NEW',
                     'range': 'D*',
                     'values': [[`${sheetData}`]]
                 }
-                retGoogleSheet = await googleSheet(infGoogleSheet); if (!retGoogleSheet.ret) { return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
+                let retGoogleSheet = await googleSheet(infGoogleSheet);
+                if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
             }
         }
 
         // STOP
         if (inf.stop) {
             gO.inf['stop'] = true
-            if (inf.browser) {
-                await browser.close();
-            }
+            process.exit();
+            // if (inf.browser) {
+            //     await browser.close();
+            // }
         }
 
         ret['msg'] = 'SEND DATA: OK'
@@ -53,6 +54,7 @@ async function sendData(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
+        process.exit();
     };
     return ret
 }

@@ -7,6 +7,7 @@ async function buttonElement(inf) {
     await import('../../../Chrome_Extension/src/resources/@functions.js');
     let ret = { 'ret': false };
     try {
+        let element
         if (!inf.button || !['search', 'first', 'prev', 'next', 'last'].includes(inf.button)) {
             ret['msg'] = `\n\n #### ERRO #### BUTTON \n INFORMAR O 'action' \n\n`;
         } else {
@@ -33,6 +34,9 @@ async function buttonElement(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
+        let infSendData = { 'stop': false, 'status': 'TRYCATCH [buttonElement] Script erro!' }
+        let retSendData = await sendData(infSendData)
+        process.exit();
     };
     return ret
 }

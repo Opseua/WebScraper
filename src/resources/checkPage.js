@@ -18,8 +18,10 @@ async function checkPage(inf) {
                 if (inf.body.includes('Digite o código da imagem')) {
                     ret['msg'] = `Cookie expirou`;
                 } else if (!(inf.body.includes('Mostrando') && inf.body.includes('Anterior') && inf.body.includes('Próximo'))) {
-                    console.log(inf.body)
                     ret['msg'] = `Não achou a lista de NIRE's`;
+                    let infFile, retFile
+                    infFile = { 'action': 'write', 'functionLocal': true, 'path': './log/Jucesp.txt', 'rewrite': false, 'text': inf.body }
+                    retFile = await file(infFile); console.log(retFile)
                 } else {
                     ret['msg'] = `NIRE's ENCONTRADOS`;
                     ret['ret'] = true;
@@ -29,6 +31,9 @@ async function checkPage(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
+        let infSendData = { 'stop': false, 'status': 'TRYCATCH [checkPage] Script erro!' }
+        let retSendData = await sendData(infSendData)
+        process.exit();
     };
     return ret
 }

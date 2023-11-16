@@ -23,9 +23,13 @@ async function awaitLoad(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
+        let infSendData = { 'stop': false, 'status': 'TRYCATCH [awaitLoad] Script erro!' }
+        let retSendData = await sendData(infSendData)
+        process.exit();
     };
     return ret
 }
+
 
 if (typeof eng === 'boolean') {
     if (eng) { // CHROME

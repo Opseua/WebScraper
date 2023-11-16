@@ -26,17 +26,19 @@ async function apiNire(inf) {
         }
 
         // CHECAR SE ENCONTROU NO BODY UM NIRE VÁLIDO (CNPJ JÁ ESTÁ AQUI)
-        if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj')) {
+        if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj') && !texto.includes('mas houve um problema em nosso servidor')) {
             // ### ENCONTROU: NÃO
             ret['msg'] = `NIRE inválido`;
-            return ret
+            console.log(ret.msg)
+            ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
             const infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
             const retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
-                return ret
+                console.log(ret.msg)
+                ret['ret'] = true;
             } else {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
                 let infApiCnpj = { 'cnpj': cnpj, }
@@ -49,6 +51,9 @@ async function apiNire(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
+        let infSendData = { 'stop': false, 'status': 'TRYCATCH [apiNire] Script erro!' }
+        let retSendData = await sendData(infSendData)
+        process.exit();
     };
     return ret
 }
