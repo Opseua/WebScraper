@@ -1,0 +1,62 @@
+// let infApiNire, retApiNire
+// infApiNire = { 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
+// retApiNire = await apiNire(infApiNire)
+// console.log(retApiNire)
+
+async function apiNire(inf) {
+    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    let ret = { 'ret': false };
+    try {
+        // API
+        let infApi = {
+            'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${inf.nire}&idproduto=`,
+            'headers': { 'Cookie': inf.aut }
+        }; let retApi = await api(infApi); if (!retApi.ret) { return retApi } else { retApi = retApi.res }
+
+        // CHECAR SE A API DEU CÓDIGO 200
+        if (retApi.code !== 200) {
+            return retApi
+        }
+
+        // CHECAR SE O COOKIE EXPIROU
+        const texto = JSON.stringify(retApi.body)
+        if (texto.includes('CaptchaImage')) {
+            ret['msg'] = `Cookie expirou`;
+            return ret
+        }
+
+        // CHECAR SE ENCONTROU NO BODY UM NIRE VÁLIDO (CNPJ JÁ ESTÁ AQUI)
+        if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj')) {
+            // ### ENCONTROU: NÃO
+            ret['msg'] = `NIRE inválido`;
+            return ret
+        } else {
+            // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
+            const infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
+            const retRegex = regex(infRegex);
+            if (!retRegex.ret || !retRegex.res['1']) {
+                ret['msg'] = `CNPJ do NIRE não encotrado`;
+                return ret
+            } else {
+                let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
+                let infApiCnpj = { 'cnpj': cnpj, }
+                let retApiCnpj = await apiCnpj(infApiCnpj); if (!retApiCnpj.ret) { return retApiCnpj } else { retApiCnpj = retApiCnpj.res }
+                ret['res'] = retApiCnpj;
+                ret['msg'] = `API NIRE: OK`;
+                ret['ret'] = true;
+            }
+        }
+    } catch (e) {
+        let m = await regexE({ 'e': e });
+        ret['msg'] = m.res
+    };
+    return ret
+}
+
+if (typeof eng === 'boolean') {
+    if (eng) { // CHROME
+        window['apiNire'] = apiNire;
+    } else { // NODEJS
+        global['apiNire'] = apiNire;
+    }
+}

@@ -1,77 +1,4 @@
 async function cookiesGetSet(inf) {
-    let valueCookie = [
-        {
-            name: 'ASP.NET_SessionId',
-            value: 'wivpxhlq3b45tgtb12dcgk4t',
-            domain: 'www.jucesponline.sp.gov.br',
-            path: '/',
-            expires: -1,
-            size: 41,
-            httpOnly: true,
-            secure: false,
-            session: true,
-            sameSite: 'Lax',
-            sameParty: false,
-            sourceScheme: 'Secure',
-            sourcePort: 443
-        },
-        {
-            name: '_gid',
-            value: 'GA1.4.1936086295.1699939394',
-            domain: '.jucesponline.sp.gov.br',
-            path: '/',
-            expires: 1700025793,
-            size: 31,
-            httpOnly: false,
-            secure: false,
-            session: false,
-            sameParty: false,
-            sourceScheme: 'Secure',
-            sourcePort: 443
-        },
-        {
-            name: '_gat_gtag_UA_129106988_4',
-            value: '1',
-            domain: '.jucesponline.sp.gov.br',
-            path: '/',
-            expires: 1699939453,
-            size: 25,
-            httpOnly: false,
-            secure: false,
-            session: false,
-            sameParty: false,
-            sourceScheme: 'Secure',
-            sourcePort: 443
-        },
-        {
-            name: '_ga',
-            value: 'GA1.4.1257799709.1699939394',
-            domain: '.jucesponline.sp.gov.br',
-            path: '/',
-            expires: 1734499393.673031,
-            size: 30,
-            httpOnly: false,
-            secure: false,
-            session: false,
-            sameParty: false,
-            sourceScheme: 'Secure',
-            sourcePort: 443
-        },
-        {
-            name: '_ga_ETQ25R36EX',
-            value: 'GS1.1.1699939393.1.0.1699939393.60.0.0',
-            domain: '.jucesponline.sp.gov.br',
-            path: '/',
-            expires: 1734499393.54442,
-            size: 52,
-            httpOnly: false,
-            secure: false,
-            session: false,
-            sameParty: false,
-            sourceScheme: 'Secure',
-            sourcePort: 443
-        }
-    ]
     // let infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie }
     // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
     // console.log(retCookiesGetSet)
@@ -92,9 +19,24 @@ async function cookiesGetSet(inf) {
                 ret['msg'] = `COOKIES GET SET: OK [${inf.action}]`;
                 ret['ret'] = true;
             } else if (inf.action == 'set') { // SET
-                let valueJson = inf && !inf.value == '*' ? inf.value : valueCookie
-                valueJson = typeof valueJson === 'object' ? valueJson : JSON.parse(valueJson)
-                await page.setCookie(...valueJson);
+                let valueCookie = [
+                    {
+                        name: inf && inf.value == '*' ? 'ASP.NET_SessionId' : inf.value.split('=')[0],
+                        value: inf && inf.value == '*' ? 'padraoDaFuncao' : inf.value.split('=')[1],
+                        domain: 'www.jucesponline.sp.gov.br',
+                        path: '/',
+                        expires: -1,
+                        size: 41,
+                        httpOnly: true,
+                        secure: false,
+                        session: true,
+                        sameSite: 'Lax',
+                        sameParty: false,
+                        sourceScheme: 'Secure',
+                        sourcePort: 443
+                    }
+                ]
+                await page.setCookie(...valueCookie);
                 ret['msg'] = `COOKIES GET SET: OK [${inf.action}]`;
                 ret['ret'] = true;
             }
