@@ -7,6 +7,7 @@ async function getTextElement(inf) {
     await import('../../../Chrome_Extension/src/resources/@functions.js');
     let ret = { 'ret': false };
     try {
+        let infRegex, retRegex
         if (!inf.element) { // SELECTOR #jo_encontrados
             ret['msg'] = `\n\n #### ERRO #### RESULTS \n INFORMAR O 'element' \n\n`;
         } else {

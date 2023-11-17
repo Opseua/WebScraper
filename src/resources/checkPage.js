@@ -20,7 +20,7 @@ async function checkPage(inf) {
                 } else if (!(inf.body.includes('Mostrando') && inf.body.includes('Anterior') && inf.body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
                     let infFile, retFile
-                    infFile = { 'action': 'write', 'functionLocal': true, 'path': './log/Jucesp.txt', 'rewrite': false, 'text': inf.body }
+                    infFile = { 'action': 'write', 'functionLocal': false, 'path': './log/Jucesp.txt', 'rewrite': false, 'text': inf.body }
                     retFile = await file(infFile); console.log(retFile)
                 } else {
                     ret['msg'] = `NIRE's ENCONTRADOS`;

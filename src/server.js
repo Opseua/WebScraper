@@ -4,16 +4,28 @@ async function run(inf) {
     let ret = { 'ret': false };
     try {
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
-        let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut
+        let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, lastPage = false
         gO.inf['stop'] = false; let time = dateHour().res; let rate = rateLimiter({ 'max': 3, 'sec': 40 });
-        let repet1 = 100, pg, mode = '←' // → ←
+        let repet1 = 100, pg, mode
         // STATUS [INSERINDO DATA DE PESQUISA]
         infSendData = { 'stop': false, 'status': 'Iniciando script, aguarde...' }
         console.log(infSendData.status)
         retSendData = await sendData(infSendData)
 
-        const browser = await puppeteer.launch({ headless: false, });
+        const browser = await puppeteer.launch({
+            headless: false,
+            args: [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-accelerated-2d-canvas",
+                "--no-first-run",
+                "--no-zygote",
+                // "--single-process",
+                "--disable-gpu",
+            ],
+        });
         const page = await browser.newPage();
         await page.setViewport({ width: 1280, height: 800 });
 
@@ -134,10 +146,14 @@ async function run(inf) {
         if (!retGoogleSheet.ret) {
             infSendData = { 'stop': true, 'status': `Erro ao pegar dados para planilha` }
             retSendData = await sendData(infSendData); console.log(retGoogleSheet); return
-        } else { retGoogleSheet = JSON.parse(retGoogleSheet.res[0]) }
+        }
+        retGoogleSheet = JSON.parse(retGoogleSheet.res[0])
 
         // COOKIE [SET]
         aut = retGoogleSheet.aut
+        date = retGoogleSheet.date
+        mode = retGoogleSheet.mode
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}${time.mon}2023` } else { date = date.replace(/[^0-9]/g, '') }
         infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': aut }
         retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 
@@ -147,13 +163,13 @@ async function run(inf) {
         retSendData = await sendData(infSendData)
 
         // IMPUT [DATA INÍCIO]
-        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${time.day}${time.mon}2023` }
+        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date}` }
         retImput = await imput(infImput)
 
         await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // IMPUT [DATA FIM]
-        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim', 'value': `${time.day}${time.mon}2023` }
+        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim', 'value': `${date}` }
         retImput = await imput(infImput)
 
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -164,18 +180,23 @@ async function run(inf) {
 
         await new Promise(resolve => { setTimeout(resolve, 2000) })
 
-        // CHECK PAGE [COOKIE]
-        value = await page.content()
-        retCheckPage = await checkPage({ 'body': value, });
-        if (!retCheckPage.ret) {
-            infSendData = { 'stop': true, 'status': retCheckPage.msg }
-            retSendData = await sendData(infSendData); console.log(retCheckPage); return
-        };
+        // AGUARDAR PÁGINA TERMINAR DE CARREGAR
+        infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_hTitulo' }
+        retAwaitLoad = await awaitLoad(infAwaitLoad)
 
         // STATUS [BUSCANDO NOVOS NIRE's]
         infSendData = { 'stop': false, 'status': `Buscando novos NIRE's` }
         console.log(infSendData.status)
         retSendData = await sendData(infSendData)
+
+        // CHECK PAGE [COOKIE]
+        // value = await page.content()
+        value = await page.evaluate(() => document.querySelector('*').outerHTML);
+        retCheckPage = await checkPage({ 'body': value, });
+        if (!retCheckPage.ret) {
+            infSendData = { 'stop': true, 'status': retCheckPage.msg }
+            retSendData = await sendData(infSendData); console.log(retCheckPage); return
+        };
 
         // BUTTON [TESTE] 
         // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[5]/div/strong')
@@ -184,7 +205,8 @@ async function run(inf) {
         // await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECK PAGE [LISTA DE NIRE's]
-        value = await page.content()
+        // value = await page.content()
+        value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
             infSendData = { 'stop': true, 'status': retCheckPage.msg }
@@ -203,7 +225,8 @@ async function run(inf) {
         if (!retGoogleSheet.ret) {
             infSendData = { 'stop': true, 'status': `Erro ao pegar dados para planilha` }
             retSendData = await sendData(infSendData); console.log(retGoogleSheet); return
-        } else { sheetNire = retGoogleSheet.res.flat() }
+        }
+        sheetNire = retGoogleSheet.res.flat()
 
         // ###################################################################################
         // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
@@ -229,7 +252,8 @@ async function run(inf) {
             await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
 
             // CHECK PAGE [LISTA DE NIRE's]
-            value = await page.content()
+            // value = await page.content()
+            value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
                 infSendData = { 'stop': true, 'status': retCheckPage.msg }
@@ -250,7 +274,8 @@ async function run(inf) {
             // await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
 
             // CHECK PAGE [LISTA DE NIRE's]
-            value = await page.content()
+            // value = await page.content()
+            value = await page.evaluate(() => document.querySelector('*').outerHTML);
             // value = await page.evaluate(() => { return document.documentElement.innerHTML });
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
