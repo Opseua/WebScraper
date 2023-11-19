@@ -18,15 +18,15 @@ async function apiCnpj(inf) {
         if (criacao !== 'null') {
             let time2 = new Date(criacao);
             time2.setHours(time2.getHours());
-            const day = ("0" + time2.getDate()).slice(-2);
-            const mon = ("0" + (time2.getMonth() + 1)).slice(-2);
-            const hou = ("0" + time2.getHours()).slice(-2);
-            const min = ("0" + time2.getMinutes()).slice(-2);
-            const sec = ("0" + time2.getSeconds()).slice(-2);
+            let day = ("0" + time2.getDate()).slice(-2);
+            let mon = ("0" + (time2.getMonth() + 1)).slice(-2);
+            let hou = ("0" + time2.getHours()).slice(-2);
+            let min = ("0" + time2.getMinutes()).slice(-2);
+            let sec = ("0" + time2.getSeconds()).slice(-2);
             criacao = `${day}/${mon} ${hou}:${min}:${sec}`;
         }
 
-        const razaoSocial = !retApi.company.name ? 'null' : retApi.company.name
+        let razaoSocial = !retApi.company.name ? 'null' : retApi.company.name
 
         // TELEFONE
         let telefones = retApi.phones[0] || retApi.phones[1] ? '' : 'null'
@@ -60,14 +60,14 @@ async function apiCnpj(inf) {
         }
         let gestor1 = retApi.company.members[0] && retApi.company.members[0].person ? retApi.company.members[0].person.name : 'null'
         let gestor2 = retApi.company.members[1] && retApi.company.members[1].person ? retApi.company.members[1].person.name : 'null'
-        const endLogradouro = 'null'
-        const endNome = !retApi.address.street ? 'null' : retApi.address.street
-        const endNumero = !retApi.address.number ? 'null' : retApi.address.number
-        const endBairro = !retApi.address.district ? 'null' : retApi.address.district
-        const endMunicipio = !retApi.address.city ? 'null' : retApi.address.city
-        const endEstado = !retApi.address.state ? 'null' : retApi.address.state
-        const endCep = !retApi.address.zip ? 'null' : retApi.address.zip
-        const endereco = {
+        let endLogradouro = 'null'
+        let endNome = !retApi.address.street ? 'null' : retApi.address.street
+        let endNumero = !retApi.address.number ? 'null' : retApi.address.number
+        let endBairro = !retApi.address.district ? 'null' : retApi.address.district
+        let endMunicipio = !retApi.address.city ? 'null' : retApi.address.city
+        let endEstado = !retApi.address.state ? 'null' : retApi.address.state
+        let endCep = !retApi.address.zip ? 'null' : retApi.address.zip
+        let endereco = {
             'endLogradouro': endLogradouro,
             'endNome': endNome,
             'endNumero': endNumero,
@@ -78,7 +78,7 @@ async function apiCnpj(inf) {
         }
 
         // RES
-        const res = {
+        let res = {
             'criacao': criacao,
             'cnpj': retApi.taxId,
             'razaoSocial': razaoSocial,

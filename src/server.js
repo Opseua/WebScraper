@@ -1,6 +1,6 @@
 async function run(inf) {
     await import('../../Chrome_Extension/src/resources/@functions.js')
-    const puppeteer = await import('puppeteer');
+    let puppeteer = await import('puppeteer');
     let ret = { 'ret': false };
     try {
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
@@ -13,7 +13,7 @@ async function run(inf) {
         console.log(infSendData.status)
         retSendData = await sendData(infSendData)
 
-        const browser = await puppeteer.launch({
+        let browser = await puppeteer.launch({
             headless: false,
             args: [
                 "--no-sandbox",
@@ -26,7 +26,7 @@ async function run(inf) {
                 "--disable-gpu",
             ],
         });
-        const page = await browser.newPage();
+        let page = await browser.newPage();
         await page.setViewport({ width: 1280, height: 800 });
 
         // FECHAR ABA EM BRANCO 
@@ -59,7 +59,7 @@ async function run(inf) {
         // page.on('response', async (response) => {
         //     // console.log('>> RES', response.url());
         //     try {
-        //         const body = await response.text()
+        //         let  body = await response.text()
         //         if (body) {
         //             //  console.log('BODY:\n', body, '\n');
         //         }
@@ -287,7 +287,7 @@ async function run(inf) {
             infGetTextElement = { 'value': value, 'element': 'results' }
             retGetTextElement = await getTextElement(infGetTextElement); value = [retGetTextElement.res[0][0], retGetTextElement.res[0][1], retGetTextElement.res[0][2]]
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
-            const repet2 = Number(value[1]) - Number(value[0]) + 1
+            let repet2 = Number(value[1]) - Number(value[0]) + 1
             console.log('MEIO', repet2, results)
 
             // ADICIONAR NO LOOP DA CONSULTA

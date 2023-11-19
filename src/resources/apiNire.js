@@ -19,7 +19,7 @@ async function apiNire(inf) {
         }
 
         // CHECAR SE O COOKIE EXPIROU
-        const texto = JSON.stringify(retApi.body)
+        let texto = JSON.stringify(retApi.body)
         if (texto.includes('CaptchaImage')) {
             ret['msg'] = `Cookie expirou`;
             return ret
@@ -33,8 +33,8 @@ async function apiNire(inf) {
             ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
-            const infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
-            const retRegex = regex(infRegex);
+            let infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
+            let retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
                 console.log(ret.msg)
