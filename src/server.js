@@ -5,14 +5,31 @@ async function run(inf) {
     try {
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
-        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, lastPage = false
+        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, lastPage = false; gO.inf['sheetKepp'] = false
         gO.inf['stop'] = false; let time = dateHour().res; let rate = rateLimiter({ 'max': 3, 'sec': 40 });
-        let repet1 = 100, pg, mode
-        // STATUS [INSERINDO DATA DE PESQUISA]
-        infSendData = { 'stop': false, 'status': 'Iniciando script, aguarde...' }
-        console.log(infSendData.status)
-        retSendData = await sendData(infSendData)
+        let repet1 = 100, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
 
+        // PEGAR DA PLANILHA [A2]
+        infGoogleSheet = {
+            'action': 'get',
+            'id': gO.inf.sheetId,
+            'tab': gO.inf.sheetTab,
+            'range': range,
+        }
+        retGoogleSheet = await googleSheet(infGoogleSheet);
+        if (!retGoogleSheet.ret) {
+            console.log(retGoogleSheet)
+            infSendData = { 'stop': true, 'status1': `Erro ao pegar dados para planilha` }
+            retSendData = await sendData(infSendData); return
+        }
+        gO.inf['sheetKepp'] = JSON.parse(retGoogleSheet.res[0])
+
+        // STATUS1 [Iniciando script, aguarde]
+        infSendData = { 'stop': false, 'status1': 'Iniciando script, aguarde' }
+        retSendData = await sendData(infSendData)
+        console.log(infSendData.status1)
+
+        // INICIAR PUPPETEER
         let browser = await puppeteer.launch({
             headless: false,
             args: [
@@ -72,36 +89,37 @@ async function run(inf) {
             if (!rate.check()) { await new Promise(resolve => { setTimeout(resolve, 10000) }) }
             let time = dateHour().res
             console.log('CONSULTANDO NIRE:', inf.value)
-            // STATUS [CONSULTANDO NIRE]
-            if (lastPage) {
-                infSendData = { 'stop': false, 'status': `[${mode}] Consultando NIRE: ${inf.value}` }
-                retSendData = await sendData(infSendData)
-            }
-            let retApiNire = await apiNire({ 'nire': inf.value, 'aut': aut })
+            let retApiNire = await apiNire({ 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
                 let status = retApiNire.msg ? retApiNire.msg : 'ERRO: FALSE [apiNire]'
-                infSendData = { 'stop': true, 'status': status }
-                console.log(infSendData.status)
+                console.log(status)
+                infSendData = { 'stop': true, 'status1': status }
+                retSendData = await sendData(infSendData)
+            } else if (!retApiNire.res) {
+                let status = `${inf.value} | ${retApiNire.msg}`
+                console.log(status)
+                infSendData = { 'stop': false, 'status2': status }
                 retSendData = await sendData(infSendData)
             } else {
-                if (retApiNire.res && retApiNire.res.cnpj) {
-                    let apiNire = retApiNire.res
-                    let results = [[
-                        `${inf.value}`,
-                        `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                        apiNire.criacao, apiNire.cnpj, apiNire.razaoSocial,
-                        apiNire.telefone1,
-                        apiNire.telefone2,
-                        apiNire.email1,
-                        apiNire.gestor1,
-                    ]]
-                    results = results[0].join('|=:=')
-                    infSendData = { 'stop': false, 'results': results }
-                    retSendData = await sendData(infSendData)
-                } else {
-                    console.log('NÃO RETORNOU OS DADOS DO CNPJ')
-                }
+                console.log('TRUE', retApiNire)
+                // let apiNire = retApiNire.res
+                // let results = [[
+                //     `${inf.value}`,
+                //     `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
+                //     apiNire.criacao, apiNire.cnpj, apiNire.razaoSocial,
+                //     apiNire.telefone1,
+                //     apiNire.telefone2,
+                //     apiNire.email1,
+                //     apiNire.gestor1,
+                // ]]
+                // results = results[0].join('|=:=')
+                // infSendData = { 'stop': false, 'results': results }
+                // retSendData = await sendData(infSendData)
             }
+
+
+            await new Promise(resolve => { setTimeout(resolve, 10000) })
+            return
         }
         async function loopFun() {
             let indice = 0; while (!gO.inf.stop) {
@@ -110,8 +128,8 @@ async function run(inf) {
                     indice++
                     if (indice == valuesLoop.length) {
                         console.log('INDICES ACABARAM');
-                        infSendData = { 'stop': true, 'status': 'Terminou de consultar tudo' }
-                        retSendData = await sendData(infSendData);
+                        infSendData = { 'stop': true, 'status2': 'Terminou de consultar tudo' }
+                        // retSendData = await sendData(infSendData);
                     }
                 } else { await new Promise((resolve) => setTimeout(resolve, 1000)) }
             }; console.log('PAROU O LOOP');
@@ -127,49 +145,35 @@ async function run(inf) {
         value = await page.content()
         retCheckPage = await checkPage({ 'body': value, 'search': `Pesquisa Avançada` });
         if (!retCheckPage.ret) {
-            infSendData = { 'stop': true, 'status': 'Não encontrou a página de pesquisa' }
-            retSendData = await sendData(infSendData); console.log(retCheckPage); return
+            console.log(retCheckPage);
+            infSendData = { 'stop': true, 'status1': 'Não encontrou a página de pesquisa' }
+            retSendData = await sendData(infSendData); return
         };
 
         // AGUARDAR 'Pesquisa Avançada' APARECER 
         // await Promise.all([page.waitForSelector("#content > h3", { visible: true }),]);
 
-        // PEGAR DA PLANILHA [A2]
-        infGoogleSheet = {
-            'action': 'get',
-            'id': '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8',
-            'tab': 'RESULTADOS_CNPJ_NEW',
-            'range': 'A2', // PERÍMETRO
-            // 'range': 'E1', // CÉLULA ÚNICA
-        }
-        retGoogleSheet = await googleSheet(infGoogleSheet);
-        if (!retGoogleSheet.ret) {
-            infSendData = { 'stop': true, 'status': `Erro ao pegar dados para planilha` }
-            retSendData = await sendData(infSendData); console.log(retGoogleSheet); return
-        }
-        retGoogleSheet = JSON.parse(retGoogleSheet.res[0])
-
         // COOKIE [SET]
-        aut = retGoogleSheet.aut
-        date = retGoogleSheet.date
-        mode = retGoogleSheet.mode
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}${time.mon}2023` } else { date = date.replace(/[^0-9]/g, '') }
+        aut = gO.inf.sheetKepp.aut
+        date = gO.inf.sheetKepp.date
+        mode = gO.inf.sheetKepp.mode
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}/${time.mon}/2023` }
         infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': aut }
         retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 
         // STATUS [INSERINDO DATA DE PESQUISA]
-        infSendData = { 'stop': false, 'status': 'Inserindo data de pesquisa' }
-        console.log(infSendData.status)
+        infSendData = { 'stop': false, 'status1': 'Inserindo data de pesquisa' }
         retSendData = await sendData(infSendData)
+        console.log(infSendData.status1)
 
         // IMPUT [DATA INÍCIO]
-        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date}` }
+        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date.replace(/[^0-9]/g, '')}` }
         retImput = await imput(infImput)
 
         await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // IMPUT [DATA FIM]
-        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim', 'value': `${date}` }
+        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim', 'value': `${date.replace(/[^0-9]/g, '')}` }
         retImput = await imput(infImput)
 
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -178,25 +182,30 @@ async function run(inf) {
         infButtonElement = { 'browser': browser, 'page': page, 'button': 'search' }
         retButtonElement = await buttonElement(infButtonElement)
 
-        await new Promise(resolve => { setTimeout(resolve, 2000) })
-
         // AGUARDAR PÁGINA TERMINAR DE CARREGAR
         infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_hTitulo' }
         retAwaitLoad = await awaitLoad(infAwaitLoad)
-
-        // STATUS [BUSCANDO NOVOS NIRE's]
-        infSendData = { 'stop': false, 'status': `Buscando novos NIRE's` }
-        console.log(infSendData.status)
-        retSendData = await sendData(infSendData)
 
         // CHECK PAGE [COOKIE]
         // value = await page.content()
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
-            infSendData = { 'stop': true, 'status': retCheckPage.msg }
-            retSendData = await sendData(infSendData); console.log(retCheckPage); return
+            console.log(retCheckPage);
+            infSendData = { 'stop': true, 'status1': retCheckPage.msg }
+            retSendData = await sendData(infSendData); return
         };
+
+        // STATUS [BUSCANDO NOVOS NIRE's]
+        infSendData = { 'stop': false, 'status1': `Buscando novos NIRE's` }
+        retSendData = await sendData(infSendData)
+        console.log(infSendData.status1)
+
+        valuesLoop.push('35141938101')
+
+        return
+
+        await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // BUTTON [TESTE] 
         // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[5]/div/strong')
@@ -209,22 +218,23 @@ async function run(inf) {
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
-            infSendData = { 'stop': true, 'status': retCheckPage.msg }
-            retSendData = await sendData(infSendData); console.log(retCheckPage); return
+            console.log(retCheckPage);
+            infSendData = { 'stop': true, 'status1': retCheckPage.msg }
+            retSendData = await sendData(infSendData); return
         };
 
         // PEGAR DA PLANILHA [NIRE's JÁ CONSULTADOS]
         infGoogleSheet = {
             'action': 'get',
-            'id': '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8',
-            'tab': 'RESULTADOS_CNPJ_NEW',
-            'range': 'E1:E', // PERÍMETRO
-            // 'range': 'E1', // CÉLULA ÚNICA
+            'id': gO.inf.sheetId,
+            'tab': gO.inf.sheetTab,
+            'range': 'E1:E',
         }
         retGoogleSheet = await googleSheet(infGoogleSheet);
         if (!retGoogleSheet.ret) {
-            infSendData = { 'stop': true, 'status': `Erro ao pegar dados para planilha` }
-            retSendData = await sendData(infSendData); console.log(retGoogleSheet); return
+            console.log(retGoogleSheet);
+            infSendData = { 'stop': true, 'status1': `Erro ao pegar dados para planilha` }
+            retSendData = await sendData(infSendData); return
         }
         sheetNire = retGoogleSheet.res.flat()
 
@@ -256,8 +266,9 @@ async function run(inf) {
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
-                infSendData = { 'stop': true, 'status': retCheckPage.msg }
-                retSendData = await sendData(infSendData); console.log(retCheckPage); return
+                console.log(retCheckPage);
+                infSendData = { 'stop': true, 'status1': retCheckPage.msg }
+                retSendData = await sendData(infSendData); return
             };
 
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
@@ -279,8 +290,9 @@ async function run(inf) {
             // value = await page.evaluate(() => { return document.documentElement.innerHTML });
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
-                infSendData = { 'stop': true, 'status': retCheckPage.msg }
-                retSendData = await sendData(infSendData); console.log(retCheckPage); return
+                console.log(retCheckPage);
+                infSendData = { 'stop': true, 'status1': retCheckPage.msg }
+                retSendData = await sendData(infSendData); return
             };
 
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [DEMAIS PÁGINAS]
@@ -300,7 +312,7 @@ async function run(inf) {
             }
 
             // STATUS [BUSCANDO NOVOS NIRE's]
-            infSendData = { 'stop': false, 'status': `[${mode}] NIRE's: ${results[3]} Página ${pg} de ${Math.ceil(Number(value[2]) / 15)}` }
+            infSendData = { 'stop': false, 'status1': `[${mode}] NIRE's: ${results[3]} Página ${pg} de ${Math.ceil(Number(value[2]) / 15)}` }
             retSendData = await sendData(infSendData)
             await new Promise(resolve => { setTimeout(resolve, 4000) })
 
@@ -345,8 +357,8 @@ async function run(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': true, 'status': 'TRYCATCH [server] Script erro!' }
-        console.log(infSendData.status)
+        let infSendData = { 'stop': true, 'status1': 'TRYCATCH [server] Script erro!' }
+        console.log(infSendData.status1)
         let retSendData = await sendData(infSendData)
         process.exit();
     };

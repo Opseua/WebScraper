@@ -7,6 +7,7 @@ async function apiNire(inf) {
     await import('../../../Chrome_Extension/src/resources/@functions.js');
     let ret = { 'ret': false };
     try {
+        let infRegex, retRegex
         // API
         let infApi = {
             'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${inf.nire}&idproduto=`,
@@ -29,29 +30,70 @@ async function apiNire(inf) {
         if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj') && !texto.includes('mas houve um problema em nosso servidor')) {
             // ### ENCONTROU: NÃO
             ret['msg'] = `NIRE inválido`;
-            console.log(ret.msg)
             ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
-            let infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
-            let retRegex = regex(infRegex);
+            infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
+            retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
-                console.log(ret.msg)
                 ret['ret'] = true;
             } else {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
-                let infApiCnpj = { 'cnpj': cnpj, }
-                let retApiCnpj = await apiCnpj(infApiCnpj); if (!retApiCnpj.ret) { return retApiCnpj } else { retApiCnpj = retApiCnpj.res }
-                ret['res'] = retApiCnpj;
-                ret['msg'] = `API NIRE: OK`;
-                ret['ret'] = true;
+
+                // PEGAR A RAZÃO SOCIAL
+                infRegex = { 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
+                retRegex = regex(infRegex);
+                if (!retRegex.ret || !retRegex.res['1']) {
+                    ret['msg'] = `Razão Social do CNPJ não encontrada`;
+                    ret['ret'] = true;
+                } else {
+                    let razaoSocial = retRegex.res['1']
+
+                    // PEGAR TIPO DE EMPRESA DO CNPJ
+                    infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
+                    retRegex = regex(infRegex);
+                    if (!retRegex.ret || !retRegex.res['1']) {
+                        ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
+                        ret['ret'] = true;
+                    } else {
+                        let tipo = retRegex.res['1']
+
+                        let mei = `${cnpj.slice(0, 2)}.${cnpj.slice(2, 5)}.${cnpj.slice(5, 8)}`
+                        mei = razaoSocial.includes(mei) ? true : false
+                        if (mei) {
+                            ret['msg'] = `MEI`;
+                            ret['ret'] = true;
+                        } else {
+                            // PEGAR DATA DE EMPRESA DO CNPJ
+                            infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
+                            retRegex = regex(infRegex);
+                            if (!retRegex.ret || !retRegex.res['1']) {
+                                ret['msg'] = `Data do CNPJ não encontrada`;
+                                ret['ret'] = true;
+                            } else {
+                                let data = retRegex.res['1']
+                                if (data !== inf.date) {
+                                    ret['msg'] = `DATA ERRADA`;
+                                    ret['ret'] = true;
+                                } else {
+                                    let infApiCnpj = { 'cnpj': cnpj, }
+                                    // let retApiCnpj = await apiCnpj(infApiCnpj); if (!retApiCnpj.ret) { return retApiCnpj } else { retApiCnpj = retApiCnpj.res }
+                                    // ret['res'] = retApiCnpj;
+                                    ret['res'] = cnpj;
+                                    ret['msg'] = `API NIRE: OK`;
+                                    ret['ret'] = true;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': false, 'status': 'TRYCATCH [apiNire] Script erro!' }
+        let infSendData = { 'stop': false, 'status1': 'TRYCATCH [apiNire] Script erro!' }
         let retSendData = await sendData(infSendData)
         process.exit();
     };

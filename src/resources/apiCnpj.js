@@ -99,7 +99,7 @@ async function apiCnpj(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': false, 'status': 'TRYCATCH [apiCnpj] Script erro!' }
+        let infSendData = { 'stop': false, 'status1': 'TRYCATCH [apiCnpj] Script erro!' }
         let retSendData = await sendData(infSendData)
         process.exit();
     };

@@ -25,7 +25,7 @@ async function imput(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': false, 'status': 'TRYCATCH [imput] Script erro!' }
+        let infSendData = { 'stop': false, 'status1': 'TRYCATCH [imput] Script erro!' }
         let retSendData = await sendData(infSendData)
         process.exit();
     };

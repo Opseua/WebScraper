@@ -31,7 +31,7 @@ async function checkPage(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': false, 'status': 'TRYCATCH [checkPage] Script erro!' }
+        let infSendData = { 'stop': false, 'status1': 'TRYCATCH [checkPage] Script erro!' }
         let retSendData = await sendData(infSendData)
         process.exit();
     };
