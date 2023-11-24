@@ -13,21 +13,7 @@ async function sendData(inf) {
         let range = inf && inf.range ? inf.range : 'A29'
 
         // ENVIAR DADOS DA PLANILHA
-        if (inf.status || inf.status1 || inf.status2 || inf.results) {
-            // [STATUS]
-            if (inf.status) {
-                let sheetData = typeof inf.status === 'object' ? JSON.parse(inf.status) : inf.status
-                let infGoogleSheet = {
-                    'action': 'send',
-                    'id': id,
-                    'tab': tab,
-                    'range': range,
-                    'values': [[`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} | ${sheetData.replace('KEEP ', '')}`]]
-                }
-                let retGoogleSheet = await googleSheet(infGoogleSheet);
-                if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
-            }
-
+        if (inf.status1 || inf.status2 || inf.results) {
             // [STATUS1]
             if (inf.status1) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A29'

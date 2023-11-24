@@ -1,5 +1,5 @@
 // let infApiCnpj, retApiCnpj
-// infApiCnpj = { 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
+// infApiCnpj = { 'cnpj': '52957711000152' }
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)
 
@@ -11,7 +11,11 @@ async function apiCnpj(inf) {
             'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
             'headers': { 'Authorization': 'd4e74d0e-6b07-4f7f-80f9-fd18a5a23261-c0954e0c-9be7-48dc-987d-302dcd00d4e3' }
         };
-        let retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) { return retApi } else { retApi = JSON.parse(retApi.res.body) }
+        let retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
+            let infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `API_apiCnpj_FALSE.txt`, 'text': retApi }
+            let retLog = await log(infLog);
+            return retApi
+        } else { retApi = JSON.parse(retApi.res.body) }
 
         // CRIAÇÃO
         let criacao = !retApi.updated ? 'null' : retApi.updated
