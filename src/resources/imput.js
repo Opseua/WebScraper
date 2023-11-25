@@ -29,7 +29,11 @@ async function imput(inf) {
         let retSendData = await sendData(infSendData)
         process.exit();
     };
-    return ret
+    return {
+        ...(ret.ret && { ret: ret.ret }),
+        ...(ret.msg && { msg: ret.msg }),
+        ...(ret.res && { res: ret.res }),
+    };
 }
 
 if (typeof eng === 'boolean') {

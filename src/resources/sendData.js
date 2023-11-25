@@ -72,7 +72,11 @@ async function sendData(inf) {
         ret['msg'] = m.res
         process.exit();
     };
-    return ret
+    return {
+        ...(ret.ret && { ret: ret.ret }),
+        ...(ret.msg && { msg: ret.msg }),
+        ...(ret.res && { res: ret.res }),
+    };
 }
 
 if (typeof eng === 'boolean') {
