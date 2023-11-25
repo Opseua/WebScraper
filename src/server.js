@@ -1,6 +1,5 @@
 async function run(inf) {
     await import('../../Chrome_Extension/src/resources/@functions.js')
-    let puppeteer = await import('puppeteer');
     let ret = { 'ret': false };
     try {
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
@@ -30,7 +29,7 @@ async function run(inf) {
         console.log(infSendData.status1)
 
         // INICIAR PUPPETEER
-        let browser = await puppeteer.launch({
+        let browser = await _puppeteer.launch({
             headless: false,
             args: [
                 "--no-sandbox",
