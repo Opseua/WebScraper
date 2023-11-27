@@ -4,7 +4,7 @@
 // console.log(retNavigate)
 
 async function navigate(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.url) {
@@ -27,16 +27,14 @@ async function navigate(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['navigate'] = navigate;
-    } else { // NODEJS
-        global['navigate'] = navigate;
-    }
+if (eng) { // CHROME
+    window['navigate'] = navigate;
+} else { // NODEJS
+    global['navigate'] = navigate;
 }

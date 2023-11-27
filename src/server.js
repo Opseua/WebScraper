@@ -1,11 +1,13 @@
-async function run(inf) {
-    await import('../../Chrome_Extension/src/resources/@functions.js')
+await import('./resources/@export.js')
+async function server(inf) {
     let ret = { 'ret': false };
     try {
+        let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `server [WebScraper]`, '\n');
+
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false; gO.inf['sheetKepp'] = false
-        gO.inf['stop'] = false; let time = dateHour().res; let rate = rateLimiter({ 'max': 3, 'sec': 40 });
+        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
         let repet1 = 100, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
 
         // PEGAR DA PLANILHA [A2]
@@ -394,9 +396,9 @@ async function run(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
-run()
+await server()

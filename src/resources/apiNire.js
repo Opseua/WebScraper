@@ -4,7 +4,7 @@
 // console.log(retApiNire)
 
 async function apiNire(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         let infRegex, retRegex
@@ -27,7 +27,11 @@ async function apiNire(inf) {
         let texto = JSON.stringify(retApi.body)
         if (texto.includes('CaptchaImage')) {
             ret['msg'] = `Cookie expirou`;
-            return ret
+            return {
+                ...({ ret: ret.ret }),
+                ...(ret.msg && { msg: ret.msg }),
+                ...(ret.res && { res: ret.res }),
+            };
         }
 
         // CHECAR SE ENCONTROU NO BODY UM NIRE VÁLIDO (CNPJ JÁ ESTÁ AQUI)
@@ -112,16 +116,15 @@ async function apiNire(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['apiNire'] = apiNire;
-    } else { // NODEJS
-        global['apiNire'] = apiNire;
-    }
+if (eng) { // CHROME
+    window['apiNire'] = apiNire;
+} else { // NODEJS
+    global['apiNire'] = apiNire;
 }
+

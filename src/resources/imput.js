@@ -4,7 +4,7 @@
 // console.log(retImput)
 
 async function imput(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.element) {
@@ -30,16 +30,14 @@ async function imput(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['imput'] = imput;
-    } else { // NODEJS
-        global['imput'] = imput;
-    }
+if (eng) { // CHROME
+    window['imput'] = imput;
+} else { // NODEJS
+    global['imput'] = imput;
 }

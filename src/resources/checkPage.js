@@ -4,7 +4,7 @@
 // console.log(retCheckPage)
 
 async function checkPage(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.body) {
@@ -36,16 +36,14 @@ async function checkPage(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['checkPage'] = checkPage;
-    } else { // NODEJS
-        global['checkPage'] = checkPage;
-    }
+if (eng) { // CHROME
+    window['checkPage'] = checkPage;
+} else { // NODEJS
+    global['checkPage'] = checkPage;
 }

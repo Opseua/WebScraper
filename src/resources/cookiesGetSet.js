@@ -1,9 +1,9 @@
-async function cookiesGetSet(inf) {
-    // let infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie }
-    // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
-    // console.log(retCookiesGetSet)
+// let infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie }
+// let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
+// console.log(retCookiesGetSet)
 
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+async function cookiesGetSet(inf) {
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.action || (!inf.action == 'get' || !inf.action == 'set')) {
@@ -49,16 +49,14 @@ async function cookiesGetSet(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['cookiesGetSet'] = cookiesGetSet;
-    } else { // NODEJS
-        global['cookiesGetSet'] = cookiesGetSet;
-    }
+if (eng) { // CHROME
+    window['cookiesGetSet'] = cookiesGetSet;
+} else { // NODEJS
+    global['cookiesGetSet'] = cookiesGetSet;
 }

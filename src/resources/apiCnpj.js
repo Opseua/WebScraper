@@ -4,7 +4,7 @@
 // console.log(retApiCnpj)
 
 async function apiCnpj(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         let infApi = {
@@ -108,17 +108,16 @@ async function apiCnpj(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['apiCnpj'] = apiCnpj;
-    } else { // NODEJS
-        global['apiCnpj'] = apiCnpj;
-    }
+if (eng) { // CHROME
+    window['apiCnpj'] = apiCnpj;
+} else { // NODEJS
+    global['apiCnpj'] = apiCnpj;
 }
+
 

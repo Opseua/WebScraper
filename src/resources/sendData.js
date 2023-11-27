@@ -4,7 +4,7 @@
 // console.log(retSendData)
 
 async function sendData(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         let time = dateHour().res
@@ -73,16 +73,14 @@ async function sendData(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['sendData'] = sendData;
-    } else { // NODEJS
-        global['sendData'] = sendData;
-    }
+if (eng) { // CHROME
+    window['sendData'] = sendData;
+} else { // NODEJS
+    global['sendData'] = sendData;
 }

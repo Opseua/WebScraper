@@ -4,7 +4,7 @@
 // console.log(retButton)
 
 async function buttonElement(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         let element
@@ -39,16 +39,14 @@ async function buttonElement(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['buttonElement'] = buttonElement;
-    } else { // NODEJS
-        global['buttonElement'] = buttonElement;
-    }
+if (eng) { // CHROME
+    window['buttonElement'] = buttonElement;
+} else { // NODEJS
+    global['buttonElement'] = buttonElement;
 }

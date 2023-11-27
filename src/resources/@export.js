@@ -1,3 +1,7 @@
+// FUNCTIONS
+await import('../../../Chrome_Extension/src/resources/@functions.js');
+
+// FUNÇÕES DESSE PROJETO
 await import('./apiCnpj.js')
 await import('./apiNire.js')
 await import('./awaitLoad.js')
@@ -8,4 +12,3 @@ await import('./getTextElement.js')
 await import('./imput.js')
 await import('./navigate.js')
 await import('./sendData.js')
-

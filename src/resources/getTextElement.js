@@ -4,7 +4,7 @@
 // console.log(retGetTextElement)
 
 async function getTextElement(inf) {
-    await import('../../../Chrome_Extension/src/resources/@functions.js');
+    await import('./@export');
     let ret = { 'ret': false };
     try {
         let infRegex, retRegex
@@ -42,16 +42,14 @@ async function getTextElement(inf) {
         process.exit();
     };
     return {
-        ...(ret.ret && { ret: ret.ret }),
+        ...({ ret: ret.ret }),
         ...(ret.msg && { msg: ret.msg }),
         ...(ret.res && { res: ret.res }),
     };
 }
 
-if (typeof eng === 'boolean') {
-    if (eng) { // CHROME
-        window['getTextElement'] = getTextElement;
-    } else { // NODEJS
-        global['getTextElement'] = getTextElement;
-    }
+if (eng) { // CHROME
+    window['getTextElement'] = getTextElement;
+} else { // NODEJS
+    global['getTextElement'] = getTextElement;
 }
