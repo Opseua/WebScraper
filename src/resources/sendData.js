@@ -4,7 +4,6 @@
 // console.log(retSendData)
 
 async function sendData(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         let time = dateHour().res

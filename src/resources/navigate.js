@@ -4,7 +4,6 @@
 // console.log(retNavigate)
 
 async function navigate(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.url) {

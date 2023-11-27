@@ -4,7 +4,6 @@
 // console.log(retCheckPage)
 
 async function checkPage(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.body) {

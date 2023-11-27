@@ -4,7 +4,6 @@
 // console.log(retImput)
 
 async function imput(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.element) {

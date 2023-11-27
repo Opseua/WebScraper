@@ -146,13 +146,16 @@ async function server(inf) {
                 if (indice < valuesLoop.length) {
                     await loopFunRun({ 'value': valuesLoop[indice], 'index': indice, 'length': valuesLoop.length });
                     indice++
-                    if (indice == valuesLoop.length) {
+                    if (indice == valuesLoop.length && lastPage) {
                         console.log('INDICES ACABARAM');
                         infSendData = { 'stop': true, 'status2': 'Terminou de consultar tudo' }
                         retSendData = await sendData(infSendData);
                     }
-                } else { await new Promise((resolve) => setTimeout(resolve, 1000)) }
-            }; console.log('PAROU O LOOP');
+                } else {
+                    await new Promise((resolve) => setTimeout(resolve, 1000))
+                }
+            };
+            console.log('PAROU O LOOP');
         }; loopFun();
 
         // NAVIGATE [ABRINDO JUCESP]

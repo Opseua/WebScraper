@@ -4,7 +4,6 @@
 // console.log(retButton)
 
 async function buttonElement(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         let element

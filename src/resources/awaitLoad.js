@@ -4,7 +4,6 @@
 // console.log(retAwaitLoad)
 
 async function awaitLoad(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.element) { // SELECTOR #jo_encontrados

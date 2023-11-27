@@ -3,7 +3,6 @@
 // console.log(retCookiesGetSet)
 
 async function cookiesGetSet(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         if (!inf.action || (!inf.action == 'get' || !inf.action == 'set')) {

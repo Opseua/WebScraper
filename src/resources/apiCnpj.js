@@ -4,7 +4,6 @@
 // console.log(retApiCnpj)
 
 async function apiCnpj(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         let infApi = {

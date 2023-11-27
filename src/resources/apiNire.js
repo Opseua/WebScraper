@@ -4,7 +4,6 @@
 // console.log(retApiNire)
 
 async function apiNire(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         let infRegex, retRegex

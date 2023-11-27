@@ -4,7 +4,6 @@
 // console.log(retGetTextElement)
 
 async function getTextElement(inf) {
-    await import('./@export');
     let ret = { 'ret': false };
     try {
         let infRegex, retRegex
