@@ -1,4 +1,4 @@
-// let infGetTextElement, retGetTextElement
+// let infGetTextElement, retGetTextElement // 'logFun': true,
 // infGetTextElement = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
 // retGetTextElement = await getTextElement(infGetTextElement)
 // console.log(retGetTextElement)
@@ -32,6 +32,12 @@ async function getTextElement(inf) {
             }
             ret['msg'] = `GET TEXT ELEMENT: OK`;
             ret['ret'] = true;
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });

@@ -1,4 +1,4 @@
-// let infSendData, retSendData
+// let infSendData, retSendData // 'logFun': true,
 // infSendData = { 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
 // retSendData = await sendData(infSendData)
 // console.log(retSendData)
@@ -57,15 +57,20 @@ async function sendData(inf) {
                 if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
             }
         }
+        ret['msg'] = 'SEND DATA: OK'
+        ret['ret'] = true
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
+        }
 
         // STOP
         if (inf.stop) {
             gO.inf['stop'] = true
             process.exit();
         }
-
-        ret['msg'] = 'SEND DATA: OK'
-        ret['ret'] = true
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res

@@ -1,4 +1,4 @@
-// let infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie }
+// let infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie } // 'logFun': true,
 // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 // console.log(retCookiesGetSet)
 
@@ -39,6 +39,12 @@ async function cookiesGetSet(inf) {
                 ret['msg'] = `COOKIES GET SET: OK [${inf.action}]`;
                 ret['ret'] = true;
             }
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });

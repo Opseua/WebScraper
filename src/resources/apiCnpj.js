@@ -1,4 +1,4 @@
-// let infApiCnpj, retApiCnpj
+// let infApiCnpj, retApiCnpj // 'logFun': true,
 // infApiCnpj = { 'cnpj': '52957711000152' }
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)
@@ -99,6 +99,12 @@ async function apiCnpj(inf) {
         ret['res'] = res
         ret['msg'] = 'API CNPJ: OK';
         ret['ret'] = true;
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
+        }
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res

@@ -1,4 +1,4 @@
-// let infNavigate, retNavigate
+// let infNavigate, retNavigate // 'logFun': true,
 // infNavigate = { 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retNavigate = await navigate(infNavigate)
 // console.log(retNavigate)
@@ -17,6 +17,12 @@ async function navigate(inf) {
             });
             ret['msg'] = `NAVIGATE: OK`;
             ret['ret'] = true;
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });

@@ -1,4 +1,4 @@
-// let infButton, retButton
+// let infButton, retButton // 'logFun': true,
 // infButton = { 'browser': browser, 'page': page, 'button': 'search' }
 // retButton = await button(infButton)
 // console.log(retButton)
@@ -29,6 +29,12 @@ async function buttonElement(inf) {
             await element[0].click()
             ret['msg'] = `BUTTON ELEMENT: OK [${inf.button}]`;
             ret['ret'] = true;
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });

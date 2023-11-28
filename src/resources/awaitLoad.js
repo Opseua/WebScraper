@@ -1,4 +1,4 @@
-// let infAwaitLoad, retAwaitLoad
+// let infAwaitLoad, retAwaitLoad // 'logFun': true,
 // infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
 // retAwaitLoad = await awaitLoad(infAwaitLoad)
 // console.log(retAwaitLoad)
@@ -18,6 +18,12 @@ async function awaitLoad(inf) {
             await new Promise(resolve => { setTimeout(resolve, 1000) })
             ret['msg'] = `AWAIT ELEMENT: OK`;
             ret['ret'] = true;
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });

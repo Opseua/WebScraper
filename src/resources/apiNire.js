@@ -1,4 +1,4 @@
-// let infApiNire, retApiNire
+// let infApiNire, retApiNire // 'logFun': true,
 // infApiNire = { 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
 // retApiNire = await apiNire(infApiNire)
 // console.log(retApiNire)
@@ -106,6 +106,12 @@ async function apiNire(inf) {
                     }
                 }
             }
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });

@@ -1,4 +1,4 @@
-// let infCheckPage, retCheckPage
+// let infCheckPage, retCheckPage // 'logFun': true,
 // infCheckPage = { 'body': body }
 // retCheckPage = await checkPage(infCheckPage)
 // console.log(retCheckPage)
@@ -26,6 +26,12 @@ async function checkPage(inf) {
                     ret['ret'] = true;
                 }
             }
+        }
+
+        // ### LOG FUN ###
+        if (inf.logFun) {
+            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
         let m = await regexE({ 'e': e });
