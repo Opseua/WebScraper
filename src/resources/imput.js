@@ -13,8 +13,7 @@ async function imput(inf) {
         } else {
             let browser = inf.browser
             let page = inf.page
-            // DATA INÍCIO (SELECTOR) #ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio
-            // DATA INÍCIO (SELECTOR) #ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim
+
             // IMPUTAR VALOR
             await page.focus(inf.element)
             page.keyboard.type(inf.value)

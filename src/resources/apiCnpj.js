@@ -6,9 +6,10 @@
 async function apiCnpj(inf) {
     let ret = { 'ret': false };
     try {
+        let token = inf && inf.token ? inf.token : gO.inf.token
         let infApi = {
             'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
-            'headers': { 'Authorization': 'd4e74d0e-6b07-4f7f-80f9-fd18a5a23261-c0954e0c-9be7-48dc-987d-302dcd00d4e3' }
+            'headers': { 'Authorization': token }
         };
         let retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
             let infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `API_apiCnpj_FALSE.txt`, 'text': retApi }

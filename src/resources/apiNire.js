@@ -26,11 +26,7 @@ async function apiNire(inf) {
         let texto = JSON.stringify(retApi.body)
         if (texto.includes('CaptchaImage')) {
             ret['msg'] = `Cookie expirou`;
-            return {
-                ...({ ret: ret.ret }),
-                ...(ret.msg && { msg: ret.msg }),
-                ...(ret.res && { res: ret.res }),
-            };
+            return ret
         }
 
         // CHECAR SE ENCONTROU NO BODY UM NIRE VÁLIDO (CNPJ JÁ ESTÁ AQUI)
@@ -94,9 +90,6 @@ async function apiNire(inf) {
                                     ret['msg'] = `DATA ERRADA ${data}`;
                                     ret['ret'] = true;
                                 } else {
-                                    let infApiCnpj = { 'cnpj': cnpj, }
-                                    // let retApiCnpj = await apiCnpj(infApiCnpj); if (!retApiCnpj.ret) { return retApiCnpj } else { retApiCnpj = retApiCnpj.res }
-                                    // ret['res'] = retApiCnpj;
                                     ret['res'] = [cnpj, data];
                                     ret['msg'] = `API NIRE: OK`;
                                     ret['ret'] = true;

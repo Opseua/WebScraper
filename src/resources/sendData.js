@@ -50,7 +50,7 @@ async function sendData(inf) {
                     'action': 'send',
                     'id': id,
                     'tab': tab,
-                    'range': 'D*',
+                    'range': 'D**',
                     'values': [[`${sheetData}`]]
                 }
                 let retGoogleSheet = await googleSheet(infGoogleSheet);

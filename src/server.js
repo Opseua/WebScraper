@@ -1,13 +1,25 @@
-await import('./resources/@export.js')
 async function server(inf) {
+    await import('./resources/@export.js')
     let ret = { 'ret': false };
     try {
         let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `server [WebScraper]`, '\n');
 
+        let infConfigStorage, retConfigStorage
+        // PEGAR O TOKEN DO CONFIG
+        infConfigStorage = { 'action': 'get', 'functionLocal': false, 'key': 'cnpja' } // 'functionLocal' SOMENTE NO NODEJS
+        retConfigStorage = await configStorage(infConfigStorage);
+        if (!retConfigStorage.ret) {
+            console.log('[server] FALSE: retConfigStorage');
+            return retConfigStorage
+        } else {
+            retConfigStorage = retConfigStorage.res
+        }
+        let token = inf && inf.token ? inf.token : retConfigStorage.token
+
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false; gO.inf['sheetKepp'] = false
-        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
+        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res; gO.inf['token'] = token
         let repet1 = 100, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
 
         // PEGAR DA PLANILHA [A2]
@@ -109,24 +121,24 @@ async function server(inf) {
                 if (!rate.check()) { await new Promise(resolve => { setTimeout(resolve, 10000) }) }
                 infApiCnpj = { 'cnpj': retApiNire.res[0], }
                 retApiCnpj = await apiCnpj(infApiCnpj)
-                if (!retApiCnpj.res) {
+                if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
                     let status = 'ERRO: FALSE [apiCnpj]'
                     console.log(status, retApiCnpj)
                     infSendData = { 'stop': true, 'status1': status }
                     retSendData = await sendData(infSendData)
                 } else {
                     let time = dateHour().res
-                    let apiNire = retApiCnpj.res
+                    retApiCnpj = retApiCnpj.res
                     let results = [[
                         `${inf.value}`, // NIRE
                         `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, // DATA DA CONSULTA
                         retApiNire.res[1], // DATA CNPJ
-                        apiNire.cnpj,
-                        apiNire.razaoSocial,
-                        apiNire.telefone1,
-                        apiNire.telefone2,
-                        apiNire.email1,
-                        apiNire.gestor1 == 'null' ? apiNire.razaoSocial : apiNire.gestor1,
+                        retApiCnpj.cnpj,
+                        retApiCnpj.razaoSocial,
+                        retApiCnpj.telefone1,
+                        retApiCnpj.telefone2,
+                        retApiCnpj.email1,
+                        retApiCnpj.gestor1 == 'null' ? retApiCnpj.razaoSocial : retApiCnpj.gestor1,
                     ]]
                     results = results[0].join('|=:=')
                     infSendData = { 'stop': false, 'results': results }
@@ -175,9 +187,6 @@ async function server(inf) {
             retSendData = await sendData(infSendData); return
         };
 
-        // AGUARDAR 'Pesquisa Avançada' APARECER 
-        // await Promise.all([page.waitForSelector("#content > h3", { visible: true }),]);
-
         // COOKIE [SET]
         aut = gO.inf.sheetKepp.aut
         date = gO.inf.sheetKepp.date
@@ -212,7 +221,6 @@ async function server(inf) {
         retAwaitLoad = await awaitLoad(infAwaitLoad)
 
         // CHECK PAGE [COOKIE]
-        // value = await page.content()
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
@@ -228,14 +236,7 @@ async function server(inf) {
         retSendData = await sendData(infSendData)
         console.log(infSendData.status1)
 
-        // BUTTON [TESTE] 
-        // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[5]/div/strong')
-        // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[4]/div')
-        // await element[0].click()
-        // await new Promise(resolve => { setTimeout(resolve, 2000) })
-
         // CHECK PAGE [LISTA DE NIRE's]
-        // value = await page.content()
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
@@ -246,26 +247,9 @@ async function server(inf) {
             retSendData = await sendData(infSendData); return
         };
 
-        // // PEGAR DA PLANILHA [NIRE's JÁ CONSULTADOS]
-        // infGoogleSheet = {
-        //     'action': 'get',
-        //     'id': gO.inf.sheetId,
-        //     'tab': gO.inf.sheetTab,
-        //     'range': 'E1:E',
-        // }
-        // retGoogleSheet = await googleSheet(infGoogleSheet);
-        // if (!retGoogleSheet.ret) {
-        //     console.log(retGoogleSheet);
-        //     infSendData = { 'stop': true, 'status1': `Erro ao pegar dados para planilha` }
-        //     retSendData = await sendData(infSendData); return
-        // }
-        // sheetNire = retGoogleSheet.res.flat()
-
-        // ARQUIVO NIREs.txt [NIRE's JÁ CONSULTADOS]
-        // ESCREVER QUEBRA DE LINHA
+        // ARQUIVO DE NIRE's JÁ CONSULTADOS: ESCREVER QUEBRA DE LINHA → LER O ARQUIVO
         infFile = { 'action': 'write', 'functionLocal': true, 'path': './log/NIREs.txt', 'rewrite': true, 'text': '\n' }
         retFile = await file(infFile);
-        // LER O ARQUIVO
         infFile = { 'action': 'read', 'functionLocal': true, 'path': './log/NIREs.txt' }
         retFile = await file(infFile);
         try { sheetNire = JSON.parse(retFile.res) } catch (e) { sheetNire = [] }
@@ -294,7 +278,6 @@ async function server(inf) {
             await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
 
             // CHECK PAGE [LISTA DE NIRE's]
-            // value = await page.content()
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
@@ -315,13 +298,8 @@ async function server(inf) {
 
         // *****************************************************************
         for (let i = 0; i < repet1; i++) {
-            // AGUARDAR 'Lista de NIRE' APARECER
-            // await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
-
             // CHECK PAGE [LISTA DE NIRE's]
-            // value = await page.content()
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
-            // value = await page.evaluate(() => { return document.documentElement.innerHTML });
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
                 console.log(retCheckPage);
@@ -358,11 +336,6 @@ async function server(inf) {
                 lastPage = true
                 break
             } else {
-                // AGUARDAR 'Lista de NIRE' APARECER
-                // await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
-
-                // await new Promise(resolve => { setTimeout(resolve, 4000) })
-
                 // BUTTON [PRÓXIMA PÁGINA] / [PRÓXIMA ANTERIOR]
                 if (mode == '→') {
                     infButtonElement = { 'browser': browser, 'page': page, 'button': 'next' }
@@ -381,15 +354,17 @@ async function server(inf) {
         }
         // *****************************************************************
         console.log('FIM - QTD', valuesJucesp.length,)
-        return
 
-        // MOSTRAR CONTEUDO DA PÁGINA
-        value = await page.evaluate(() => document.body.textContent);
-        // console.log(value);
-
-        // ENCERRAR
-        // await browser.close();
-
+        // BUTTON [TESTE] 
+        // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[5]/div/strong')
+        // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[4]/div')
+        // await element[0].click()
+        // await new Promise(resolve => { setTimeout(resolve, 2000) })
+        // AGUARDAR ELEMENTO APARECER
+        // await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
+        // value = await page.content()
+        // value = await page.evaluate(() => document.querySelector('*').outerHTML);
+        // value = await page.evaluate(() => { return document.documentElement.innerHTML });
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
