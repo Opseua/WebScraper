@@ -4,23 +4,29 @@ async function server(inf) {
     try {
         let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `server [WebScraper]`, '\n');
 
+        let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
+        let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
+        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false; gO.inf['sheetKepp'] = false
+        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
+        let repet1 = 100, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
         let infConfigStorage, retConfigStorage
+
         // PEGAR O TOKEN DO CONFIG
         infConfigStorage = { 'action': 'get', 'functionLocal': false, 'key': 'cnpja' } // 'functionLocal' SOMENTE NO NODEJS
         retConfigStorage = await configStorage(infConfigStorage);
         if (!retConfigStorage.ret) {
-            console.log('[server] FALSE: retConfigStorage');
+            let err = `[server] FALSE: retConfigStorage`
+            console.log(err);
+            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retConfigStorage }
+            retLog = await log(infLog);
+            let infSendData = { 'stop': true, 'status1': err }
+            let retSendData = await sendData(infSendData)
             return retConfigStorage
         } else {
             retConfigStorage = retConfigStorage.res
         }
         let token = inf && inf.token ? inf.token : retConfigStorage.token
-
-        let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
-        let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
-        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false; gO.inf['sheetKepp'] = false
-        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res; gO.inf['token'] = token
-        let repet1 = 100, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
+        gO.inf['token'] = token;
 
         // PEGAR DA PLANILHA [A2]
         infGoogleSheet = {
@@ -31,9 +37,13 @@ async function server(inf) {
         }
         retGoogleSheet = await googleSheet(infGoogleSheet);
         if (!retGoogleSheet.ret) {
-            console.log(retGoogleSheet)
-            infSendData = { 'stop': true, 'status1': `Erro ao pegar dados para planilha` }
-            retSendData = await sendData(infSendData); return
+            let err = `[server] Erro ao pegar dados para planilha`
+            console.log(err);
+            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
+            retLog = await log(infLog);
+            infSendData = { 'stop': true, 'status1': err }
+            retSendData = await sendData(infSendData);
+            return retGoogleSheet
         }
         gO.inf['sheetKepp'] = JSON.parse(retGoogleSheet.res[0])
 
@@ -103,14 +113,17 @@ async function server(inf) {
             let ok = false
             let retApiNire = await apiNire({ 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
-                let status = retApiNire.msg ? retApiNire.msg : 'ERRO: FALSE [apiNire]'
-                console.log(status)
+                let err = `[server] FALSE: apiNire`
+                console.log(err);
+                infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
+                retLog = await log(infLog);
+                let status = retApiNire.msg ? retApiNire.msg : err
                 infSendData = { 'stop': true, 'status1': status }
                 retSendData = await sendData(infSendData)
             } else if (!retApiNire.res) {
-                let status = `${inf.value} ${current} | ${retApiNire.msg}`
-                console.log(status)
-                infSendData = { 'stop': false, 'status2': status }
+                let err = `${inf.value} ${current} | ${retApiNire.msg}`
+                console.log(err);
+                infSendData = { 'stop': false, 'status2': err }
                 retSendData = await sendData(infSendData)
                 ok = true
             } else {
@@ -122,9 +135,11 @@ async function server(inf) {
                 infApiCnpj = { 'cnpj': retApiNire.res[0], }
                 retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
-                    let status = 'ERRO: FALSE [apiCnpj]'
-                    console.log(status, retApiCnpj)
-                    infSendData = { 'stop': true, 'status1': status }
+                    let err = `[server] FALSE: apiCnpj`
+                    console.log(err);
+                    infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
+                    retLog = await log(infLog);
+                    infSendData = { 'stop': true, 'status1': err }
                     retSendData = await sendData(infSendData)
                 } else {
                     let time = dateHour().res
@@ -180,11 +195,13 @@ async function server(inf) {
         value = await page.content()
         retCheckPage = await checkPage({ 'body': value, 'search': `Pesquisa Avançada` });
         if (!retCheckPage.ret) {
-            console.log(retCheckPage);
-            infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `Não encontrou a página de pesquisa.txt`, 'text': value }
+            let err = `[server] Não encontrou a página de pesquisa`
+            console.log(err);
+            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': 'Não encontrou a página de pesquisa' }
-            retSendData = await sendData(infSendData); return
+            infSendData = { 'stop': true, 'status1': err }
+            retSendData = await sendData(infSendData);
+            return retCheckPage
         };
 
         // COOKIE [SET]
@@ -224,11 +241,13 @@ async function server(inf) {
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
-            console.log(retCheckPage);
-            infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `${retCheckPage.msg}.txt`, 'text': value }
+            let err = `[server] ${retCheckPage.msg}`
+            console.log(err);
+            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': retCheckPage.msg }
-            retSendData = await sendData(infSendData); return
+            infSendData = { 'stop': true, 'status1': err }
+            retSendData = await sendData(infSendData);
+            return retCheckPage
         };
 
         // STATUS [BUSCANDO NOVOS NIRE's]
@@ -240,11 +259,13 @@ async function server(inf) {
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
-            console.log(retCheckPage);
-            infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `${retCheckPage.msg}.txt`, 'text': value }
+            let err = `[server] ${retCheckPage.msg}`
+            console.log(err);
+            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': retCheckPage.msg }
-            retSendData = await sendData(infSendData); return
+            infSendData = { 'stop': true, 'status1': err }
+            retSendData = await sendData(infSendData);
+            return retCheckPage
         };
 
         // ARQUIVO DE NIRE's JÁ CONSULTADOS: ESCREVER QUEBRA DE LINHA → LER O ARQUIVO
@@ -281,11 +302,13 @@ async function server(inf) {
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
-                console.log(retCheckPage);
-                infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `${retCheckPage.msg}.txt`, 'text': value }
+                let err = `[server] ${retCheckPage.msg}`
+                console.log(err);
+                infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
-                infSendData = { 'stop': true, 'status1': retCheckPage.msg }
-                retSendData = await sendData(infSendData); return
+                infSendData = { 'stop': true, 'status1': err }
+                retSendData = await sendData(infSendData);
+                return retCheckPage
             };
 
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
@@ -302,10 +325,11 @@ async function server(inf) {
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
-                console.log(retCheckPage);
-                infLog = { 'folder': 'Jucesp', 'functionLocal': true, 'path': `${retCheckPage.msg}.txt`, 'text': value }
+                let err = `[server] ${retCheckPage.msg}`
+                console.log(err);
+                infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
-                infSendData = { 'stop': true, 'status1': retCheckPage.msg }
+                infSendData = { 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData); return
             };
 
@@ -368,10 +392,11 @@ async function server(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': true, 'status1': 'TRYCATCH [server] Script erro!' }
-        console.log(infSendData.status1)
+
+        let err = `[server] TRYCATCH Script erro!`
+        console.log(e);
+        let infSendData = { 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
-        process.exit();
     };
     return {
         ...({ ret: ret.ret }),

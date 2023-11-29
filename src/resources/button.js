@@ -39,9 +39,11 @@ async function buttonElement(inf) {
     } catch (e) {
         let m = await regexE({ 'e': e });
         ret['msg'] = m.res
-        let infSendData = { 'stop': false, 'status1': 'TRYCATCH [buttonElement] Script erro!' }
+
+        let err = `[buttonElement] TRYCATCH Script erro!`
+        console.log(e);
+        let infSendData = { 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
-        process.exit();
     };
     return {
         ...({ ret: ret.ret }),
