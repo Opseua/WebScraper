@@ -6,9 +6,9 @@ async function server(inf) {
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
-        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false; gO.inf['sheetKepp'] = false
+        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false;
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
-        let repet1 = 100, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
+        let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
         let infConfigStorage, retConfigStorage
 
         // PEGAR O TOKEN DO CONFIG
@@ -28,7 +28,7 @@ async function server(inf) {
         let token = inf && inf.token ? inf.token : retConfigStorage.token
         gO.inf['token'] = token;
 
-        // PEGAR DA PLANILHA [A2]
+        // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         infGoogleSheet = {
             'action': 'get',
             'id': gO.inf.sheetId,
@@ -46,6 +46,9 @@ async function server(inf) {
             return retGoogleSheet
         }
         gO.inf['sheetKepp'] = JSON.parse(retGoogleSheet.res[0])
+        aut = gO.inf.sheetKepp.aut
+        date = gO.inf.sheetKepp.date
+        mode = gO.inf.sheetKepp.mode
 
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'stop': false, 'status1': 'Iniciando script, aguarde' }
@@ -113,7 +116,7 @@ async function server(inf) {
             let ok = false
             let retApiNire = await apiNire({ 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
-                let err = `[server] FALSE: apiNire`
+                let err = `[server] FALSE: retApiNire`
                 console.log(err);
                 infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
                 retLog = await log(infLog);
@@ -135,7 +138,7 @@ async function server(inf) {
                 infApiCnpj = { 'cnpj': retApiNire.res[0], }
                 retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
-                    let err = `[server] FALSE: apiCnpj`
+                    let err = `[server] FALSE: retApiCnpj`
                     console.log(err);
                     infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
                     retLog = await log(infLog);
@@ -205,9 +208,6 @@ async function server(inf) {
         };
 
         // COOKIE [SET]
-        aut = gO.inf.sheetKepp.aut
-        date = gO.inf.sheetKepp.date
-        mode = gO.inf.sheetKepp.mode
         if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}/${time.mon}/2023` }
         infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': aut }
         retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
@@ -366,6 +366,7 @@ async function server(inf) {
                 } else if (mode == '←') {
                     infButtonElement = { 'browser': browser, 'page': page, 'button': 'prev' }
                 }
+
                 retButtonElement = await buttonElement(infButtonElement)
                 await new Promise(resolve => { setTimeout(resolve, 2000) })
 
@@ -390,11 +391,10 @@ async function server(inf) {
         // value = await page.evaluate(() => document.querySelector('*').outerHTML);
         // value = await page.evaluate(() => { return document.documentElement.innerHTML });
     } catch (e) {
-        let m = await regexE({ 'e': e });
-        ret['msg'] = m.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': e });
+        ret['msg'] = retRegexE.res
 
         let err = `[server] TRYCATCH Script erro!`
-        console.log(e);
         let infSendData = { 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };

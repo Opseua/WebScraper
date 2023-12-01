@@ -72,11 +72,8 @@ async function sendData(inf) {
             process.exit();
         }
     } catch (e) {
-        let m = await regexE({ 'e': e });
-        ret['msg'] = m.res
-
-        let err = `[sendData] TRYCATCH Script erro!`
-        console.log(e);
+        let retRegexE = await regexE({ 'inf': inf, 'e': e });
+        ret['msg'] = retRegexE.res
 
         process.exit();
     };
