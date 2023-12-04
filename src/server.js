@@ -1,8 +1,12 @@
 await import('./resources/@export.js')
 let e = import.meta.url;
 async function server(inf) {
-    let ret = { 'ret': false };
-    e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    if (catchGlobal) {
+        const errs = async (err, ret) => { if (!ret.stop) { ret['stop'] = true; let retRegexE = await regexE({ 'e': err, 'inf': inf, 'catchGlobal': true }) } }
+        if (typeof window !== 'undefined') { window.addEventListener('error', (err) => errs(err, ret)); window.addEventListener('unhandledrejection', (err) => errs(err, ret)) }
+        else { process.on('uncaughtException', (err) => errs(err, ret)); process.on('unhandledRejection', (err) => errs(err, ret)) }
+    }
     try {
         let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `server [WebScraper]`, '\n');
 
@@ -394,7 +398,7 @@ async function server(inf) {
         // value = await page.evaluate(() => document.querySelector('*').outerHTML);
         // value = await page.evaluate(() => { return document.documentElement.innerHTML });
     } catch (e) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': e });
+        let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
         err = `[server] TRYCATCH Script erro!`
