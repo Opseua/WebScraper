@@ -3,8 +3,10 @@
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)
 
+let e = import.meta.url;
 async function apiCnpj(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         let infApi, retApi, infLog, retLog
         let token = inf && inf.token ? inf.token : gO.inf.token
@@ -15,7 +17,7 @@ async function apiCnpj(inf) {
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
             let err = `[apiCnpj] FALSE: retApi`
             // console.log(err);
-            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
             retLog = await log(infLog);
             return retApi
         } else { retApi = JSON.parse(retApi.res.body) }
@@ -105,8 +107,8 @@ async function apiCnpj(inf) {
         ret['ret'] = true;
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {

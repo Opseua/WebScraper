@@ -3,8 +3,10 @@
 // retButton = await button(infButton)
 // console.log(retButton)
 
+let e = import.meta.url;
 async function buttonElement(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         let element
         if (!inf.button || !['search', 'first', 'prev', 'next', 'last'].includes(inf.button)) {
@@ -32,8 +34,8 @@ async function buttonElement(inf) {
         }
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {

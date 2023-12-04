@@ -3,8 +3,10 @@
 // retApiNire = await apiNire(infApiNire)
 // console.log(retApiNire)
 
+let e = import.meta.url;
 async function apiNire(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex, infLog, retLog
         let nire = inf && inf.nire ? inf.nire : '12345678'
@@ -15,7 +17,7 @@ async function apiNire(inf) {
         }; let retApi = await api(infApi); if (!retApi.ret) {
             let err = `[apiNire] FALSE: retApi`
             console.log(err);
-            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
             retLog = await log(infLog);
             return retApi
         } else { retApi = retApi.res }
@@ -37,7 +39,7 @@ async function apiNire(inf) {
             // ### ENCONTROU: NÃO
             let err = `[apiNire] NIRE_INVALIDO`
             // console.log(err);
-            infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
             retLog = await log(infLog);
             ret['msg'] = `NIRE inválido`;
             ret['ret'] = true;
@@ -50,7 +52,7 @@ async function apiNire(inf) {
                 ret['ret'] = true;
                 let err = `[apiNire] ${ret.msg}`
                 // console.log(err);
-                infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
                 retLog = await log(infLog);
             } else {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
@@ -63,7 +65,7 @@ async function apiNire(inf) {
                     ret['ret'] = true;
                     let err = `[apiNire] ${ret.msg}`
                     // console.log(err);
-                    infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
                     retLog = await log(infLog);
                 } else {
                     let razaoSocial = retRegex.res['1']
@@ -76,7 +78,7 @@ async function apiNire(inf) {
                         ret['ret'] = true;
                         let err = `[apiNire] ${ret.msg}`
                         // console.log(err);
-                        infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
                         retLog = await log(infLog);
                     } else {
                         let tipo = retRegex.res['1']
@@ -95,7 +97,7 @@ async function apiNire(inf) {
                                 ret['ret'] = true;
                                 let err = `[apiNire] ${ret.msg}`
                                 // console.log(err);
-                                infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
                                 retLog = await log(infLog);
                             } else {
                                 let data = retRegex.res['1']
@@ -115,8 +117,8 @@ async function apiNire(inf) {
         }
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {

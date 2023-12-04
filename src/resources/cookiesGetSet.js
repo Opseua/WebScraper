@@ -2,8 +2,10 @@
 // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 // console.log(retCookiesGetSet)
 
+let e = import.meta.url;
 async function cookiesGetSet(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         if (!inf.action || (!inf.action == 'get' || !inf.action == 'set')) {
             ret['msg'] = `\n\n #### ERRO #### COOKIES \n INFORMAR O 'action' \n\n`;
@@ -42,8 +44,8 @@ async function cookiesGetSet(inf) {
         }
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {

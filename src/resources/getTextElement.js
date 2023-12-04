@@ -3,8 +3,10 @@
 // retGetTextElement = await getTextElement(infGetTextElement)
 // console.log(retGetTextElement)
 
+let e = import.meta.url;
 async function getTextElement(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex
         if (!inf.element) { // SELECTOR #jo_encontrados
@@ -35,8 +37,8 @@ async function getTextElement(inf) {
         }
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {

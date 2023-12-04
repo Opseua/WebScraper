@@ -3,8 +3,10 @@
 // retAwaitLoad = await awaitLoad(infAwaitLoad)
 // console.log(retAwaitLoad)
 
+let e = import.meta.url;
 async function awaitLoad(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         if (!inf.element) { // SELECTOR #jo_encontrados
             ret['msg'] = `\n\n #### ERRO #### AWAIT LOAD \n INFORMAR O 'element' \n\n`;
@@ -21,8 +23,8 @@ async function awaitLoad(inf) {
         }
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {

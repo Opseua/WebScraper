@@ -3,8 +3,10 @@
 // retCheckPage = await checkPage(infCheckPage)
 // console.log(retCheckPage)
 
+let e = import.meta.url;
 async function checkPage(inf) {
     let ret = { 'ret': false };
+    e = inf && inf.e ? inf.e : e;
     try {
         let infLog, retLog
         if (!inf.body) {
@@ -16,7 +18,7 @@ async function checkPage(inf) {
                 ret['msg'] = ret.ret ? `ENCONTRADO [SIM]: '${inf.search}'` : `ENCONTRADO [NÃO]: '${inf.search}'`
                 if (!ret.ret) {
                     let err = `[checkPage] ${ret.msg}`
-                    infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': inf.body }
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': inf.body }
                     retLog = await log(infLog);
                 }
             } else {
@@ -25,7 +27,7 @@ async function checkPage(inf) {
                 } else if (!(inf.body.includes('Mostrando') && inf.body.includes('Anterior') && inf.body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
                     let err = `[checkPage] ${ret.msg}`
-                    infLog = { 'folder': 'Registros', 'path': `${err}.txt`, 'text': inf.body }
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': inf.body }
                     retLog = await log(infLog);
                 } else {
                     ret['msg'] = `NIRE's ENCONTRADOS`;
@@ -35,8 +37,8 @@ async function checkPage(inf) {
         }
 
         // ### LOG FUN ###
-        if (inf.logFun) {
-            let infFile = { 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }, retFile
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; retFile = await file(infFile);
         }
     } catch (e) {
