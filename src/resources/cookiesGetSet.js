@@ -1,4 +1,4 @@
-// let infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie } // 'logFun': true,
+// let infCookiesGetSet = { 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie } // 'logFun': true,
 // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 // console.log(retCookiesGetSet)
 
@@ -57,7 +57,7 @@ async function cookiesGetSet(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[cookiesGetSet] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

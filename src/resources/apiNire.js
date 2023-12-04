@@ -1,5 +1,5 @@
 // let infApiNire, retApiNire // 'logFun': true,
-// infApiNire = { 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
+// infApiNire = {'e': e, 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
 // retApiNire = await apiNire(infApiNire)
 // console.log(retApiNire)
 
@@ -130,7 +130,7 @@ async function apiNire(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[apiNire] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

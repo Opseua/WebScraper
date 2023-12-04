@@ -1,5 +1,5 @@
 // let infAwaitLoad, retAwaitLoad // 'logFun': true,
-// infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
+// infAwaitLoad = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
 // retAwaitLoad = await awaitLoad(infAwaitLoad)
 // console.log(retAwaitLoad)
 
@@ -36,7 +36,7 @@ async function awaitLoad(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[awaitLoad] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

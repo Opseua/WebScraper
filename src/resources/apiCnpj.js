@@ -1,5 +1,5 @@
 // let infApiCnpj, retApiCnpj // 'logFun': true,
-// infApiCnpj = { 'cnpj': '52957711000152' }
+// infApiCnpj = {'e': e, 'cnpj': '52957711000152' }
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)
 
@@ -120,7 +120,7 @@ async function apiCnpj(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[apiCnpj] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

@@ -1,5 +1,5 @@
 // let infGetTextElement, retGetTextElement // 'logFun': true,
-// infGetTextElement = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
+// infGetTextElement = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
 // retGetTextElement = await getTextElement(infGetTextElement)
 // console.log(retGetTextElement)
 
@@ -50,7 +50,7 @@ async function getTextElement(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[getTextElement] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

@@ -1,5 +1,5 @@
 // let infCheckPage, retCheckPage // 'logFun': true,
-// infCheckPage = { 'body': body }
+// infCheckPage = {'e': e, 'body': body }
 // retCheckPage = await checkPage(infCheckPage)
 // console.log(retCheckPage)
 
@@ -50,7 +50,7 @@ async function checkPage(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[checkPage] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

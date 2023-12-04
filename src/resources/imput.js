@@ -1,5 +1,5 @@
 // let infImput, retImput // 'logFun': true,
-// infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': '13112023' }
+// infImput = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': '13112023' }
 // retImput = await imput(infImput)
 // console.log(retImput)
 
@@ -37,7 +37,7 @@ async function imput(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `[imput] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {

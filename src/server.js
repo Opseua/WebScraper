@@ -26,7 +26,7 @@ async function server(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retConfigStorage }
             retLog = await log(infLog);
-            let infSendData = { 'stop': true, 'status1': err }
+            let infSendData = { 'e': e, 'stop': true, 'status1': err }
             let retSendData = await sendData(infSendData)
             return retConfigStorage
         } else {
@@ -48,7 +48,7 @@ async function server(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': err }
+            infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retGoogleSheet
         }
@@ -58,7 +58,7 @@ async function server(inf) {
         mode = gO.inf.sheetKepp.mode
 
         // STATUS1 [Iniciando script, aguarde]
-        infSendData = { 'stop': false, 'status1': 'Iniciando script, aguarde' }
+        infSendData = { 'e': e, 'stop': false, 'status1': 'Iniciando script, aguarde' }
         retSendData = await sendData(infSendData)
         console.log(infSendData.status1)
 
@@ -128,28 +128,28 @@ async function server(inf) {
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
                 retLog = await log(infLog);
                 let status = retApiNire.msg ? retApiNire.msg : err
-                infSendData = { 'stop': true, 'status1': status }
+                infSendData = { 'e': e, 'stop': true, 'status1': status }
                 retSendData = await sendData(infSendData)
             } else if (!retApiNire.res) {
                 err = `${inf.value} ${current} | ${retApiNire.msg}`
                 console.log(err);
-                infSendData = { 'stop': false, 'status2': err }
+                infSendData = { 'e': e, 'stop': false, 'status2': err }
                 retSendData = await sendData(infSendData)
                 ok = true
             } else {
-                infSendData = { 'stop': false, 'status2': `${inf.value} ${current} | OK` }
+                infSendData = { 'e': e, 'stop': false, 'status2': `${inf.value} ${current} | OK` }
                 retSendData = await sendData(infSendData);
                 console.log(infSendData.status2)
                 let infApiCnpj, retApiCnpj
                 if (!rate.check()) { await new Promise(resolve => { setTimeout(resolve, 10000) }) }
-                infApiCnpj = { 'cnpj': retApiNire.res[0], }
+                infApiCnpj = { 'e': e, 'cnpj': retApiNire.res[0], }
                 retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
                     err = `[server] FALSE: retApiCnpj`
                     console.log(err);
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
                     retLog = await log(infLog);
-                    infSendData = { 'stop': true, 'status1': err }
+                    infSendData = { 'e': e, 'stop': true, 'status1': err }
                     retSendData = await sendData(infSendData)
                 } else {
                     let time = dateHour().res
@@ -166,14 +166,14 @@ async function server(inf) {
                         retApiCnpj.gestor1 == 'null' ? retApiCnpj.razaoSocial : retApiCnpj.gestor1,
                     ]]
                     results = results[0].join('|=:=')
-                    infSendData = { 'stop': false, 'results': results }
+                    infSendData = { 'e': e, 'stop': false, 'results': results }
                     retSendData = await sendData(infSendData)
                     ok = true
                 }
             }
             if (ok) {
                 sheetNire.push(inf.value)
-                infFile = { 'e': e, 'action': 'write', 'functionLocal': true, 'path': './log/NIREs.txt', 'rewrite': false, 'text': JSON.stringify(sheetNire, null, 2) }
+                infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'rewrite': false, 'text': JSON.stringify(sheetNire, null, 2) }
                 retFile = await file(infFile);
             }
             await new Promise(resolve => { setTimeout(resolve, 1000) }) // DELAY PARA EVITAR ACABAR A ARRAY
@@ -185,7 +185,7 @@ async function server(inf) {
                     indice++
                     if (indice == valuesLoop.length && lastPage) {
                         console.log('INDICES ACABARAM');
-                        infSendData = { 'stop': true, 'status2': 'Terminou de consultar tudo' }
+                        infSendData = { 'e': e, 'stop': true, 'status2': 'Terminou de consultar tudo' }
                         retSendData = await sendData(infSendData);
                     }
                 } else {
@@ -196,7 +196,7 @@ async function server(inf) {
         }; loopFun();
 
         // NAVIGATE [ABRINDO JUCESP]
-        infNavigate = { 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
+        infNavigate = { 'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
         retNavigate = await navigate(infNavigate)
 
         await new Promise(resolve => { setTimeout(resolve, 2000) })
@@ -209,18 +209,18 @@ async function server(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': err }
+            infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
         };
 
         // COOKIE [SET]
         if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}/${time.mon}/2023` }
-        infCookiesGetSet = { 'browser': browser, 'page': page, 'action': 'set', 'value': aut }
+        infCookiesGetSet = { 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut }
         retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 
         // STATUS [INSERINDO DATA DE PESQUISA]
-        infSendData = { 'stop': false, 'status1': 'Inserindo data de pesquisa' }
+        infSendData = { 'e': e, 'stop': false, 'status1': 'Inserindo data de pesquisa' }
         retSendData = await sendData(infSendData)
         console.log(infSendData.status1)
 
@@ -241,7 +241,7 @@ async function server(inf) {
         retButtonElement = await buttonElement(infButtonElement)
 
         // AGUARDAR PÁGINA TERMINAR DE CARREGAR
-        infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_hTitulo' }
+        infAwaitLoad = { 'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_hTitulo' }
         retAwaitLoad = await awaitLoad(infAwaitLoad)
 
         // CHECK PAGE [COOKIE]
@@ -252,13 +252,13 @@ async function server(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': err }
+            infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
         };
 
         // STATUS [BUSCANDO NOVOS NIRE's]
-        infSendData = { 'stop': false, 'status1': `Buscando novos NIRE's` }
+        infSendData = { 'e': e, 'stop': false, 'status1': `Buscando novos NIRE's` }
         retSendData = await sendData(infSendData)
         console.log(infSendData.status1)
 
@@ -270,21 +270,21 @@ async function server(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            infSendData = { 'stop': true, 'status1': err }
+            infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
         };
 
         // ARQUIVO DE NIRE's JÁ CONSULTADOS: ESCREVER QUEBRA DE LINHA → LER O ARQUIVO
-        infFile = { 'e': e, 'action': 'write', 'functionLocal': true, 'path': './log/NIREs.txt', 'rewrite': true, 'text': '\n' }
+        infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'rewrite': true, 'text': '\n' }
         retFile = await file(infFile);
-        infFile = { 'e': e, 'action': 'read', 'functionLocal': true, 'path': './log/NIREs.txt' }
+        infFile = { 'e': e, 'action': 'read', 'functionLocal': false, 'path': './log/NIREs.txt' }
         retFile = await file(infFile);
         try { sheetNire = JSON.parse(retFile.res) } catch (e) { sheetNire = [] }
 
         // ###################################################################################
         // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
-        infGetTextElement = { 'value': value, 'element': 'results' }
+        infGetTextElement = { 'e': e, 'value': value, 'element': 'results' }
         retGetTextElement = await getTextElement(infGetTextElement); value = [retGetTextElement.res[0][0], retGetTextElement.res[0][1], retGetTextElement.res[0][2]]
         pg = mode == '→' ? 1 : Math.ceil(Number(value[2]) / 15)
         results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
@@ -297,7 +297,7 @@ async function server(inf) {
             await new Promise(resolve => { setTimeout(resolve, 2000) })
 
             // AGUARDAR PÁGINA TERMINAR DE CARREGAR
-            infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#jo_encontrados' }
+            infAwaitLoad = { 'e': e, 'browser': browser, 'page': page, 'element': '#jo_encontrados' }
             retAwaitLoad = await awaitLoad(infAwaitLoad)
 
             await new Promise(resolve => { setTimeout(resolve, 2000) })
@@ -313,13 +313,13 @@ async function server(inf) {
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
-                infSendData = { 'stop': true, 'status1': err }
+                infSendData = { 'e': e, 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData);
                 return retCheckPage
             };
 
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
-            infGetTextElement = { 'value': value, 'element': 'results' }
+            infGetTextElement = { 'e': e, 'value': value, 'element': 'results' }
             retGetTextElement = await getTextElement(infGetTextElement); value = [retGetTextElement.res[0][0], retGetTextElement.res[0][1], retGetTextElement.res[0][2]]
             pg = mode == '→' ? 1 : Math.ceil(Number(value[2]) / 15)
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
@@ -336,12 +336,12 @@ async function server(inf) {
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
-                infSendData = { 'stop': true, 'status1': err }
+                infSendData = { 'e': e, 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData); return
             };
 
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [DEMAIS PÁGINAS]
-            infGetTextElement = { 'value': value, 'element': 'results' }
+            infGetTextElement = { 'e': e, 'value': value, 'element': 'results' }
             retGetTextElement = await getTextElement(infGetTextElement); value = [retGetTextElement.res[0][0], retGetTextElement.res[0][1], retGetTextElement.res[0][2]]
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
             let repet2 = Number(value[1]) - Number(value[0]) + 1
@@ -357,7 +357,7 @@ async function server(inf) {
             }
 
             // STATUS [BUSCANDO NOVOS NIRE's]
-            infSendData = { 'stop': false, 'status1': `[${mode}] NIRE's: ${results[3]} Página ${pg} de ${Math.ceil(Number(value[2]) / 15)}` }
+            infSendData = { 'e': e, 'stop': false, 'status1': `[${mode}] NIRE's: ${results[3]} Página ${pg} de ${Math.ceil(Number(value[2]) / 15)}` }
             retSendData = await sendData(infSendData)
             await new Promise(resolve => { setTimeout(resolve, 4000) })
 
@@ -378,7 +378,7 @@ async function server(inf) {
                 await new Promise(resolve => { setTimeout(resolve, 2000) })
 
                 // AGUARDAR PÁGINA TERMINAR DE CARREGAR
-                infAwaitLoad = { 'browser': browser, 'page': page, 'element': '#jo_encontrados' }
+                infAwaitLoad = { 'e': e, 'browser': browser, 'page': page, 'element': '#jo_encontrados' }
                 retAwaitLoad = await awaitLoad(infAwaitLoad)
 
                 await new Promise(resolve => { setTimeout(resolve, 2000) })
@@ -402,7 +402,7 @@ async function server(inf) {
         ret['msg'] = retRegexE.res
 
         err = `[server] TRYCATCH Script erro!`
-        let infSendData = { 'stop': true, 'status1': err }
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {
