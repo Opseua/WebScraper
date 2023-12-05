@@ -5,7 +5,7 @@ await import('../../../Chrome_Extension/src/resources/@functions.js');
 await import('./apiCnpj.js')
 await import('./apiNire.js')
 await import('./awaitLoad.js')
-await import('./button.js')
+await import('./buttonElement.js')
 await import('./checkPage.js')
 await import('./cookiesGetSet.js')
 await import('./getTextElement.js')
