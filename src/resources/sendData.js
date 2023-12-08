@@ -15,13 +15,13 @@ async function sendData(inf) {
         let time = dateHour().res
         let id = inf && inf.id ? inf.id : gO.inf.sheetId ? gO.inf.sheetId : '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'
         let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'RESULTADOS_CNPJ_2'
-        let range = inf && inf.range ? inf.range : 'A29'
+        let range = inf && inf.range ? inf.range : 'A32'
 
         // ENVIAR DADOS DA PLANILHA
         if (inf.status1 || inf.status2 || inf.results) {
             // [STATUS1]
             if (inf.status1) {
-                range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A29'
+                range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A32'
                 let sheetData = typeof inf.status1 === 'object' ? JSON.parse(inf.status1) : inf.status1
                 let infGoogleSheet = {
                     'action': 'send',
@@ -36,7 +36,7 @@ async function sendData(inf) {
 
             // [STATUS2]
             if (inf.status2) {
-                range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status2 ? gO.inf.sheetKepp.range.status2 : 'A31'
+                range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status2 ? gO.inf.sheetKepp.range.status2 : 'A34'
                 let sheetData = typeof inf.status2 === 'object' ? JSON.parse(inf.status2) : inf.status2
                 let infGoogleSheet = {
                     'action': 'send',

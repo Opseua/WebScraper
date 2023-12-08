@@ -14,10 +14,19 @@ async function apiNire(inf) {
     try {
         let infRegex, retRegex, infLog, retLog
         let nire = inf && inf.nire ? inf.nire : '12345678'
+        let aut = inf && inf.aut ? inf.aut : 'ASP.NET_SessionId=aaaaaaaaaaaa'
+
+        for (let [index, value] of aut.entries()) {
+            if (value.name == 'ASP.NET_SessionId') {
+                aut = `ASP.NET_SessionId=${value.value}`
+                break
+            }
+        }
+
         // API
         let infApi = {
             'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
-            'headers': { 'Cookie': inf.aut }
+            'headers': { 'Cookie': aut }
         }; let retApi = await api(infApi); if (!retApi.ret) {
             let err = `[apiNire] FALSE: retApi`
             console.log(err);

@@ -1,6 +1,6 @@
 await import('./resources/@export.js')
 let e = import.meta.url;
-async function server(inf) {
+async function serverJucesp(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     if (catchGlobal) {
         const errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; let retRegexE = await regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } }
@@ -8,7 +8,7 @@ async function server(inf) {
         else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
     }
     try {
-        let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `server [WebScraper]`, '\n');
+        let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `serverJucesp [WebScraper]`, '\n');
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
@@ -22,7 +22,7 @@ async function server(inf) {
         infConfigStorage = { 'e': e, 'action': 'get', 'functionLocal': false, 'key': 'cnpja' } // 'functionLocal' SOMENTE NO NODEJS
         retConfigStorage = await configStorage(infConfigStorage);
         if (!retConfigStorage.ret) {
-            err = `[server] FALSE: retConfigStorage`
+            err = `[serverJucesp] FALSE: retConfigStorage`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retConfigStorage }
             retLog = await log(infLog);
@@ -44,7 +44,7 @@ async function server(inf) {
         }
         retGoogleSheet = await googleSheet(infGoogleSheet);
         if (!retGoogleSheet.ret) {
-            err = `[server] Erro ao pegar dados para planilha`
+            err = `[serverJucesp] Erro ao pegar dados para planilha`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
             retLog = await log(infLog);
@@ -124,7 +124,7 @@ async function server(inf) {
             let ok = false
             let retApiNire = await apiNire({ 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
-                err = `[server] FALSE: retApiNire`
+                err = `[serverJucesp] FALSE: retApiNire`
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
                 retLog = await log(infLog);
@@ -146,7 +146,7 @@ async function server(inf) {
                 infApiCnpj = { 'e': e, 'cnpj': retApiNire.res[0], }
                 retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
-                    err = `[server] FALSE: retApiCnpj`
+                    err = `[serverJucesp] FALSE: retApiCnpj`
                     console.log(err);
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
                     retLog = await log(infLog);
@@ -155,16 +155,17 @@ async function server(inf) {
                 } else {
                     let time = dateHour().res
                     retApiCnpj = retApiCnpj.res
+
                     let results = [[
                         `${inf.value}`, // NIRE
-                        `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, // DATA DA CONSULTA
-                        retApiNire.res[1], // DATA CNPJ
+                        `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, // DATA SCRIPT
+                        retApiNire.res[1], // DATA REC FED
                         retApiCnpj.cnpj,
-                        retApiCnpj.razaoSocial,
                         retApiCnpj.telefone1,
                         retApiCnpj.telefone2,
-                        retApiCnpj.email1,
                         retApiCnpj.gestor1 == 'null' ? retApiCnpj.razaoSocial : retApiCnpj.gestor1,
+                        retApiCnpj.email1,
+                        retApiCnpj.razaoSocial,
                     ]]
                     results = results[0].join(conSpl)
                     infSendData = { 'e': e, 'stop': false, 'results': results }
@@ -206,7 +207,7 @@ async function server(inf) {
         value = await page.content()
         retCheckPage = await checkPage({ 'body': value, 'search': `Pesquisa Avançada` });
         if (!retCheckPage.ret) {
-            err = `[server] Não encontrou a página de pesquisa`
+            err = `[serverJucesp] Não encontrou a página de pesquisa`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
@@ -249,7 +250,7 @@ async function server(inf) {
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
-            err = `[server] ${retCheckPage.msg}`
+            err = `[serverJucesp] ${retCheckPage.msg}`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
@@ -267,7 +268,7 @@ async function server(inf) {
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
         retCheckPage = await checkPage({ 'body': value, });
         if (!retCheckPage.ret) {
-            err = `[server] ${retCheckPage.msg}`
+            err = `[serverJucesp] ${retCheckPage.msg}`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
@@ -310,7 +311,7 @@ async function server(inf) {
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
-                err = `[server] ${retCheckPage.msg}`
+                err = `[serverJucesp] ${retCheckPage.msg}`
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
@@ -333,7 +334,7 @@ async function server(inf) {
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
             retCheckPage = await checkPage({ 'body': value, });
             if (!retCheckPage.ret) {
-                err = `[server] ${retCheckPage.msg}`
+                err = `[serverJucesp] ${retCheckPage.msg}`
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
@@ -402,7 +403,7 @@ async function server(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let err = `[server] TRYCATCH Script erro!`
+        let err = `[serverJucesp] TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
@@ -412,5 +413,5 @@ async function server(inf) {
         ...(ret.res && { res: ret.res }),
     };
 }
-await server()
+await serverJucesp()
 
