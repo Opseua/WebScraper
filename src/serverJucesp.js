@@ -15,7 +15,7 @@ async function serverJucesp(inf) {
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
-        let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS_CNPJ_2'
+        let repet1 = 999999, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS'
         let infConfigStorage, retConfigStorage
 
         // PEGAR O TOKEN DO CONFIG
@@ -65,53 +65,40 @@ async function serverJucesp(inf) {
 
         // INICIAR PUPPETEER
         let browser = await _puppeteer.launch({
-            headless: false,
+            headless: letter == 'D' ? false : 'new', // false | 'new'
             args: [
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-accelerated-2d-canvas",
-                "--no-first-run",
-                "--no-zygote",
-                // "--single-process",
-                "--disable-gpu",
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                // '--single-process',
+                '--disable-gpu',
+                '--disable-extensions',
             ],
         });
         let page = await browser.newPage();
-        await page.setViewport({ width: 1280, height: 800 });
-
+        await page.setViewport({ 'width': 1024, 'height': 768 });
         // FECHAR ABA EM BRANCO 
         await (await browser.pages())[0].close();
-        // HAABILITAR INTERCEPTAÇÃO
-        // await page.setRequestInterception(true);
 
-        // // INTERCEPTAR REQ [SEND]
-        // page.on('request', async (request) => {
-        //     if (request.method() === 'OPTIONS') {
-        //         request.abort();
-        //     } else {
-        //         let bodyNew
-        //         if (request.method() === 'POST' || request.method() === 'PUT') {
+        // // HAABILITAR INTERCEPTAÇÃO
+        // await page.setRequestInterception(true);
+        // page.on('request', async (request) => { // INTERCEPTAR REQ [SEND]
+        //     if (request.method() === 'OPTIONS') { request.abort(); }
+        //     else {
+        //         let bodyNew; if (request.method() === 'POST' || request.method() === 'PUT') {
         //             let body = await request.postData();
         //             if (body && body.includes('__VIEWSTATE') && request.url().includes('https://www.jucesponline.sp.gov.br/ResultadoBusca.aspx?IDProduto')) {
-        //                 console.log('BODY:\n', body, '\n');
-        //                 // bodyNew = body;
+        //                 console.log('BODY:\n', body, '\n');  // bodyNew = body;
         //             }
-        //         }
-        //         if (bodyNew) {
-        //             request.continue({ postData: bodyNew });
-        //         } else {
-        //             request.continue();
-        //         }
+        //         }; if (bodyNew) { request.continue({ postData: bodyNew }); } else { request.continue(); }
         //     }
-        // });
-
-        // // INTERCEPTAR RES [GET]
-        // page.on('response', async (response) => {
+        // }); page.on('response', async (response) => {  // INTERCEPTAR RES [GET]
         //     // console.log('>> RES', response.url());
         //     try {
-        //         let  body = await response.text()
-        //         if (body) {
+        //         let body = await response.text(); if (body) {
         //             //  console.log('BODY:\n', body, '\n');
         //         }
         //     } catch (error) { }
@@ -387,18 +374,8 @@ async function serverJucesp(inf) {
             }
         }
         // *****************************************************************
-        console.log('FIM - QTD', valuesJucesp.length,)
 
-        // BUTTON [TESTE] 
-        // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[5]/div/strong')
-        // element = await page.$x('//*[@id="ctl00_cphContent_navigators_dtlNavigators_ctl03_pnlTopModifiers"]/a[4]/div')
-        // await element[0].click()
-        // await new Promise(resolve => { setTimeout(resolve, 2000) })
-        // AGUARDAR ELEMENTO APARECER
-        // await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
-        // value = await page.content()
-        // value = await page.evaluate(() => document.querySelector('*').outerHTML);
-        // value = await page.evaluate(() => { return document.documentElement.innerHTML });
+        console.log('FIM - QTD', valuesJucesp.length,)
     } catch (e) {
         let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
         ret['msg'] = retRegexE.res

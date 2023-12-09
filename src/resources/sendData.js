@@ -14,7 +14,7 @@ async function sendData(inf) {
     try {
         let time = dateHour().res
         let id = inf && inf.id ? inf.id : gO.inf.sheetId ? gO.inf.sheetId : '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'
-        let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'RESULTADOS_CNPJ_2'
+        let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'RESULTADOS'
         let range = inf && inf.range ? inf.range : 'A32'
 
         // ENVIAR DADOS DA PLANILHA

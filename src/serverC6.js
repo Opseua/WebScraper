@@ -14,10 +14,11 @@ async function serverC6(inf) {
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl, leads, leadsQtd, col, leadsTxt
-        let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames
+        let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames, leadLastAut = Number(time.tim), leadLastMan = Number(time.tim)
+        let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
-        let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_AUTOMATICO_[TELEIN]'
+        let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         infGoogleSheet = {
@@ -34,8 +35,23 @@ async function serverC6(inf) {
             retLog = await log(infLog);
             return
         }
-
-        gO.inf['sheetKepp'] = JSON.parse(retGoogleSheet.res[0])
+        try {
+            json = retGoogleSheet.res[0][0]
+            json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
+            gO.inf['sheetKepp'] = JSON.parse(json)
+        } catch (e) {
+            infApi = { // ###### → json/object
+                'method': 'POST', 'url': `http://${letter == 'D' ? devChromeLocal.split('://')[1] : devChromeWeb.split('://')[1]}`,
+                'headers': { 'Content-Type': 'application/json' }, 'body': {
+                    'fun': [{
+                        'securityPass': securityPass, 'retInf': false, 'name': 'notification',
+                        'par': { 'duration': 5, 'icon': './src/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
+                    }]
+                }
+            };
+            retApi = await api(infApi);
+            return
+        }
         aut = gO.inf.sheetKepp.autC6
         col = gO.inf.sheetKepp.colC6
         conSpl = gO.inf.sheetKepp.conSpl
@@ -43,26 +59,30 @@ async function serverC6(inf) {
         leadRandomNames = gO.inf.sheetKepp.randomNames
 
         // STATUS1 [Iniciando script, aguarde]
-        infSendData = { 'e': e, 'stop': false, 'status1': 'Iniciando script, aguarde' }
+        infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }
         console.log(infSendData.status1)
         retSendData = await sendData(infSendData)
 
         // INICIAR PUPPETEER
         browser = await _puppeteer.launch({
-            headless: false,
+            headless: letter == 'D' ? false : 'new', // false | 'new'
             args: [
-                "--no-sandbox",
-                "--disable-setuid-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-accelerated-2d-canvas",
-                "--no-first-run",
-                "--no-zygote",
-                // "--single-process",
-                "--disable-gpu",
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                // '--single-process',
+                '--disable-gpu',
+                '--disable-extensions',
             ],
         });
         page = await browser.newPage();
-        await page.setViewport({ width: 1280, height: 800 });
+        await page.setViewport({
+            //width: 1280, height: 800
+            'width': 1024, 'height': 768
+        });
         // FECHAR ABA EM BRANCO 
         await (await browser.pages())[0].close();
 
@@ -71,7 +91,7 @@ async function serverC6(inf) {
         retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 
         // ABRIR PÁGINA DE BUSCA GLOBAL
-        await page.goto(`https://c6bank.my.site.com/partners/s/global-search`, {
+        await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, {
             waitUntil: 'networkidle2'
         });
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -80,7 +100,7 @@ async function serverC6(inf) {
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content()
         if (pageValue.includes('Esqueci minha senha')) {
-            err = `$ Cookie inválido!`
+            err = `$# Cookie inválido!`
             console.log(err);
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             retSendData = await sendData(infSendData)
@@ -98,6 +118,8 @@ async function serverC6(inf) {
             time = dateHour().res;
             console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]`);
 
+            gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO_[TELEIN]'
+
             // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
             infGoogleSheet = {
                 'action': 'get',
@@ -113,8 +135,24 @@ async function serverC6(inf) {
                 retLog = await log(infLog);
                 return
             }
-
-            gO.inf['sheetKepp'] = JSON.parse(retGoogleSheet.res[0])
+            try {
+                json = retGoogleSheet.res[0][0]
+                json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
+                gO.inf['sheetKepp'] = JSON.parse(json)
+            } catch (e) {
+                infApi = { // ###### → json/object
+                    'method': 'POST', 'url': `http://${letter == 'D' ? devChromeLocal.split('://')[1] : devChromeWeb.split('://')[1]}`,
+                    'headers': { 'Content-Type': 'application/json' }, 'body': {
+                        'fun': [{
+                            'securityPass': securityPass, 'retInf': false, 'name': 'notification',
+                            'par': { 'duration': 5, 'icon': './src/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
+                        }]
+                    }
+                };
+                retApi = await api(infApi);
+                browser.close()
+                return
+            }
             aut = gO.inf.sheetKepp.autC6
             col = gO.inf.sheetKepp.colC6
             conSpl = gO.inf.sheetKepp.conSpl
@@ -129,14 +167,20 @@ async function serverC6(inf) {
                 let leadInf, leadLinha, leadStatus, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome
                 for (let [index, value] of leads.entries()) {
                     leadInf = value.split(conSpl)
-                    leadLinha = leadInf[0].replace('LINHA_', '')
-                    leadStatus = leadInf[1]
-                    leadCnpj = leadInf[2]
-                    leadTelefone = `55${leadInf[3]}`
-                    leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
+                    leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', '')
+                    leadStatus = leadInf[1].replace(/^\s+/g, '')
+                    leadCnpj = leadInf[2].replace(/^\s+/g, '')
+                    leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
+                    // leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
+                    leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
                     leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'
-                    leadPrimeiroNome = leadAdministrador.replace(' ', '###').split('###')[0]
-                    leadSobrenome = leadAdministrador.replace(' ', '###').split('###')[1]
+                    leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###')
+                    if (leadAdministrador.length < 2) {
+                        leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
+                        leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
+                    }
+                    leadPrimeiroNome = leadAdministrador[0]
+                    leadSobrenome = leadAdministrador[1]
                 }
 
                 // STATUS1 [Checando se é da base]
@@ -144,19 +188,28 @@ async function serverC6(inf) {
                 console.log(infSendData.status1)
                 retSendData = await sendData(infSendData)
 
-                // ABRIR PÁGINA DE IMPUT
-                await page.goto(`https://c6bank.my.site.com/partners/s/global-search/${leadCnpj}`, {
-                    waitUntil: 'networkidle2'
-                });
-                await new Promise(resolve => { setTimeout(resolve, 1000) })
-                //await page.screenshot({ path: `log/screenshot_1_home.jpg` });
-
-                // CHECAR SE O COOKIE EXPIROU
+                // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
                 pageValue = await page.content()
-                if (pageValue.includes('Esqueci minha senha')) {
-                    statusText = `$ Cookie inválido!`
-                    console.log(statusText)
-                    infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
+                infRegex = { 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
+                retRegex = regex(infRegex);
+                if (!retRegex.ret || !retRegex.res['1']) {
+                    err = `$ Não achou o ID da lupa de pesquisa`
+                    console.log(err);
+                    infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                    retSendData = await sendData(infSendData)
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                    retLog = await log(infLog);
+                    browser.close()
+                    return
+                }
+                retRegex = retRegex.res['1']
+
+                // BUSCAR LEAD NA LUPA
+                pageInput = await page.$(`input[id="${retRegex}"]`);
+                if (!pageInput) {
+                    err = `$ Não achou o campo de imput da lupa`
+                    console.log(err);
+                    infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                     retSendData = await sendData(infSendData)
                     pageValue = await page.content()
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -164,25 +217,26 @@ async function serverC6(inf) {
                     browser.close()
                     return
                 }
-                await new Promise(resolve => { setTimeout(resolve, 1000) })
+                await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
+                await new Promise(resolve => setTimeout(resolve, 250));
+                await page.type(`input[id="${retRegex}"]`, leadCnpj);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                await pageInput.press('Enter');
 
                 // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
                 pageResult = await page.waitForFunction(() => {
-                    const conteudo0 = document.body.innerText.includes('Expirado');
-                    const conteudo1 = document.body.innerText.includes('NOME DA CONTA');
-                    const conteudo2 = document.body.innerText.includes('NOME COMPLETO');
-                    const conteudo3 = document.body.innerText.includes('Nenhum resultado para');
-                    if (conteudo0) {
-                        return 'ENCONTRADO_EXPIRADO';
-                    } else if (conteudo1) {
+                    let conteudo = document.body.innerText;
+                    if (conteudo.includes('NOME DA CONTA')) {
                         return 'ENCONTRADO_CONTA';
-                    } else if (conteudo2) {
+                    } else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) {
+                        return 'ENCONTRADO_EXPIRADO';
+                    } else if (conteudo.includes('NOME COMPLETO')) {
                         return 'ENCONTRADO_LEAD';
-                    } else if (conteudo3) {
+                    } else if (conteudo.includes('Nenhum resultado para')) {
                         return 'NADA_ENCONTRADO';
                     }
                     return false;
-                }, { timeout: 15000 }).catch(() => false);
+                }, { timeout: 30000 }).catch(() => false);
                 if (!pageResult) {
                     err = `$ Não achou o resultado da consulta`
                     console.log(err);
@@ -195,6 +249,8 @@ async function serverC6(inf) {
                     return
                 }
                 leadStatus = await pageResult.jsonValue();
+                console.log(leadStatus)
+                await new Promise(resolve => setTimeout(resolve, 500));
 
                 // LEAD DA BASE [SIM] ******************************************************************
                 if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD') {
@@ -202,7 +258,7 @@ async function serverC6(inf) {
                     pageValue = await page.content()
                     infRegex = { 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
                     retRegex = regex(infRegex);
-                    if (!retRegex.ret || !retRegex.res) {
+                    if (!retRegex.ret || !retRegex.res['1']) {
                         err = `$ Não achou o ID do link da página do lead`
                         console.log(err);
                         infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
@@ -214,39 +270,18 @@ async function serverC6(inf) {
                     }
                     leadPageId = retRegex.res['1']
 
-                    // PEGAR O NOME DO LINK DA PÁGINA DO LEAD
-                    infRegex = { 'pattern': `data-special-link="true" title="(.*?)" data-navigable`, 'text': pageValue }
-                    retRegex = regex(infRegex);
-                    if (!retRegex.ret || !retRegex.res) {
-                        err = `$ Não achou o nome do link da página do lead`
-                        console.log(err);
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                        retSendData = await sendData(infSendData)
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                        retLog = await log(infLog);
-                        browser.close()
-                        return
-                    }
-                    leadPageName = retRegex.res['1'].toLowerCase().replace(/ /g, '-')
-
-                    // STATUS1 [Abrinda dos do cliente]
+                    // STATUS1 [Abrindo dados do cliente]
                     infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
                     console.log(infSendData.status1)
                     retSendData = await sendData(infSendData)
 
-                    // ABRIR PÁGINA COM OS DADOS DO LEAS
-                    if (leadStatus == 'ENCONTRADO_CONTA') {
-                        await page.goto(`https://c6bank.my.site.com/partners/s/account/${leadPageId}/${leadPageName}`, {
-                            waitUntil: 'networkidle2'
-                        });
-                    } else {
-                        await page.goto(`https://c6bank.my.site.com/partners/s/lead/${leadPageId}/${leadPageName}`, {
-                            waitUntil: 'networkidle2'
-                        });
-                    }
-                    await new Promise(resolve => { setTimeout(resolve, 1000) })
-                    //await page.screenshot({ path: `log/screenshot_1_home.jpg` });
+                    // CLICAR NO LINK DO ID DO LEAD
+                    let linkSelector = `a[data-recordid="${leadPageId}"]`;
+                    await page.waitForSelector(linkSelector);
+                    let link = await page.$(linkSelector);
+                    await link.click();
 
+                    // ESPERAR A DATA DO LEAD APARECER
                     pageResult = await page.waitForFunction(() => {
                         const elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
                         if (elements.length > 0) {
@@ -254,7 +289,7 @@ async function serverC6(inf) {
                             return values;
                         }
                         return false;
-                    }, { timeout: 15000 }).catch(() => false);
+                    }, { timeout: 30000 }).catch(() => false);
                     if (!pageResult) {
                         err = `$ Não achou a data de abertura`
                         console.log(err);
@@ -300,33 +335,16 @@ async function serverC6(inf) {
                         return
                     }
 
+                    // VOLTAR PARA A PÁGINA DE INDICAÇÃO
+                    await page.goBack();
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await page.goBack();
+
                 } else {
                     // LEAD DA BASE [NÃO] ******************************************************************
 
-                    // STATUS1 [Esperando formulário aparecer]
-                    infSendData = { 'e': e, 'stop': false, 'status1': 'Esperando formulário aparecer' }
-                    console.log(infSendData.status1)
-                    retSendData = await sendData(infSendData)
-
-                    // ABRIR PÁGINA DE IMPUT
-                    await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, {
-                        waitUntil: 'networkidle2'
-                    });
-                    await new Promise(resolve => { setTimeout(resolve, 1000) })
-                    //await page.screenshot({ path: `log/screenshot_1_home.jpg` });
-
-                    // CHECAR SE O COOKIE EXPIROU
-                    pageValue = await page.content()
-                    if (pageValue.includes('Esqueci minha senha')) {
-                        err = `$ Cookie inválido!`
-                        console.log(err);
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                        retSendData = await sendData(infSendData)
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                        retLog = await log(infLog);
-                        browser.close()
-                        return
-                    }
+                    // VOLTAR PARA A PÁGINA DE INDICAÇÃO
+                    await page.goBack();
 
                     // ESPERAR OS CAMPOS APARECEREM
                     pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
@@ -341,7 +359,7 @@ async function serverC6(inf) {
                         browser.close()
                         return
                     }
-                    await new Promise(resolve => { setTimeout(resolve, 1000) });
+                    // await new Promise(resolve => { setTimeout(resolve, 1000) });
 
                     // REGEX PARA PEGAR O ID DOS CAMPOS
                     pageValue = await page.content()
@@ -364,6 +382,7 @@ async function serverC6(inf) {
                     console.log(infSendData.status1)
                     retSendData = await sendData(infSendData)
                     pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
+
                     for (let [index, value] of retRegex.entries()) {
                         pageInput = await page.$(`input[id="${value}"]`);
                         if (!pageInput) {
@@ -377,8 +396,10 @@ async function serverC6(inf) {
                             browser.close()
                             return
                         }
-                        await pageInput.type(pageImputs[index]);
-                        await new Promise(resolve => { setTimeout(resolve, 750) });
+                        await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
+                        await new Promise(resolve => setTimeout(resolve, 250));
+                        await page.type(`input[id="${value}"]`, pageImputs[index]);
+                        await new Promise(resolve => { setTimeout(resolve, 500) });
                     }
 
                     // CLICAR NO BOTÃO 'Confirmar'
@@ -451,16 +472,22 @@ async function serverC6(inf) {
                         browser.close()
                         return
                     }
+
+                    // VOLTAR PARA A PÁGINA DE INDICAÇÃO
+                    if (leadStatus == 'INDICADO') {
+                        await page.goBack();
+                    }
+
                 }
             }
 
             // ESPERAR PRÓXIMO LOOP
-            if (leadsQtd < 2) {
+            if (leadsQtd < 2 && (leadsQtdOld < 2 || leadsQtdOld == 9999)) {
                 time = dateHour().res;
                 console.log(`\n${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} ## ESPERANDO DELAY PARA O PRÓXIMO LOOP ##`)
 
-                // STATUS1 [Nada pendente, esperando 1 minuto...]
-                infSendData = { 'e': e, 'stop': false, 'status1': `[${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}] Nada pendente, esperando 1 minuto...` }
+                // STATUS1 [Nada pendente, esperando 2 minutos...]
+                infSendData = { 'e': e, 'stop': false, 'status1': `[${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}] Nada pendente, esperando 2 minutos...` }
                 retSendData = await sendData(infSendData)
 
                 // F5 | COOKIE KEEP
@@ -470,8 +497,11 @@ async function serverC6(inf) {
                     });
                 }
 
-                await new Promise(resolve => { setTimeout(resolve, 50000) });
+                if (leadsQtdOld < 2) {
+                    await new Promise(resolve => { setTimeout(resolve, 50000) }); // 50000 → 50 SEGUNDOS
+                }
             }
+            leadsQtdOld = leadsQtd
         }
         console.log('FIM')
     } catch (e) {
