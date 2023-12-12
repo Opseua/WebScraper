@@ -2,11 +2,11 @@ await import('./resources/@export.js')
 let e = import.meta.url;
 async function serverJucesp(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
-    if (catchGlobal) {
-        const errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; let retRegexE = await regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } }
-        if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
-        else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
-    }
+    // if (catchGlobal) {
+    //     const errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; let retRegexE = await regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } }
+    //     if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
+    //     else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
+    // }
     try {
         let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `serverJucesp [WebScraper]`, '\n');
 
@@ -65,7 +65,8 @@ async function serverJucesp(inf) {
 
         // INICIAR PUPPETEER
         let browser = await _puppeteer.launch({
-            headless: letter == 'D' ? false : 'new', // false | 'new'
+            // headless: letter == 'D' ? false : 'new', // false | 'new'
+            headless: 'new', // false | 'new'
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -109,6 +110,7 @@ async function serverJucesp(inf) {
             let current = `[${inf.index + 1}/${inf.length}]`
             // RESULTS
             let ok = false
+            console.log(`${valuesLoop.length} | ${inf.value}`)
             let retApiNire = await apiNire({ 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
                 err = `[serverJucesp] FALSE: retApiNire`
@@ -116,6 +118,7 @@ async function serverJucesp(inf) {
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
                 retLog = await log(infLog);
                 let status = retApiNire.msg ? retApiNire.msg : err
+                await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
                 infSendData = { 'e': e, 'stop': true, 'status1': status }
                 retSendData = await sendData(infSendData)
             } else if (!retApiNire.res) {
@@ -137,6 +140,7 @@ async function serverJucesp(inf) {
                     console.log(err);
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
                     retLog = await log(infLog);
+                    await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
                     infSendData = { 'e': e, 'stop': true, 'status1': err }
                     retSendData = await sendData(infSendData)
                 } else {
@@ -168,7 +172,8 @@ async function serverJucesp(inf) {
             await new Promise(resolve => { setTimeout(resolve, 1000) }) // DELAY PARA EVITAR ACABAR A ARRAY
         }
         async function loopFun() {
-            let indice = 0; while (!gO.inf.stop) {
+            let indice = 0;
+            while (!gO.inf.stop) {
                 if (indice < valuesLoop.length) {
                     await loopFunRun({ 'value': valuesLoop[indice], 'index': indice, 'length': valuesLoop.length });
                     indice++
@@ -198,6 +203,7 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
+            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
@@ -212,6 +218,7 @@ async function serverJucesp(inf) {
         infSendData = { 'e': e, 'stop': false, 'status1': 'Inserindo data de pesquisa' }
         retSendData = await sendData(infSendData)
         console.log(infSendData.status1)
+        await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
         // IMPUT [DATA INÍCIO]
         infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date.replace(/[^0-9]/g, '')}` }
@@ -241,6 +248,7 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
+            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
@@ -250,6 +258,7 @@ async function serverJucesp(inf) {
         infSendData = { 'e': e, 'stop': false, 'status1': `Buscando novos NIRE's` }
         retSendData = await sendData(infSendData)
         console.log(infSendData.status1)
+        await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
         // CHECK PAGE [LISTA DE NIRE's]
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
@@ -259,6 +268,7 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
+            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
@@ -302,6 +312,7 @@ async function serverJucesp(inf) {
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
+                await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
                 infSendData = { 'e': e, 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData);
                 return retCheckPage
@@ -325,6 +336,7 @@ async function serverJucesp(inf) {
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
+                await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
                 infSendData = { 'e': e, 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData); return
             };
@@ -335,6 +347,7 @@ async function serverJucesp(inf) {
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
             let repet2 = Number(value[1]) - Number(value[0]) + 1
             console.log('MEIO', repet2, results)
+            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
             // ADICIONAR NO LOOP DA CONSULTA
             let newValues = retGetTextElement.res[1]
