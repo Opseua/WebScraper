@@ -75,13 +75,12 @@ async function sendData(inf) {
         // STOP
         if (inf.stop) {
             gO.inf['stop'] = true
-            //  process.exit();
+            process.exit();
         }
     } catch (e) {
         let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
-
-        // process.exit();
+        process.exit();
     };
     return {
         ...({ ret: ret.ret }),

@@ -118,8 +118,8 @@ async function serverC6(inf) {
         while (!whileStop) {
             whileQtd++;
             time = dateHour().res;
-            // SEG <> SAB | 08H <> 20H
-            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > 7 & Number(time.hou) < 21)) {
+            // SEG <> SAB | 08:00 <> 19:59 (20h)
+            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > 7 & Number(time.hou) < 20)) {
 
                 console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]`);
 
@@ -439,7 +439,7 @@ async function serverC6(inf) {
                                 leadStatus = `JÁ POSSUI CONTA`
                             } else if (pageValue.includes(`Já existe um lead e um cliente cadastrado com o CNPJ informado`)) {
                                 leadStatus = `JÁ POSSUI CONTA E LEAD`
-                            } else if (pageValue.includes(`Lead expirou`)) {
+                            } else if (pageValue.includes(`Lead expirou`) || pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
                                 leadStatus = `LEAD EXPIRADO`
                             } else {
                                 if (pageValue.includes(`O formato correto para o telefone`)) {

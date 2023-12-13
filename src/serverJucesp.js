@@ -179,8 +179,10 @@ async function serverJucesp(inf) {
                     indice++
                     if (indice == valuesLoop.length && lastPage) {
                         console.log('INDICES ACABARAM');
-                        infSendData = { 'e': e, 'stop': true, 'status2': 'Terminou de consultar tudo' }
+                        infSendData = { 'e': e, 'stop': false, 'status2': 'Terminou de consultar tudo' }
                         retSendData = await sendData(infSendData);
+                        browser.close()
+                        return
                     }
                 } else {
                     await new Promise((resolve) => setTimeout(resolve, 1000))
