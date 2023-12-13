@@ -23,44 +23,44 @@ async function sendData(inf) {
             if (inf.status1) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A32'
                 let sheetData = typeof inf.status1 === 'object' ? JSON.parse(inf.status1) : inf.status1
-                let infGoogleSheet = {
+                let infGoogleSheets = {
                     'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': range,
                     'values': [[`${time.tim} | ${sheetData}`]]
                 }
-                let retGoogleSheet = await googleSheet(infGoogleSheet);
-                if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
+                let retGoogleSheets = await googleSheets(infGoogleSheets);
+                if (!retGoogleSheets.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
             }
 
             // [STATUS2]
             if (inf.status2) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status2 ? gO.inf.sheetKepp.range.status2 : 'A34'
                 let sheetData = typeof inf.status2 === 'object' ? JSON.parse(inf.status2) : inf.status2
-                let infGoogleSheet = {
+                let infGoogleSheets = {
                     'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': range,
                     'values': [[`${time.tim} | ${sheetData}`]]
                 }
-                let retGoogleSheet = await googleSheet(infGoogleSheet);
-                if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
+                let retGoogleSheets = await googleSheets(infGoogleSheets);
+                if (!retGoogleSheets.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
             }
 
             // [RESULTS]
             if (inf.results) {
                 let sheetData = typeof inf.results === 'object' ? JSON.parse(inf.results) : inf.results
-                let infGoogleSheet = {
+                let infGoogleSheets = {
                     'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': 'D**',
                     'values': [[`${sheetData}`]]
                 }
-                let retGoogleSheet = await googleSheet(infGoogleSheet);
-                if (!retGoogleSheet.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheet } else { retGoogleSheet = retGoogleSheet.msg }
+                let retGoogleSheets = await googleSheets(infGoogleSheets);
+                if (!retGoogleSheets.ret) { console.log('ERRO GOOGLE SHEETS'); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
             }
         }
         ret['msg'] = 'SEND DATA: OK'

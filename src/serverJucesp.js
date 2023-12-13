@@ -11,7 +11,7 @@ async function serverJucesp(inf) {
         let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `serverJucesp [WebScraper]`, '\n');
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
-        let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
+        let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
@@ -36,23 +36,23 @@ async function serverJucesp(inf) {
         gO.inf['token'] = token;
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-        infGoogleSheet = {
+        infGoogleSheets = {
             'action': 'get',
             'id': gO.inf.sheetId,
             'tab': gO.inf.sheetTab,
             'range': range,
         }
-        retGoogleSheet = await googleSheet(infGoogleSheet);
-        if (!retGoogleSheet.ret) {
+        retGoogleSheets = await googleSheets(infGoogleSheets);
+        if (!retGoogleSheets.ret) {
             err = `[serverJucesp] Erro ao pegar dados para planilha`
             console.log(err);
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
-            return retGoogleSheet
+            return retGoogleSheets
         }
-        gO.inf['sheetKepp'] = JSON.parse(retGoogleSheet.res[0])
+        gO.inf['sheetKepp'] = JSON.parse(retGoogleSheets.res[0])
         aut = gO.inf.sheetKepp.aut
         date = gO.inf.sheetKepp.date
         mode = gO.inf.sheetKepp.mode

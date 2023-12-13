@@ -12,7 +12,7 @@ async function serverC6(inf) {
         let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `serverC6 [WebScraper]`, '\n');
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
-        let element, cookies, results = [], infSendData, retSendData, infGoogleSheet, retGoogleSheet, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
+        let element, cookies, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl, leads, leadsQtd, col, leadsTxt
         let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames, leadLastAut = Number(time.tim), leadLastMan = Number(time.tim)
         let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999
@@ -21,22 +21,22 @@ async function serverC6(inf) {
         let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-        infGoogleSheet = {
+        infGoogleSheets = {
             'action': 'get',
             'id': gO.inf.sheetId,
             'tab': gO.inf.sheetTab,
             'range': range,
         }
-        retGoogleSheet = await googleSheet(infGoogleSheet);
-        if (!retGoogleSheet.ret) {
+        retGoogleSheets = await googleSheets(infGoogleSheets);
+        if (!retGoogleSheets.ret) {
             err = `[serverC6] Erro ao pegar dados para planilha`
             console.log(err);
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
             return
         }
         try {
-            json = retGoogleSheet.res[0][0]
+            json = retGoogleSheets.res[0][0]
             json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
             gO.inf['sheetKepp'] = JSON.parse(json)
         } catch (e) {
@@ -126,22 +126,22 @@ async function serverC6(inf) {
                 gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO_[TELEIN]'
 
                 // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-                infGoogleSheet = {
+                infGoogleSheets = {
                     'action': 'get',
                     'id': gO.inf.sheetId,
                     'tab': gO.inf.sheetTab,
                     'range': range,
                 }
-                retGoogleSheet = await googleSheet(infGoogleSheet);
-                if (!retGoogleSheet.ret) {
+                retGoogleSheets = await googleSheets(infGoogleSheets);
+                if (!retGoogleSheets.ret) {
                     err = `[serverC6] Erro ao pegar dados para planilha`
                     console.log(err);
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                     retLog = await log(infLog);
                     return
                 }
                 try {
-                    json = retGoogleSheet.res[0][0]
+                    json = retGoogleSheets.res[0][0]
                     json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
                     gO.inf['sheetKepp'] = JSON.parse(json)
                 } catch (e) {
@@ -332,18 +332,18 @@ async function serverC6(inf) {
                             leadDate[0]
                         ]]
                         results = results[0].join(conSpl)
-                        infGoogleSheet = {
+                        infGoogleSheets = {
                             'action': 'send',
                             'id': gO.inf.sheetId,
                             'tab': gO.inf.sheetTab,
                             'range': `${col}${leadLinha}`,
                             'values': [[results]]
                         }
-                        retGoogleSheet = await googleSheet(infGoogleSheet);
-                        if (!retGoogleSheet.ret) {
+                        retGoogleSheets = await googleSheets(infGoogleSheets);
+                        if (!retGoogleSheets.ret) {
                             err = `[serverC6] Erro ao enviar dados para planilha`
                             console.log(err);
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
+                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                             retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
                             browser.close()
@@ -476,18 +476,18 @@ async function serverC6(inf) {
                             leadStatus,
                         ]]
                         results = results[0].join(conSpl)
-                        infGoogleSheet = {
+                        infGoogleSheets = {
                             'action': 'send',
                             'id': gO.inf.sheetId,
                             'tab': gO.inf.sheetTab,
                             'range': `${col}${leadLinha}`,
                             'values': [[results]]
                         }
-                        retGoogleSheet = await googleSheet(infGoogleSheet);
-                        if (!retGoogleSheet.ret) {
+                        retGoogleSheets = await googleSheets(infGoogleSheets);
+                        if (!retGoogleSheets.ret) {
                             err = `[serverC6] Erro ao enviar dados para planilha`
                             console.log(err);
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheet }
+                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                             retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
                             browser.close()
