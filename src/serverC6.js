@@ -33,7 +33,7 @@ async function serverC6(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
-            return
+            process.exit();
         }
         try {
             json = retGoogleSheets.res[0][0]
@@ -50,7 +50,7 @@ async function serverC6(inf) {
                 }
             };
             retApi = await api(infApi);
-            return
+            process.exit();
         }
         aut = gO.inf.sheetKepp.autC6
         col = gO.inf.sheetKepp.colC6
@@ -92,11 +92,14 @@ async function serverC6(inf) {
         retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 
         // ABRIR PÁGINA DE BUSCA GLOBAL
-        await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, {
-            waitUntil: 'networkidle2'
-        });
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
-        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+        async function openHome() {
+            await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, {
+                waitUntil: 'networkidle2'
+            });
+            await new Promise(resolve => { setTimeout(resolve, 1000) })
+            await page.screenshot({ path: `log/screenshot_C6.jpg` });
+        }
+        await openHome()
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content()
@@ -107,9 +110,9 @@ async function serverC6(inf) {
             retSendData = await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6.jpg` });
+            await page.screenshot({ path: `log/screenshot_C6_err_1.jpg` });
             browser.close()
-            return
+            process.exit();
         }
 
         // **************************************************************************************************************
@@ -125,382 +128,410 @@ async function serverC6(inf) {
 
                 gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO_[TELEIN]'
 
-                // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-                infGoogleSheets = {
-                    'action': 'get',
-                    'id': gO.inf.sheetId,
-                    'tab': gO.inf.sheetTab,
-                    'range': range,
-                }
-                retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) {
-                    err = `[serverC6] Erro ao pegar dados para planilha`
-                    console.log(err);
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                    retLog = await log(infLog);
-                    return
-                }
-                try {
-                    json = retGoogleSheets.res[0][0]
-                    json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
-                    gO.inf['sheetKepp'] = JSON.parse(json)
-                } catch (e) {
-                    infApi = { // ###### → json/object
-                        'method': 'POST', 'url': `http://${letter == 'D' ? devChromeLocal.split('://')[1] : devChromeWeb.split('://')[1]}`,
-                        'headers': { 'Content-Type': 'application/json' }, 'body': {
-                            'fun': [{
-                                'securityPass': securityPass, 'retInf': false, 'name': 'notification',
-                                'par': { 'duration': 5, 'icon': './src/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
-                            }]
-                        }
-                    };
-                    retApi = await api(infApi);
-                    browser.close()
-                    return
-                }
-                aut = gO.inf.sheetKepp.autC6
-                col = gO.inf.sheetKepp.colC6
-                conSpl = gO.inf.sheetKepp.conSpl
-                leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
-                leadRandomNames = gO.inf.sheetKepp.randomNames
-
-                // CHECAR SE TEM LEAD PENDENTE
-                if (leadsQtd > 0) {
-                    leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`)
-
-                    // DADOS DO LEAD
-                    let leadInf, leadLinha, leadStatus, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome
-                    for (let [index, value] of leads.entries()) {
-                        leadInf = value.split(conSpl)
-                        leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', '')
-                        leadStatus = leadInf[1].replace(/^\s+/g, '')
-                        leadCnpj = leadInf[2].replace(/^\s+/g, '')
-                        leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
-                        // leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
-                        leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
-                        leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'
-                        leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###')
-                        if (leadAdministrador.length < 2) {
-                            leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
-                            leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
-                        }
-                        leadPrimeiroNome = leadAdministrador[0]
-                        leadSobrenome = leadAdministrador[1]
+                async function run() {
+                    // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
+                    infGoogleSheets = {
+                        'action': 'get',
+                        'id': gO.inf.sheetId,
+                        'tab': gO.inf.sheetTab,
+                        'range': range,
                     }
-
-                    // STATUS1 [Checando se é da base]
-                    infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
-                    console.log(infSendData.status1)
-                    retSendData = await sendData(infSendData)
-                    await page.screenshot({ path: `log/screenshot_C6.jpg` });
-
-                    // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
-                    pageValue = await page.content()
-                    infRegex = { 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
-                    retRegex = regex(infRegex);
-                    if (!retRegex.ret || !retRegex.res['1']) {
-                        err = `$ Não achou o ID da lupa de pesquisa`
+                    retGoogleSheets = await googleSheets(infGoogleSheets);
+                    if (!retGoogleSheets.ret) {
+                        err = `[serverC6] Erro ao pegar dados para planilha`
                         console.log(err);
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                        retSendData = await sendData(infSendData)
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                         retLog = await log(infLog);
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                        browser.close()
-                        return
+                        process.exit();
                     }
-                    retRegex = retRegex.res['1']
-
-                    // BUSCAR LEAD NA LUPA
-                    pageInput = await page.$(`input[id="${retRegex}"]`);
-                    if (!pageInput) {
-                        err = `$ Não achou o campo de imput da lupa`
-                        console.log(err);
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                        retSendData = await sendData(infSendData)
-                        pageValue = await page.content()
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                        retLog = await log(infLog);
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                    try {
+                        json = retGoogleSheets.res[0][0]
+                        json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
+                        gO.inf['sheetKepp'] = JSON.parse(json)
+                    } catch (e) {
+                        infApi = { // ###### → json/object
+                            'method': 'POST', 'url': `http://${letter == 'D' ? devChromeLocal.split('://')[1] : devChromeWeb.split('://')[1]}`,
+                            'headers': { 'Content-Type': 'application/json' }, 'body': {
+                                'fun': [{
+                                    'securityPass': securityPass, 'retInf': false, 'name': 'notification',
+                                    'par': { 'duration': 5, 'icon': './src/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
+                                }]
+                            }
+                        };
+                        retApi = await api(infApi);
                         browser.close()
-                        return
+                        process.exit();
                     }
-                    await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
-                    await new Promise(resolve => setTimeout(resolve, 250));
-                    await page.type(`input[id="${retRegex}"]`, leadCnpj);
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    await pageInput.press('Enter');
+                    aut = gO.inf.sheetKepp.autC6
+                    col = gO.inf.sheetKepp.colC6
+                    conSpl = gO.inf.sheetKepp.conSpl
+                    leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
+                    leadRandomNames = gO.inf.sheetKepp.randomNames
 
-                    // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
-                    pageResult = await page.waitForFunction(() => {
-                        let conteudo = document.body.innerText;
-                        if (conteudo.includes('NOME DA CONTA')) {
-                            return 'ENCONTRADO_CONTA';
-                        } else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) {
-                            return 'ENCONTRADO_EXPIRADO';
-                        } else if (conteudo.includes('NOME COMPLETO')) {
-                            return 'ENCONTRADO_LEAD';
-                        } else if (conteudo.includes('Nenhum resultado para')) {
-                            return 'NADA_ENCONTRADO';
+                    // CHECAR SE TEM LEAD PENDENTE
+                    if (leadsQtd > 0) {
+                        leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`)
+
+                        // DADOS DO LEAD
+                        let leadInf, leadLinha, leadStatus, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome
+                        for (let [index, value] of leads.entries()) {
+                            leadInf = value.split(conSpl)
+                            leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', '')
+                            leadStatus = leadInf[1].replace(/^\s+/g, '')
+                            leadCnpj = leadInf[2].replace(/^\s+/g, '')
+                            leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
+                            leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
+                            leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'
+                            leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###')
+                            if (leadAdministrador.length < 2) {
+                                leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
+                                leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
+                            }
+                            leadPrimeiroNome = leadAdministrador[0]
+                            leadSobrenome = leadAdministrador[1]
                         }
-                        return false;
-                    }, { timeout: 30000 }).catch(() => false);
-                    if (!pageResult) {
-                        err = `$ Não achou o resultado da consulta`
-                        console.log(err);
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                        retSendData = await sendData(infSendData)
-                        pageValue = await page.content()
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                        retLog = await log(infLog);
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                        browser.close()
-                        return
-                    }
-                    leadStatus = await pageResult.jsonValue();
-                    console.log(leadStatus)
-                    await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                    await new Promise(resolve => setTimeout(resolve, 500));
 
-                    // LEAD DA BASE [SIM] ******************************************************************
-                    if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD') {
-                        // PEGAR O ID DO LINK DA PÁGINA DO LEAD
+                        // STATUS1 [Checando se é da base]
+                        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
+                        console.log(infSendData.status1)
+                        retSendData = await sendData(infSendData)
+                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+
+                        // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
                         pageValue = await page.content()
-                        infRegex = { 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
+                        infRegex = { 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
                         retRegex = regex(infRegex);
                         if (!retRegex.ret || !retRegex.res['1']) {
-                            err = `$ Não achou o ID do link da página do lead`
+                            err = `$ Não achou o ID da lupa de pesquisa`
                             console.log(err);
                             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                             retSendData = await sendData(infSendData)
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                             retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            browser.close()
+                            await page.screenshot({ path: `log/screenshot_C6_err_2.jpg` });
+
+                            // ABRIR PÁGINA DE BUSCA GLOBAL
+                            await openHome()
+
                             return
                         }
-                        leadPageId = retRegex.res['1']
+                        retRegex = retRegex.res['1']
 
-                        // STATUS1 [Abrindo dados do cliente]
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
-                        console.log(infSendData.status1)
-                        retSendData = await sendData(infSendData)
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                        // BUSCAR LEAD NA LUPA
+                        pageInput = await page.$(`input[id="${retRegex}"]`);
+                        if (!pageInput) {
+                            err = `$ Não achou o campo de imput da lupa`
+                            console.log(err);
+                            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                            retSendData = await sendData(infSendData)
+                            pageValue = await page.content()
+                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                            retLog = await log(infLog);
+                            await page.screenshot({ path: `log/screenshot_C6_err_3.jpg` });
 
-                        // CLICAR NO LINK DO ID DO LEAD
-                        let linkSelector = `a[data-recordid="${leadPageId}"]`;
-                        await page.waitForSelector(linkSelector);
-                        let link = await page.$(linkSelector);
-                        await link.click();
+                            // ABRIR PÁGINA DE BUSCA GLOBAL
+                            await openHome()
 
-                        // ESPERAR A DATA DO LEAD APARECER
+                            return
+                        }
+                        await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
+                        await new Promise(resolve => setTimeout(resolve, 250));
+                        await page.type(`input[id="${retRegex}"]`, leadCnpj);
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        await pageInput.press('Enter');
+
+                        // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
                         pageResult = await page.waitForFunction(() => {
-                            const elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
-                            if (elements.length > 0) {
-                                const values = Array.from(elements).map(element => element.textContent.trim());
-                                return values;
+                            let conteudo = document.body.innerText;
+                            if (conteudo.includes('NOME DA CONTA')) {
+                                return 'ENCONTRADO_CONTA';
+                            } else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) {
+                                return 'ENCONTRADO_EXPIRADO';
+                            } else if (conteudo.includes('NOME COMPLETO')) {
+                                return 'ENCONTRADO_LEAD';
+                            } else if (conteudo.includes('Nenhum resultado para')) {
+                                return 'NADA_ENCONTRADO';
                             }
                             return false;
-                        }, { timeout: 30000 }).catch(() => false);
+                        }, { timeout: 30000 }).catch(async () => {
+                            return false;
+                        });
                         if (!pageResult) {
-                            err = `$ Não achou a data de abertura`
+                            err = `$ Não achou o resultado da consulta`
                             console.log(err);
                             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                             retSendData = await sendData(infSendData)
                             pageValue = await page.content()
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                             retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            browser.close()
+                            await page.screenshot({ path: `log/screenshot_C6_err_4.jpg` });
+
+                            // ABRIR PÁGINA DE BUSCA GLOBAL
+                            await openHome()
+
                             return
                         }
-                        leadDate = await pageResult.jsonValue();
-
-                        // STATUS1 [STATUS DA CONSULTA]
-                        statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                        console.log(infSendData.status1)
-                        retSendData = await sendData(infSendData)
+                        leadStatus = await pageResult.jsonValue();
+                        console.log(leadStatus)
                         await page.screenshot({ path: `log/screenshot_C6.jpg` });
-
-                        // MANDAR PARA A PLANILHA O RESULTADO 
-                        time = dateHour().res;
-                        let results = [[
-                            'ID AQUI',
-                            `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                            leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA` : `INDICAÇÃO OK`,
-                            leadDate[0]
-                        ]]
-                        results = results[0].join(conSpl)
-                        infGoogleSheets = {
-                            'action': 'send',
-                            'id': gO.inf.sheetId,
-                            'tab': gO.inf.sheetTab,
-                            'range': `${col}${leadLinha}`,
-                            'values': [[results]]
-                        }
-                        retGoogleSheets = await googleSheets(infGoogleSheets);
-                        if (!retGoogleSheets.ret) {
-                            err = `[serverC6] Erro ao enviar dados para planilha`
-                            console.log(err);
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                            retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            browser.close()
-                            return
-                        }
-
-                        // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                        await page.goBack();
                         await new Promise(resolve => setTimeout(resolve, 500));
-                        await page.goBack();
 
-                    } else {
-                        // LEAD DA BASE [NÃO] ******************************************************************
-
-                        // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                        await page.goBack();
-
-                        // ESPERAR OS CAMPOS APARECEREM
-                        pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
-                        if (!pageInput) {
-                            err = `$ Formulário não apareceu`
-                            console.log(err);
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                            retSendData = await sendData(infSendData)
+                        // LEAD DA BASE [SIM] ******************************************************************
+                        if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD') {
+                            // PEGAR O ID DO LINK DA PÁGINA DO LEAD
                             pageValue = await page.content()
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                            retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            browser.close()
-                            return
-                        }
-                        // await new Promise(resolve => { setTimeout(resolve, 1000) });
+                            infRegex = { 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
+                            retRegex = regex(infRegex);
+                            if (!retRegex.ret || !retRegex.res['1']) {
+                                err = `$ Não achou o ID do link da página do lead`
+                                console.log(err);
+                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                                retSendData = await sendData(infSendData)
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                                retLog = await log(infLog);
+                                await page.screenshot({ path: `log/screenshot_C6__err_5.jpg` });
 
-                        // REGEX PARA PEGAR O ID DOS CAMPOS
-                        pageValue = await page.content()
-                        infRegex = { 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
-                        retRegex = regex(infRegex);
-                        if (!retRegex.ret || !retRegex.res['5']) {
-                            err = `$ Não achou o ID dos campos`
-                            console.log(err);
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                                // ABRIR PÁGINA DE BUSCA GLOBAL
+                                await openHome()
+
+                                return
+                            }
+                            leadPageId = retRegex.res['1']
+
+                            // STATUS1 [Abrindo dados do cliente]
+                            infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
+                            console.log(infSendData.status1)
                             retSendData = await sendData(infSendData)
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                            retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            browser.close()
-                            return
-                        }
-                        retRegex = retRegex.res['5']
 
-                        // STATUS1 [Indicando...]
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
-                        console.log(infSendData.status1)
-                        retSendData = await sendData(infSendData)
-                        pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                            // CLICAR NO LINK DO ID DO LEAD
+                            let linkSelector = `a[data-recordid="${leadPageId}"]`;
+                            await page.waitForSelector(linkSelector);
+                            let link = await page.$(linkSelector);
+                            await link.click();
 
-                        for (let [index, value] of retRegex.entries()) {
-                            pageInput = await page.$(`input[id="${value}"]`);
-                            if (!pageInput) {
-                                err = `$ Não achou o campo de imput [${index}]`
+                            // ESPERAR A DATA DO LEAD APARECER
+                            pageResult = await page.waitForFunction(() => {
+                                const elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
+                                if (elements.length > 0) {
+                                    const values = Array.from(elements).map(element => element.textContent.trim());
+                                    return values;
+                                }
+                                return false;
+                            }, { timeout: 30000 }).catch(async () => { return false; });
+                            if (!pageResult) {
+                                err = `$ Não achou a data de abertura`
                                 console.log(err);
                                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                                 retSendData = await sendData(infSendData)
                                 pageValue = await page.content()
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                                 retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                                browser.close()
+                                await page.screenshot({ path: `log/screenshot_C6_err_6.jpg` });
+
+                                // ABRIR PÁGINA DE BUSCA GLOBAL
+                                await openHome()
+
                                 return
                             }
-                            await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
-                            await new Promise(resolve => setTimeout(resolve, 250));
-                            await page.type(`input[id="${value}"]`, pageImputs[index]);
-                            await new Promise(resolve => { setTimeout(resolve, 500) });
-                        }
+                            leadDate = await pageResult.jsonValue();
 
-                        // CLICAR NO BOTÃO 'Confirmar'
-                        await page.click('.slds-button.slds-button--neutral.button.uiButton--default.uiButton--brand.uiButton');
-
-                        // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
-                        pageResult = await Promise.race([
-                            page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.contentRegion.comm-layout-column > div > div > div > div.container.EDIT.forceQuickActionLayout > div.pageLevelErrors > div > div', { timeout: 15000 }).then(() => false),
-                            page.waitForNavigation({ timeout: 15000 }).then(() => true),
-                        ]).catch(() => 'NADA_ACONTECEU');
-
-                        time = dateHour().res
-                        pageValue = await page.content()
-                        if (!pageResult) {
-                            if (pageValue.includes(`Já existe um lead cadastrado com o CNPJ informado`)) {
-                                leadStatus = `INDICAÇÃO OUTRO ECE`
-                            } else if (pageValue.includes(`Já existe um cliente cadastrado com o CNPJ informado`)) {
-                                leadStatus = `JÁ POSSUI CONTA`
-                            } else if (pageValue.includes(`Já existe um lead e um cliente cadastrado com o CNPJ informado`)) {
-                                leadStatus = `JÁ POSSUI CONTA E LEAD`
-                            } else if (pageValue.includes(`Lead expirou`) || pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
-                                leadStatus = `LEAD EXPIRADO`
-                            } else {
-                                if (pageValue.includes(`O formato correto para o telefone`)) {
-                                    leadStatus = `ALERTA: telefone inválido`
-                                } else if (pageValue.includes(`CNPJ informado é inválido`)) {
-                                    leadStatus = `ALERTA: CNPJ inválido`
-                                } else if (pageValue.includes(`endereço de email inválido`)) {
-                                    leadStatus = `ALERTA: email inválido`
-                                } else if (pageValue.includes(`Os seguintes campos obrigatórios devem ser preenchidos`)) {
-                                    leadStatus = `ALERTA: campo não preenchido`
-                                } else {
-                                    leadStatus = `ALERTA: status não identificado`
-                                    let infFile, retFile
-                                    infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
-                                    retFile = await file(infFile);
-                                }
-                            }
-                        } else {
-                            leadStatus = `INDICADO`
-                        }
-
-                        // STATUS1 [STATUS DA CONSULTA]
-                        statusText = `${leadCnpj} | ${leadStatus}`
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                        console.log(infSendData.status1)
-                        retSendData = await sendData(infSendData)
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
-
-                        // MANDAR PARA A PLANILHA O RESULTADO
-                        time = dateHour().res;
-                        let results = [[
-                            'ID AQUI',
-                            `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                            leadStatus,
-                        ]]
-                        results = results[0].join(conSpl)
-                        infGoogleSheets = {
-                            'action': 'send',
-                            'id': gO.inf.sheetId,
-                            'tab': gO.inf.sheetTab,
-                            'range': `${col}${leadLinha}`,
-                            'values': [[results]]
-                        }
-                        retGoogleSheets = await googleSheets(infGoogleSheets);
-                        if (!retGoogleSheets.ret) {
-                            err = `[serverC6] Erro ao enviar dados para planilha`
-                            console.log(err);
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                            retLog = await log(infLog);
+                            // STATUS1 [STATUS DA CONSULTA]
+                            statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
+                            infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
+                            console.log(infSendData.status1)
+                            retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            browser.close()
-                            return
-                        }
 
-                        // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                        if (leadStatus == 'INDICADO') {
+                            // MANDAR PARA A PLANILHA O RESULTADO 
+                            time = dateHour().res;
+                            let results = [[
+                                'ID AQUI',
+                                `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
+                                leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA` : `INDICAÇÃO OK`,
+                                leadDate[0]
+                            ]]
+                            results = results[0].join(conSpl)
+                            infGoogleSheets = {
+                                'action': 'send',
+                                'id': gO.inf.sheetId,
+                                'tab': gO.inf.sheetTab,
+                                'range': `${col}${leadLinha}`,
+                                'values': [[results]]
+                            }
+                            retGoogleSheets = await googleSheets(infGoogleSheets);
+                            if (!retGoogleSheets.ret) {
+                                err = `[serverC6] Erro ao enviar dados para planilha`
+                                console.log(err);
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
+                                retLog = await log(infLog);
+                                await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
+                                browser.close()
+                                process.exit();
+                            }
+
+                            // VOLTAR PARA A PÁGINA DE INDICAÇÃO
                             await page.goBack();
-                        }
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            await page.goBack();
 
+                        } else {
+                            // LEAD DA BASE [NÃO] ******************************************************************
+
+                            // VOLTAR PARA A PÁGINA DE INDICAÇÃO
+                            await page.goBack();
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+
+                            // ESPERAR OS CAMPOS APARECEREM
+                            pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
+                            if (!pageInput) {
+                                err = `$ Formulário não apareceu`
+                                console.log(err);
+                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                                retSendData = await sendData(infSendData)
+                                pageValue = await page.content()
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                                retLog = await log(infLog);
+                                await page.screenshot({ path: `log/screenshot_C6_erro_8.jpg` });
+
+                                // ABRIR PÁGINA DE BUSCA GLOBAL
+                                await openHome()
+
+                                return
+                            }
+
+                            // REGEX PARA PEGAR O ID DOS CAMPOS
+                            pageValue = await page.content()
+                            infRegex = { 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
+                            retRegex = regex(infRegex);
+                            if (!retRegex.ret || !retRegex.res['5']) {
+                                err = `$ Não achou o ID dos campos`
+                                console.log(err);
+                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                                retSendData = await sendData(infSendData)
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                                retLog = await log(infLog);
+                                await page.screenshot({ path: `log/screenshot_C6_err_9.jpg` });
+
+                                // ABRIR PÁGINA DE BUSCA GLOBAL
+                                await openHome()
+
+                                return
+                            }
+                            retRegex = retRegex.res['5']
+
+                            // STATUS1 [Indicando...]
+                            infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
+                            console.log(infSendData.status1)
+                            retSendData = await sendData(infSendData)
+                            pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
+                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
+
+                            for (let [index, value] of retRegex.entries()) {
+                                pageInput = await page.$(`input[id="${value}"]`);
+                                if (!pageInput) {
+                                    err = `$ Não achou o campo de imput [${index}]`
+                                    console.log(err);
+                                    infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                                    retSendData = await sendData(infSendData)
+                                    pageValue = await page.content()
+                                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                                    retLog = await log(infLog);
+                                    await page.screenshot({ path: `log/screenshot_C6_err_10.jpg` });
+
+                                    // ABRIR PÁGINA DE BUSCA GLOBAL
+                                    await openHome()
+
+                                    return
+                                }
+                                await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
+                                await new Promise(resolve => setTimeout(resolve, 250));
+                                await page.type(`input[id="${value}"]`, pageImputs[index]);
+                                await new Promise(resolve => { setTimeout(resolve, 500) });
+                            }
+
+                            // CLICAR NO BOTÃO 'Confirmar'
+                            await page.click('.slds-button.slds-button--neutral.button.uiButton--default.uiButton--brand.uiButton');
+
+                            // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
+                            pageResult = await Promise.race([
+                                page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.contentRegion.comm-layout-column > div > div > div > div.container.EDIT.forceQuickActionLayout > div.pageLevelErrors > div > div', { timeout: 15000 }).then(() => false),
+                                page.waitForNavigation({ timeout: 15000 }).then(() => true),
+                            ]).catch(() => 'NADA_ACONTECEU');
+
+                            time = dateHour().res
+                            pageValue = await page.content()
+                            if (!pageResult) {
+                                if (pageValue.includes(`Já existe um lead cadastrado com o CNPJ informado`)) {
+                                    leadStatus = `INDICAÇÃO OUTRO ECE`
+                                } else if (pageValue.includes(`Já existe um cliente cadastrado com o CNPJ informado`)) {
+                                    leadStatus = `JÁ POSSUI CONTA`
+                                } else if (pageValue.includes(`Já existe um lead e um cliente cadastrado com o CNPJ informado`)) {
+                                    leadStatus = `JÁ POSSUI CONTA E LEAD`
+                                } else if (pageValue.includes(`Lead expirou`) || pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
+                                    leadStatus = `LEAD EXPIRADO`
+                                } else {
+                                    if (pageValue.includes(`O formato correto para o telefone`)) {
+                                        leadStatus = `ALERTA: telefone inválido`
+                                    } else if (pageValue.includes(`CNPJ informado é inválido`)) {
+                                        leadStatus = `ALERTA: CNPJ inválido`
+                                    } else if (pageValue.includes(`endereço de email inválido`)) {
+                                        leadStatus = `ALERTA: email inválido`
+                                    } else if (pageValue.includes(`Os seguintes campos obrigatórios devem ser preenchidos`)) {
+                                        leadStatus = `ALERTA: campo não preenchido`
+                                    } else {
+                                        leadStatus = `ALERTA: status não identificado`
+                                        let infFile, retFile
+                                        infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
+                                        retFile = await file(infFile);
+                                    }
+                                }
+                            } else {
+                                leadStatus = `INDICADO`
+                            }
+
+                            // STATUS1 [STATUS DA CONSULTA]
+                            statusText = `${leadCnpj} | ${leadStatus}`
+                            infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
+                            console.log(infSendData.status1)
+                            retSendData = await sendData(infSendData)
+                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
+
+                            // MANDAR PARA A PLANILHA O RESULTADO
+                            time = dateHour().res;
+                            let results = [[
+                                'ID AQUI',
+                                `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
+                                leadStatus,
+                            ]]
+                            results = results[0].join(conSpl)
+                            infGoogleSheets = {
+                                'action': 'send',
+                                'id': gO.inf.sheetId,
+                                'tab': gO.inf.sheetTab,
+                                'range': `${col}${leadLinha}`,
+                                'values': [[results]]
+                            }
+                            retGoogleSheets = await googleSheets(infGoogleSheets);
+                            if (!retGoogleSheets.ret) {
+                                err = `[serverC6] Erro ao enviar dados para planilha`
+                                console.log(err);
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
+                                retLog = await log(infLog);
+                                await page.screenshot({ path: `log/screenshot_C6_err_11.jpg` });
+                                browser.close()
+                                process.exit();
+                            }
+
+                            // VOLTAR PARA A PÁGINA DE INDICAÇÃO
+                            if (leadStatus == 'INDICADO') {
+                                await page.goBack();
+                            }
+
+                        }
                     }
                 }
+                await run()
 
                 // ESPERAR PRÓXIMO LOOP
                 if (leadsQtd < 2 && (leadsQtdOld < 2 || leadsQtdOld == 9999)) {

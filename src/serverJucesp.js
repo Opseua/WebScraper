@@ -118,7 +118,7 @@ async function serverJucesp(inf) {
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
                 retLog = await log(infLog);
                 let status = retApiNire.msg ? retApiNire.msg : err
-                await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+                await page.screenshot({ path: `log/screenshot_Jucesp_err_1.jpg` });
                 infSendData = { 'e': e, 'stop': true, 'status1': status }
                 retSendData = await sendData(infSendData)
             } else if (!retApiNire.res) {
@@ -140,7 +140,7 @@ async function serverJucesp(inf) {
                     console.log(err);
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
                     retLog = await log(infLog);
-                    await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+                    await page.screenshot({ path: `log/screenshot_Jucesp_err_2.jpg` });
                     infSendData = { 'e': e, 'stop': true, 'status1': err }
                     retSendData = await sendData(infSendData)
                 } else {
@@ -205,7 +205,7 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+            await page.screenshot({ path: `log/screenshot_Jucesp_err_3.jpg` });
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
@@ -250,7 +250,7 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+            await page.screenshot({ path: `log/screenshot_Jucesp_err_4.jpg` });
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
@@ -270,7 +270,7 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+            await page.screenshot({ path: `log/screenshot_Jucesp_err_5.jpg` });
             infSendData = { 'e': e, 'stop': true, 'status1': err }
             retSendData = await sendData(infSendData);
             return retCheckPage
@@ -314,7 +314,7 @@ async function serverJucesp(inf) {
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
-                await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+                await page.screenshot({ path: `log/screenshot_Jucesp_err_6.jpg` });
                 infSendData = { 'e': e, 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData);
                 return retCheckPage
@@ -338,7 +338,7 @@ async function serverJucesp(inf) {
                 console.log(err);
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
-                await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
+                await page.screenshot({ path: `log/screenshot_Jucesp_err_7.jpg` });
                 infSendData = { 'e': e, 'stop': true, 'status1': err }
                 retSendData = await sendData(infSendData); return
             };
