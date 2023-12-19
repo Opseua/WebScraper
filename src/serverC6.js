@@ -15,7 +15,7 @@ async function serverC6(inf) {
         let element, cookies, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl, leads, leadsQtd, col, leadsTxt
         let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames, leadLastAut = Number(time.tim), leadLastMan = Number(time.tim)
-        let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999
+        let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999, chromiumHeadless
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
         let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
@@ -41,7 +41,7 @@ async function serverC6(inf) {
             gO.inf['sheetKepp'] = JSON.parse(json)
         } catch (e) {
             infApi = { // ###### → json/object
-                'method': 'POST', 'url': `http://${letter == 'D' ? devChromeLocal.split('://')[1] : devChromeWeb.split('://')[1]}`,
+                'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
                 'headers': { 'Content-Type': 'application/json' }, 'body': {
                     'fun': [{
                         'securityPass': securityPass, 'retInf': false, 'name': 'notification',
@@ -57,6 +57,15 @@ async function serverC6(inf) {
         conSpl = gO.inf.sheetKepp.conSpl
         leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
         leadRandomNames = gO.inf.sheetKepp.randomNames
+        chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
+        // '0' → APARECE | '1' OCUTO
+        if (chromiumHeadless == '0') {
+            chromiumHeadless = false
+        } else if (chromiumHeadless == '1') {
+            chromiumHeadless = 'new'
+        } else {
+            chromiumHeadless = false
+        }
 
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }
@@ -65,8 +74,8 @@ async function serverC6(inf) {
 
         // INICIAR PUPPETEER
         browser = await _puppeteer.launch({
-            headless: 'new', // false | 'new'
-            // headless: 'new', // false | 'new'
+            // headless: letter == 'D' ? false : 'new', // false | 'new'
+            headless: chromiumHeadless, // false | 'new'
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -150,7 +159,7 @@ async function serverC6(inf) {
                         gO.inf['sheetKepp'] = JSON.parse(json)
                     } catch (e) {
                         infApi = { // ###### → json/object
-                            'method': 'POST', 'url': `http://${letter == 'D' ? devChromeLocal.split('://')[1] : devChromeWeb.split('://')[1]}`,
+                            'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
                             'headers': { 'Content-Type': 'application/json' }, 'body': {
                                 'fun': [{
                                     'securityPass': securityPass, 'retInf': false, 'name': 'notification',

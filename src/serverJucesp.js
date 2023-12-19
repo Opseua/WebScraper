@@ -12,7 +12,7 @@ async function serverJucesp(inf) {
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
-        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl
+        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl, chromiumHeadless
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
         let repet1 = 999999, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS'
@@ -57,6 +57,15 @@ async function serverJucesp(inf) {
         date = gO.inf.sheetKepp.date
         mode = gO.inf.sheetKepp.mode
         conSpl = gO.inf.sheetKepp.conSpl
+        chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
+        // '0' → APARECE | '1' OCUTO
+        if (chromiumHeadless == '0') {
+            chromiumHeadless = false
+        } else if (chromiumHeadless == '1') {
+            chromiumHeadless = 'new'
+        } else {
+            chromiumHeadless = false
+        }
 
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'e': e, 'stop': false, 'status1': 'Iniciando script, aguarde' }
@@ -66,7 +75,7 @@ async function serverJucesp(inf) {
         // INICIAR PUPPETEER
         let browser = await _puppeteer.launch({
             // headless: letter == 'D' ? false : 'new', // false | 'new'
-            headless: 'new', // false | 'new'
+            headless: chromiumHeadless, // false | 'new'
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
