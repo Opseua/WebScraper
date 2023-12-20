@@ -131,7 +131,7 @@ async function serverC6(inf) {
             whileQtd++;
             time = dateHour().res;
             // SEG <> SAB | 08:00 <> 19:59 (20h)
-            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > 7 & Number(time.hou) < 20)) {
+            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > 7 & Number(time.hou) < 25)) {
 
                 console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]`);
 
@@ -205,6 +205,7 @@ async function serverC6(inf) {
                         console.log(infSendData.status1)
                         retSendData = await sendData(infSendData)
                         await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
                         pageValue = await page.content()
@@ -225,6 +226,7 @@ async function serverC6(inf) {
                             return
                         }
                         retRegex = retRegex.res['1']
+                        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // BUSCAR LEAD NA LUPA
                         pageInput = await page.$(`input[id="${retRegex}"]`);
@@ -244,10 +246,11 @@ async function serverC6(inf) {
                             return
                         }
                         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
-                        await new Promise(resolve => setTimeout(resolve, 250));
-                        await page.type(`input[id="${retRegex}"]`, leadCnpj);
                         await new Promise(resolve => setTimeout(resolve, 500));
+                        await page.type(`input[id="${retRegex}"]`, leadCnpj);
+                        await new Promise(resolve => setTimeout(resolve, 750));
                         await pageInput.press('Enter');
+                        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
                         pageResult = await page.waitForFunction(() => {
@@ -283,7 +286,7 @@ async function serverC6(inf) {
                         leadStatus = await pageResult.jsonValue();
                         console.log(leadStatus)
                         await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                        await new Promise(resolve => setTimeout(resolve, 500));
+                        await new Promise(resolve => setTimeout(resolve, 1500));
 
                         // LEAD DA BASE [SIM] ******************************************************************
                         if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD') {
@@ -306,18 +309,22 @@ async function serverC6(inf) {
                                 return
                             }
                             leadPageId = retRegex.res['1']
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // STATUS1 [Abrindo dados do cliente]
                             infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
                             console.log(infSendData.status1)
                             retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // CLICAR NO LINK DO ID DO LEAD
                             let linkSelector = `a[data-recordid="${leadPageId}"]`;
                             await page.waitForSelector(linkSelector);
                             let link = await page.$(linkSelector);
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
                             await link.click();
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // ESPERAR A DATA DO LEAD APARECER
                             pageResult = await page.waitForFunction(() => {
@@ -344,6 +351,7 @@ async function serverC6(inf) {
                                 return
                             }
                             leadDate = await pageResult.jsonValue();
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // STATUS1 [STATUS DA CONSULTA]
                             statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
@@ -351,6 +359,7 @@ async function serverC6(inf) {
                             console.log(infSendData.status1)
                             retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // MANDAR PARA A PLANILHA O RESULTADO 
                             time = dateHour().res;
@@ -381,7 +390,7 @@ async function serverC6(inf) {
 
                             // VOLTAR PARA A PÁGINA DE INDICAÇÃO
                             await page.goBack();
-                            await new Promise(resolve => setTimeout(resolve, 500));
+                            await new Promise(resolve => setTimeout(resolve, 1500));
                             await page.goBack();
 
                         } else {
@@ -389,7 +398,7 @@ async function serverC6(inf) {
 
                             // VOLTAR PARA A PÁGINA DE INDICAÇÃO
                             await page.goBack();
-                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            await new Promise(resolve => setTimeout(resolve, 3000));
 
                             // ESPERAR OS CAMPOS APARECEREM
                             pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
@@ -428,6 +437,7 @@ async function serverC6(inf) {
                                 return
                             }
                             retRegex = retRegex.res['5']
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // STATUS1 [Indicando...]
                             infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
@@ -435,6 +445,7 @@ async function serverC6(inf) {
                             retSendData = await sendData(infSendData)
                             pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             for (let [index, value] of retRegex.entries()) {
                                 pageInput = await page.$(`input[id="${value}"]`);
@@ -454,13 +465,14 @@ async function serverC6(inf) {
                                     return
                                 }
                                 await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
-                                await new Promise(resolve => setTimeout(resolve, 250));
+                                await new Promise(resolve => setTimeout(resolve, 500));
                                 await page.type(`input[id="${value}"]`, pageImputs[index]);
-                                await new Promise(resolve => { setTimeout(resolve, 500) });
+                                await new Promise(resolve => { setTimeout(resolve, 750) });
                             }
 
                             // CLICAR NO BOTÃO 'Confirmar'
                             await page.click('.slds-button.slds-button--neutral.button.uiButton--default.uiButton--brand.uiButton');
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
                             pageResult = await Promise.race([
@@ -505,6 +517,7 @@ async function serverC6(inf) {
                             console.log(infSendData.status1)
                             retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                            await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // MANDAR PARA A PLANILHA O RESULTADO
                             time = dateHour().res;
