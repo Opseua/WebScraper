@@ -15,10 +15,20 @@ async function serverC6(inf) {
         let element, cookies, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
         let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl, leads, leadsQtd, col, leadsTxt
         let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames, leadLastAut = Number(time.tim), leadLastMan = Number(time.tim)
-        let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999, chromiumHeadless
+        let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999, chromiumHeadless, scriptHour
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
         let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
+
+        // ENCERRAR SCRIPT E INTERROMPER PM2
+        async function pm2Stop() {
+            let infCommandLine, retCommandLine
+            infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_exe_C6/STOP_KEEP_STATUS/1_BACKGROUND.exe"` }
+            retCommandLine = await commandLine(infCommandLine);
+            await new Promise(resolve => { setTimeout(resolve, 30000) })
+            browser.close()
+            process.exit();
+        }
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         infGoogleSheets = {
@@ -33,7 +43,8 @@ async function serverC6(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
-            process.exit();
+            // ENCERRAR SCRIPT E INTERROMPER PM2
+            await pm2Stop()
         }
         try {
             json = retGoogleSheets.res[0][0]
@@ -50,7 +61,8 @@ async function serverC6(inf) {
                 }
             };
             retApi = await api(infApi);
-            process.exit();
+            // ENCERRAR SCRIPT E INTERROMPER PM2
+            await pm2Stop()
         }
         aut = gO.inf.sheetKepp.autC6
         col = gO.inf.sheetKepp.colC6
@@ -58,6 +70,8 @@ async function serverC6(inf) {
         leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
         leadRandomNames = gO.inf.sheetKepp.randomNames
         chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
+        scriptHour = gO.inf.sheetKepp.scriptHour.split('|')
+
         // '0' → APARECE | '1' OCUTO
         if (chromiumHeadless == '0') {
             chromiumHeadless = false
@@ -109,6 +123,7 @@ async function serverC6(inf) {
             await page.screenshot({ path: `log/screenshot_C6.jpg` });
         }
         await openHome()
+        await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content()
@@ -120,8 +135,8 @@ async function serverC6(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_err_1.jpg` });
-            browser.close()
-            process.exit();
+            // ENCERRAR SCRIPT E INTERROMPER PM2
+            await pm2Stop()
         }
 
         // **************************************************************************************************************
@@ -130,8 +145,9 @@ async function serverC6(inf) {
         while (!whileStop) {
             whileQtd++;
             time = dateHour().res;
-            // SEG <> SAB | 08:00 <> 19:59 (20h)
-            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > 7 & Number(time.hou) < 25)) {
+
+            // SEG <> SAB | [??:00] <> [??:00]
+            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1]))) {
 
                 console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]`);
 
@@ -151,7 +167,8 @@ async function serverC6(inf) {
                         console.log(err);
                         infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                         retLog = await log(infLog);
-                        process.exit();
+                        // ENCERRAR SCRIPT E INTERROMPER PM2
+                        await pm2Stop()
                     }
                     try {
                         json = retGoogleSheets.res[0][0]
@@ -168,14 +185,16 @@ async function serverC6(inf) {
                             }
                         };
                         retApi = await api(infApi);
-                        browser.close()
-                        process.exit();
+                        // ENCERRAR SCRIPT E INTERROMPER PM2
+                        await pm2Stop()
                     }
                     aut = gO.inf.sheetKepp.autC6
                     col = gO.inf.sheetKepp.colC6
                     conSpl = gO.inf.sheetKepp.conSpl
                     leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames
+                    chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
+                    scriptHour = gO.inf.sheetKepp.scriptHour.split('|')
 
                     // CHECAR SE TEM LEAD PENDENTE
                     if (leadsQtd > 0) {
@@ -384,8 +403,8 @@ async function serverC6(inf) {
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
-                                browser.close()
-                                process.exit();
+                                // ENCERRAR SCRIPT E INTERROMPER PM2
+                                await pm2Stop()
                             }
 
                             // VOLTAR PARA A PÁGINA DE INDICAÇÃO
@@ -541,8 +560,8 @@ async function serverC6(inf) {
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_err_11.jpg` });
-                                browser.close()
-                                process.exit();
+                                // ENCERRAR SCRIPT E INTERROMPER PM2
+                                await pm2Stop()
                             }
 
                             // VOLTAR PARA A PÁGINA DE INDICAÇÃO
@@ -578,10 +597,14 @@ async function serverC6(inf) {
                 leadsQtdOld = leadsQtd
             } else {
                 console.log(`\n${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} ## FORA DO DIA E HORÁRIO ##`)
-                if (browser) {
-                    browser.close()
-                }
-                return
+
+                // STATUS1 [Fora do horário permitido]
+                infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
+                console.log(infSendData.status1)
+                retSendData = await sendData(infSendData)
+
+                // ENCERRAR SCRIPT E INTERROMPER PM2
+                await pm2Stop()
             }
         }
     } catch (e) {

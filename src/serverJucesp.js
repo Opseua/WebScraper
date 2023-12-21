@@ -16,7 +16,17 @@ async function serverJucesp(inf) {
 
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
         let repet1 = 999999, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS'
-        let infConfigStorage, retConfigStorage
+        let infConfigStorage, retConfigStorage, browser
+
+        // ENCERRAR SCRIPT E INTERROMPER PM2
+        async function pm2Stop() {
+            let infCommandLine, retCommandLine
+            infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_exe_Jucesp/STOP_KEEP_STATUS/1_BACKGROUND.exe"` }
+            retCommandLine = await commandLine(infCommandLine);
+            await new Promise(resolve => { setTimeout(resolve, 30000) })
+            browser.close();
+            process.exit();
+        }
 
         // PEGAR O TOKEN DO CONFIG
         infConfigStorage = { 'e': e, 'action': 'get', 'functionLocal': false, 'key': 'cnpja' } // 'functionLocal' SOMENTE NO NODEJS
@@ -26,9 +36,10 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retConfigStorage }
             retLog = await log(infLog);
-            let infSendData = { 'e': e, 'stop': true, 'status1': err }
+            let infSendData = { 'e': e, 'stop': false, 'status1': err }
             let retSendData = await sendData(infSendData)
-            return retConfigStorage
+            // ENCERRAR SCRIPT E INTERROMPER PM2
+            await pm2Stop()
         } else {
             retConfigStorage = retConfigStorage.res
         }
@@ -48,9 +59,10 @@ async function serverJucesp(inf) {
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
-            infSendData = { 'e': e, 'stop': true, 'status1': err }
+            infSendData = { 'e': e, 'stop': false, 'status1': err }
             retSendData = await sendData(infSendData);
-            return retGoogleSheets
+            // ENCERRAR SCRIPT E INTERROMPER PM2
+            await pm2Stop()
         }
         gO.inf['sheetKepp'] = JSON.parse(retGoogleSheets.res[0])
         aut = gO.inf.sheetKepp.aut
@@ -73,7 +85,7 @@ async function serverJucesp(inf) {
         console.log(infSendData.status1)
 
         // INICIAR PUPPETEER
-        let browser = await _puppeteer.launch({
+        browser = await _puppeteer.launch({
             // headless: letter == 'D' ? false : 'new', // false | 'new'
             headless: chromiumHeadless, // false | 'new'
             args: [
@@ -190,8 +202,8 @@ async function serverJucesp(inf) {
                         console.log('INDICES ACABARAM');
                         infSendData = { 'e': e, 'stop': false, 'status2': 'Terminou de consultar tudo' }
                         retSendData = await sendData(infSendData);
-                        browser.close()
-                        return
+                        // ENCERRAR SCRIPT E INTERROMPER PM2
+                        await pm2Stop()
                     }
                 } else {
                     await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -260,9 +272,10 @@ async function serverJucesp(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_Jucesp_err_4.jpg` });
-            infSendData = { 'e': e, 'stop': true, 'status1': err }
+            infSendData = { 'e': e, 'stop': false, 'status1': err }
             retSendData = await sendData(infSendData);
-            return retCheckPage
+            // ENCERRAR SCRIPT E INTERROMPER PM2
+            await pm2Stop()
         };
 
         // STATUS [BUSCANDO NOVOS NIRE's]
