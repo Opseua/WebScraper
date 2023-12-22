@@ -19,7 +19,7 @@ async function apiCnpj(inf) {
             'headers': { 'Authorization': token }
         };
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
-            let err = `[apiCnpj] FALSE: retApi`
+            let err = `$ [apiCnpj] FALSE: retApi`
             // console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
             retLog = await log(infLog);
@@ -119,7 +119,7 @@ async function apiCnpj(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let err = `[apiCnpj] TRYCATCH Script erro!`
+        let err = `$ [apiCnpj] TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };

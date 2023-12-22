@@ -23,7 +23,7 @@ async function serverC6(inf) {
         // ENCERRAR SCRIPT E INTERROMPER PM2
         async function pm2Stop() {
             let infCommandLine, retCommandLine
-            infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_exe_C6/STOP_KEEP_STATUS/1_BACKGROUND.exe"` }
+            infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/1_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/2_SCRIPT.bat" "pm2"` }
             retCommandLine = await commandLine(infCommandLine);
             await new Promise(resolve => { setTimeout(resolve, 30000) })
             browser.close()
@@ -39,7 +39,7 @@ async function serverC6(inf) {
         }
         retGoogleSheets = await googleSheets(infGoogleSheets);
         if (!retGoogleSheets.ret) {
-            err = `[serverC6] Erro ao pegar dados para planilha`
+            err = `$ [serverC6] Erro ao pegar dados para planilha`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
@@ -56,7 +56,7 @@ async function serverC6(inf) {
                 'headers': { 'Content-Type': 'application/json' }, 'body': {
                     'fun': [{
                         'securityPass': securityPass, 'retInf': false, 'name': 'notification',
-                        'par': { 'duration': 5, 'icon': './src/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
+                        'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
                     }]
                 }
             };
@@ -70,7 +70,7 @@ async function serverC6(inf) {
         leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
         leadRandomNames = gO.inf.sheetKepp.randomNames
         chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
-        scriptHour = gO.inf.sheetKepp.scriptHour.split('|')
+        scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
         // '0' → APARECE | '1' OCUTO
         if (chromiumHeadless == '0') {
@@ -128,7 +128,7 @@ async function serverC6(inf) {
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content()
         if (pageValue.includes('Esqueci minha senha')) {
-            err = `$# Cookie inválido!`
+            err = `$ Cookie inválido!`
             console.log(err);
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             retSendData = await sendData(infSendData)
@@ -163,7 +163,7 @@ async function serverC6(inf) {
                     }
                     retGoogleSheets = await googleSheets(infGoogleSheets);
                     if (!retGoogleSheets.ret) {
-                        err = `[serverC6] Erro ao pegar dados para planilha`
+                        err = `$ [serverC6] Erro ao pegar dados para planilha`
                         console.log(err);
                         infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                         retLog = await log(infLog);
@@ -180,7 +180,7 @@ async function serverC6(inf) {
                             'headers': { 'Content-Type': 'application/json' }, 'body': {
                                 'fun': [{
                                     'securityPass': securityPass, 'retInf': false, 'name': 'notification',
-                                    'par': { 'duration': 5, 'icon': './src/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
+                                    'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
                                 }]
                             }
                         };
@@ -194,7 +194,7 @@ async function serverC6(inf) {
                     leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames
                     chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
-                    scriptHour = gO.inf.sheetKepp.scriptHour.split('|')
+                    scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
                     // CHECAR SE TEM LEAD PENDENTE
                     if (leadsQtd > 0) {
@@ -238,11 +238,8 @@ async function serverC6(inf) {
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                             retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6_err_2.jpg` });
-
-                            // ABRIR PÁGINA DE BUSCA GLOBAL
-                            await openHome()
-
-                            return
+                            browser.close()
+                            process.exit();
                         }
                         retRegex = retRegex.res['1']
                         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -258,11 +255,8 @@ async function serverC6(inf) {
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                             retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6_err_3.jpg` });
-
-                            // ABRIR PÁGINA DE BUSCA GLOBAL
-                            await openHome()
-
-                            return
+                            browser.close()
+                            process.exit();
                         }
                         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
                         await new Promise(resolve => setTimeout(resolve, 500));
@@ -296,11 +290,8 @@ async function serverC6(inf) {
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                             retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6_err_4.jpg` });
-
-                            // ABRIR PÁGINA DE BUSCA GLOBAL
-                            await openHome()
-
-                            return
+                            browser.close()
+                            process.exit();
                         }
                         leadStatus = await pageResult.jsonValue();
                         console.log(leadStatus)
@@ -321,11 +312,8 @@ async function serverC6(inf) {
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6__err_5.jpg` });
-
-                                // ABRIR PÁGINA DE BUSCA GLOBAL
-                                await openHome()
-
-                                return
+                                browser.close()
+                                process.exit();
                             }
                             leadPageId = retRegex.res['1']
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -363,11 +351,8 @@ async function serverC6(inf) {
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_err_6.jpg` });
-
-                                // ABRIR PÁGINA DE BUSCA GLOBAL
-                                await openHome()
-
-                                return
+                                browser.close()
+                                process.exit();
                             }
                             leadDate = await pageResult.jsonValue();
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -398,7 +383,7 @@ async function serverC6(inf) {
                             }
                             retGoogleSheets = await googleSheets(infGoogleSheets);
                             if (!retGoogleSheets.ret) {
-                                err = `[serverC6] Erro ao enviar dados para planilha`
+                                err = `$ [serverC6] Erro ao enviar dados para planilha`
                                 console.log(err);
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                                 retLog = await log(infLog);
@@ -430,11 +415,8 @@ async function serverC6(inf) {
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_erro_8.jpg` });
-
-                                // ABRIR PÁGINA DE BUSCA GLOBAL
-                                await openHome()
-
-                                return
+                                browser.close()
+                                process.exit();
                             }
 
                             // REGEX PARA PEGAR O ID DOS CAMPOS
@@ -449,11 +431,8 @@ async function serverC6(inf) {
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_err_9.jpg` });
-
-                                // ABRIR PÁGINA DE BUSCA GLOBAL
-                                await openHome()
-
-                                return
+                                browser.close()
+                                process.exit();
                             }
                             retRegex = retRegex.res['5']
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -477,11 +456,8 @@ async function serverC6(inf) {
                                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                                     retLog = await log(infLog);
                                     await page.screenshot({ path: `log/screenshot_C6_err_10.jpg` });
-
-                                    // ABRIR PÁGINA DE BUSCA GLOBAL
-                                    await openHome()
-
-                                    return
+                                    browser.close()
+                                    process.exit();
                                 }
                                 await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
                                 await new Promise(resolve => setTimeout(resolve, 500));
@@ -555,7 +531,7 @@ async function serverC6(inf) {
                             }
                             retGoogleSheets = await googleSheets(infGoogleSheets);
                             if (!retGoogleSheets.ret) {
-                                err = `[serverC6] Erro ao enviar dados para planilha`
+                                err = `$ [serverC6] Erro ao enviar dados para planilha`
                                 console.log(err);
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                                 retLog = await log(infLog);
@@ -580,7 +556,7 @@ async function serverC6(inf) {
                     console.log(`\n${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} ## ESPERANDO DELAY PARA O PRÓXIMO LOOP ##`)
 
                     // STATUS1 [Nada pendente, esperando 2 minutos...]
-                    infSendData = { 'e': e, 'stop': false, 'status1': `[${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}] Nada pendente, esperando 2 minutos...` }
+                    infSendData = { 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` }
                     retSendData = await sendData(infSendData)
 
                     // F5 | COOKIE KEEP
@@ -611,7 +587,7 @@ async function serverC6(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let err = `[serverC6] TRYCATCH Script erro!`
+        let err = `$ [serverC6] TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
