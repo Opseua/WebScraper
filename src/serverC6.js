@@ -483,9 +483,9 @@ async function serverC6(inf) {
                                 } else if (pageValue.includes(`Já existe um cliente cadastrado com o CNPJ informado`)) {
                                     leadStatus = `JÁ POSSUI CONTA`
                                 } else if (pageValue.includes(`Já existe um lead e um cliente cadastrado com o CNPJ informado`)) {
-                                    leadStatus = `JÁ POSSUI CONTA E LEAD`
+                                    leadStatus = `JÁ POSSUI CONTA`
                                 } else if (pageValue.includes(`Lead expirou`) || pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
-                                    leadStatus = `LEAD EXPIRADO`
+                                    leadStatus = `FORA DO PRAZO`
                                 } else {
                                     if (pageValue.includes(`O formato correto para o telefone`)) {
                                         leadStatus = `ALERTA: telefone inválido`
@@ -503,7 +503,7 @@ async function serverC6(inf) {
                                     }
                                 }
                             } else {
-                                leadStatus = `INDICADO`
+                                leadStatus = `INDICAÇÃO OK`
                             }
 
                             // STATUS1 [STATUS DA CONSULTA]
@@ -541,7 +541,7 @@ async function serverC6(inf) {
                             }
 
                             // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                            if (leadStatus == 'INDICADO') {
+                            if (leadStatus == 'INDICAÇÃO OK') {
                                 await page.goBack();
                             }
 
