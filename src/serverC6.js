@@ -358,7 +358,7 @@ async function serverC6(inf) {
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // STATUS1 [STATUS DA CONSULTA]
-                            statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
+                            statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `ABERTO SF ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
                             infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
                             console.log(infSendData.status1)
                             retSendData = await sendData(infSendData)
@@ -370,7 +370,7 @@ async function serverC6(inf) {
                             let results = [[
                                 'ID AQUI',
                                 `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                                leadStatus == 'ENCONTRADO_CONTA' ? `JÁ POSSUI CONTA` : `INDICAÇÃO OK`,
+                                leadStatus == 'ENCONTRADO_CONTA' ? `ABERTO SF` : `INDICAÇÃO OK`,
                                 leadDate[0]
                             ]]
                             results = results[0].join(conSpl)
