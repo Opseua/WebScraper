@@ -22,7 +22,7 @@ async function serverJucesp(inf) {
         async function pm2Stop() {
             let infCommandLine, retCommandLine
             // infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosJucesp/1_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosJucesp/2_SCRIPT.bat" "pm2"` }
-            infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperJucesp/2_SCRIPT.bat" "off" "hide" "WebScraperJucesp"` }
+            infCommandLine = { 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperJucesp/2_SCRIPT.bat" "off" "hide" "WebScraperJucesp"` }
             retCommandLine = await commandLine(infCommandLine);
             await new Promise(resolve => { setTimeout(resolve, 30000) })
             browser.close();
