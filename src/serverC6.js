@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 await import('./resources/@export.js')
-let e = import.meta.url;
+let e = import.meta.url, ee = e
 async function serverC6(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     if (catchGlobal) {
@@ -9,7 +9,7 @@ async function serverC6(inf) {
         else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
     }
     try {
-        let time = dateHour().res; console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `serverC6 [WebScraper]`, '\n');
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `[C6]\n` })
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
@@ -17,7 +17,7 @@ async function serverC6(inf) {
         let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames, leadLastAut = Number(time.tim), leadLastMan = Number(time.tim)
         let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999, chromiumHeadless, scriptHour
 
-        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); time = dateHour().res;
+        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); let time = dateHour().res;
         let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
 
         // ENCERRAR SCRIPT E INTERROMPER PM2
@@ -41,7 +41,7 @@ async function serverC6(inf) {
         retGoogleSheets = await googleSheets(infGoogleSheets);
         if (!retGoogleSheets.ret) {
             err = `$ [serverC6] Erro ao pegar dados para planilha`
-            console.log(err);
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
             // ENCERRAR SCRIPT E INTERROMPER PM2
@@ -84,7 +84,7 @@ async function serverC6(inf) {
 
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }
-        console.log(infSendData.status1)
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
         retSendData = await sendData(infSendData)
 
         // INICIAR PUPPETEER
@@ -130,7 +130,7 @@ async function serverC6(inf) {
         pageValue = await page.content()
         if (pageValue.includes('Esqueci minha senha')) {
             err = `$ Cookie inválido!`
-            console.log(err);
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             retSendData = await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -150,7 +150,7 @@ async function serverC6(inf) {
             // SEG <> SAB | [??:00] <> [??:00]
             if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1]))) {
 
-                console.log(`${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]`);
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]` })
 
                 gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO_[TELEIN]'
 
@@ -165,7 +165,7 @@ async function serverC6(inf) {
                     retGoogleSheets = await googleSheets(infGoogleSheets);
                     if (!retGoogleSheets.ret) {
                         err = `$ [serverC6] Erro ao pegar dados para planilha`
-                        console.log(err);
+                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
                         infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                         retLog = await log(infLog);
                         // ENCERRAR SCRIPT E INTERROMPER PM2
@@ -222,7 +222,7 @@ async function serverC6(inf) {
 
                         // STATUS1 [Checando se é da base]
                         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
-                        console.log(infSendData.status1)
+                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                         retSendData = await sendData(infSendData)
                         await page.screenshot({ path: `log/screenshot_C6.jpg` });
                         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -233,7 +233,7 @@ async function serverC6(inf) {
                         retRegex = regex(infRegex);
                         if (!retRegex.ret || !retRegex.res['1']) {
                             err = `$ Não achou o ID da lupa de pesquisa`
-                            console.log(err);
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                             retSendData = await sendData(infSendData)
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -249,7 +249,7 @@ async function serverC6(inf) {
                         pageInput = await page.$(`input[id="${retRegex}"]`);
                         if (!pageInput) {
                             err = `$ Não achou o campo de imput da lupa`
-                            console.log(err);
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                             retSendData = await sendData(infSendData)
                             pageValue = await page.content()
@@ -284,7 +284,7 @@ async function serverC6(inf) {
                         });
                         if (!pageResult) {
                             err = `$ Não achou o resultado da consulta`
-                            console.log(err);
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                             retSendData = await sendData(infSendData)
                             pageValue = await page.content()
@@ -295,7 +295,7 @@ async function serverC6(inf) {
                             process.exit();
                         }
                         leadStatus = await pageResult.jsonValue();
-                        console.log(leadStatus)
+                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${leadStatus}` });
                         await page.screenshot({ path: `log/screenshot_C6.jpg` });
                         await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -307,7 +307,7 @@ async function serverC6(inf) {
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['1']) {
                                 err = `$ Não achou o ID do link da página do lead`
-                                console.log(err);
+                                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                                 retSendData = await sendData(infSendData)
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -321,7 +321,7 @@ async function serverC6(inf) {
 
                             // STATUS1 [Abrindo dados do cliente]
                             infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
-                            console.log(infSendData.status1)
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                             retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -345,7 +345,7 @@ async function serverC6(inf) {
                             }, { timeout: 30000 }).catch(async () => { return false; });
                             if (!pageResult) {
                                 err = `$ Não achou a data de abertura`
-                                console.log(err);
+                                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                                 retSendData = await sendData(infSendData)
                                 pageValue = await page.content()
@@ -361,7 +361,7 @@ async function serverC6(inf) {
                             // STATUS1 [STATUS DA CONSULTA]
                             statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `ABERTO SF ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
                             infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                            console.log(infSendData.status1)
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                             retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -385,7 +385,7 @@ async function serverC6(inf) {
                             retGoogleSheets = await googleSheets(infGoogleSheets);
                             if (!retGoogleSheets.ret) {
                                 err = `$ [serverC6] Erro ao enviar dados para planilha`
-                                console.log(err);
+                                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
@@ -409,7 +409,7 @@ async function serverC6(inf) {
                             pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
                             if (!pageInput) {
                                 err = `$ Formulário não apareceu`
-                                console.log(err);
+                                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                                 retSendData = await sendData(infSendData)
                                 pageValue = await page.content()
@@ -426,7 +426,7 @@ async function serverC6(inf) {
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['5']) {
                                 err = `$ Não achou o ID dos campos`
-                                console.log(err);
+                                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                                 retSendData = await sendData(infSendData)
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -440,7 +440,7 @@ async function serverC6(inf) {
 
                             // STATUS1 [Indicando...]
                             infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
-                            console.log(infSendData.status1)
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                             retSendData = await sendData(infSendData)
                             pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
@@ -450,7 +450,7 @@ async function serverC6(inf) {
                                 pageInput = await page.$(`input[id="${value}"]`);
                                 if (!pageInput) {
                                     err = `$ Não achou o campo de imput [${index}]`
-                                    console.log(err);
+                                    logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                     infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                                     retSendData = await sendData(infSendData)
                                     pageValue = await page.content()
@@ -510,7 +510,7 @@ async function serverC6(inf) {
                             // STATUS1 [STATUS DA CONSULTA]
                             statusText = `${leadCnpj} | ${leadStatus}`
                             infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                            console.log(infSendData.status1)
+                            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                             retSendData = await sendData(infSendData)
                             await page.screenshot({ path: `log/screenshot_C6.jpg` });
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -533,7 +533,7 @@ async function serverC6(inf) {
                             retGoogleSheets = await googleSheets(infGoogleSheets);
                             if (!retGoogleSheets.ret) {
                                 err = `$ [serverC6] Erro ao enviar dados para planilha`
-                                console.log(err);
+                                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                                 retLog = await log(infLog);
                                 await page.screenshot({ path: `log/screenshot_C6_err_11.jpg` });
@@ -554,7 +554,7 @@ async function serverC6(inf) {
                 // ESPERAR PRÓXIMO LOOP
                 if (leadsQtd < 2 && (leadsQtdOld < 2 || leadsQtdOld == 9999)) {
                     time = dateHour().res;
-                    console.log(`\n${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} ## ESPERANDO DELAY PARA O PRÓXIMO LOOP ##`)
+                    logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `## ESPERANDO DELAY PARA O PRÓXIMO LOOP ##` });
 
                     // STATUS1 [Nada pendente, esperando 2 minutos...]
                     infSendData = { 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` }
@@ -573,11 +573,9 @@ async function serverC6(inf) {
                 }
                 leadsQtdOld = leadsQtd
             } else {
-                console.log(`\n${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec} ## FORA DO DIA E HORÁRIO (${scriptHour[0]}:00 <> ${scriptHour[1]}:00) ##`)
-
                 // STATUS1 [Fora do horário permitido]
                 infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
-                console.log(infSendData.status1)
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                 retSendData = await sendData(infSendData)
 
                 // ENCERRAR SCRIPT E INTERROMPER PM2
