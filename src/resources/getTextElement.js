@@ -17,10 +17,10 @@ async function getTextElement(inf) {
             ret['msg'] = `\n\n #### ERRO #### RESULTS \n INFORMAR O 'element' \n\n`;
         } else {
             if (inf.element == 'results') {
-                infRegex = { 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': inf.value.replace(/\n/g, ' ') }
+                infRegex = { 'e': e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': inf.value.replace(/\n/g, ' ') }
                 retRegex = regex(infRegex); retRegex = String(retRegex.res['5']);
                 let nire = retRegex.split(',')
-                infRegex = { 'pattern': `pgrGridView_lblResults">Mostrando (.*?)</div><span id="`, 'text': inf.value.replace(/\n/g, ' ') }
+                infRegex = { 'e': e, 'pattern': `pgrGridView_lblResults">Mostrando (.*?)</div><span id="`, 'text': inf.value.replace(/\n/g, ' ') }
                 retRegex = regex(infRegex); retRegex = String(retRegex.res['5'])
                 retRegex = retRegex.replace('</span> de <span id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_lblResultCount"', '')
                 retRegex = retRegex.split('</span>')

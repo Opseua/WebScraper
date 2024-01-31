@@ -1,7 +1,7 @@
-// let infButton, retButton // 'logFun': true,
-// infButton = { 'e': e,'browser': browser, 'page': page, 'button': 'search' }
-// retButton = await button(infButton)
-// console.log(retButton)
+// let infButtonElement, retButtonElement // 'logFun': true,
+// infButtonElement = { 'e': e,'browser': browser, 'page': page, 'button': 'search' }
+// retButtonElement = await buttonElement(infButton)
+// console.log(retButtonElement)
 
 let e = import.meta.url;
 async function buttonElement(inf) {

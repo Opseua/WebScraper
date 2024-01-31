@@ -24,7 +24,7 @@ async function serverC6(inf) {
         async function pm2Stop() {
             let infCommandLine, retCommandLine
             // infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/1_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/2_SCRIPT.bat" "pm2"` }
-            infCommandLine = { 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperC6/2_SCRIPT.bat" "off" "hide" "WebScraperC6"` }
+            infCommandLine = { 'e': e, 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperC6/2_SCRIPT.bat" "off" "hide" "WebScraperC6"` }
             retCommandLine = await commandLine(infCommandLine);
             await new Promise(resolve => { setTimeout(resolve, 30000) })
             browser.close()
@@ -33,7 +33,7 @@ async function serverC6(inf) {
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         infGoogleSheets = {
-            'action': 'get',
+            'e': e, 'action': 'get',
             'id': gO.inf.sheetId,
             'tab': gO.inf.sheetTab,
             'range': range,
@@ -53,7 +53,7 @@ async function serverC6(inf) {
             gO.inf['sheetKepp'] = JSON.parse(json)
         } catch (e) {
             infApi = { // ###### → json/object
-                'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
+                'e': e, 'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
                 'headers': { 'Content-Type': 'application/json' }, 'body': {
                     'fun': [{
                         'securityPass': securityPass, 'retInf': false, 'name': 'notification',
@@ -157,7 +157,7 @@ async function serverC6(inf) {
                 async function run() {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
                     infGoogleSheets = {
-                        'action': 'get',
+                        'e': e, 'action': 'get',
                         'id': gO.inf.sheetId,
                         'tab': gO.inf.sheetTab,
                         'range': range,
@@ -177,7 +177,7 @@ async function serverC6(inf) {
                         gO.inf['sheetKepp'] = JSON.parse(json)
                     } catch (e) {
                         infApi = { // ###### → json/object
-                            'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
+                            'e': e, 'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
                             'headers': { 'Content-Type': 'application/json' }, 'body': {
                                 'fun': [{
                                     'securityPass': securityPass, 'retInf': false, 'name': 'notification',
@@ -229,7 +229,7 @@ async function serverC6(inf) {
 
                         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
                         pageValue = await page.content()
-                        infRegex = { 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
+                        infRegex = { 'e': e, 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
                         retRegex = regex(infRegex);
                         if (!retRegex.ret || !retRegex.res['1']) {
                             err = `$ Não achou o ID da lupa de pesquisa`
@@ -303,7 +303,7 @@ async function serverC6(inf) {
                         if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD') {
                             // PEGAR O ID DO LINK DA PÁGINA DO LEAD
                             pageValue = await page.content()
-                            infRegex = { 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
+                            infRegex = { 'e': e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['1']) {
                                 err = `$ Não achou o ID do link da página do lead`
@@ -376,7 +376,7 @@ async function serverC6(inf) {
                             ]]
                             results = results[0].join(conSpl)
                             infGoogleSheets = {
-                                'action': 'send',
+                                'e': e, 'action': 'send',
                                 'id': gO.inf.sheetId,
                                 'tab': gO.inf.sheetTab,
                                 'range': `${col}${leadLinha}`,
@@ -422,7 +422,7 @@ async function serverC6(inf) {
 
                             // REGEX PARA PEGAR O ID DOS CAMPOS
                             pageValue = await page.content()
-                            infRegex = { 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
+                            infRegex = { 'e': e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['5']) {
                                 err = `$ Não achou o ID dos campos`
@@ -524,7 +524,7 @@ async function serverC6(inf) {
                             ]]
                             results = results[0].join(conSpl)
                             infGoogleSheets = {
-                                'action': 'send',
+                                'e': e, 'action': 'send',
                                 'id': gO.inf.sheetId,
                                 'tab': gO.inf.sheetTab,
                                 'range': `${col}${leadLinha}`,

@@ -15,7 +15,7 @@ async function apiCnpj(inf) {
         let infApi, retApi, infLog, retLog
         let token = inf && inf.token ? inf.token : gO.inf.token
         infApi = {
-            'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
+            'e': e, 'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
             'headers': { 'Authorization': token }
         };
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {

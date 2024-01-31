@@ -22,7 +22,7 @@ async function serverJucesp(inf) {
         async function pm2Stop() {
             let infCommandLine, retCommandLine
             // infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosJucesp/1_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosJucesp/2_SCRIPT.bat" "pm2"` }
-            infCommandLine = { 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperJucesp/2_SCRIPT.bat" "off" "hide" "WebScraperJucesp"` }
+            infCommandLine = { 'e': e, 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperJucesp/2_SCRIPT.bat" "off" "hide" "WebScraperJucesp"` }
             retCommandLine = await commandLine(infCommandLine);
             await new Promise(resolve => { setTimeout(resolve, 30000) })
             browser.close();
@@ -31,7 +31,7 @@ async function serverJucesp(inf) {
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         infGoogleSheets = {
-            'action': 'get',
+            'e': e, 'action': 'get',
             'id': gO.inf.sheetId,
             'tab': gO.inf.sheetTab,
             'range': range,
@@ -118,7 +118,7 @@ async function serverJucesp(inf) {
             // RESULTS
             let ok = false
             console.log(`${valuesLoop.length} | ${inf.value}`)
-            let retApiNire = await apiNire({ 'date': date, 'nire': inf.value, 'aut': aut })
+            let retApiNire = await apiNire({ 'e': e, 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
                 err = `$ [serverJucesp] FALSE: retApiNire`
                 console.log(err);
@@ -206,7 +206,7 @@ async function serverJucesp(inf) {
 
         // CHECK PAGE [PAGINA DE PESQUISA]
         value = await page.content()
-        retCheckPage = await checkPage({ 'body': value, 'search': `Pesquisa Avançada` });
+        retCheckPage = await checkPage({ 'e': e, 'body': value, 'search': `Pesquisa Avançada` });
         if (!retCheckPage.ret) {
             err = `$ Não encontrou a página de pesquisa`
             console.log(err);
@@ -230,13 +230,13 @@ async function serverJucesp(inf) {
         await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
         // IMPUT [DATA INÍCIO]
-        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date.replace(/[^0-9]/g, '')}` }
+        infImput = { 'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date.replace(/[^0-9]/g, '')}` }
         retImput = await imput(infImput)
 
         await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // IMPUT [DATA FIM]
-        infImput = { 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim', 'value': `${date.replace(/[^0-9]/g, '')}` }
+        infImput = { 'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaFim', 'value': `${date.replace(/[^0-9]/g, '')}` }
         retImput = await imput(infImput)
 
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -251,7 +251,7 @@ async function serverJucesp(inf) {
 
         // CHECK PAGE [COOKIE]
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
-        retCheckPage = await checkPage({ 'body': value, });
+        retCheckPage = await checkPage({ 'e': e, 'body': value, });
         if (!retCheckPage.ret) {
             err = `$ [serverJucesp] ${retCheckPage.msg}`
             console.log(err);
@@ -272,7 +272,7 @@ async function serverJucesp(inf) {
 
         // CHECK PAGE [LISTA DE NIRE's]
         value = await page.evaluate(() => document.querySelector('*').outerHTML);
-        retCheckPage = await checkPage({ 'body': value, });
+        retCheckPage = await checkPage({ 'e': e, 'body': value, });
         if (!retCheckPage.ret) {
             err = `$ [serverJucesp] ${retCheckPage.msg}`
             console.log(err);
@@ -316,7 +316,7 @@ async function serverJucesp(inf) {
 
             // CHECK PAGE [LISTA DE NIRE's]
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
-            retCheckPage = await checkPage({ 'body': value, });
+            retCheckPage = await checkPage({ 'e': e, 'body': value, });
             if (!retCheckPage.ret) {
                 err = `$ [serverJucesp] ${retCheckPage.msg}`
                 console.log(err);
@@ -340,7 +340,7 @@ async function serverJucesp(inf) {
         for (let i = 0; i < repet1; i++) {
             // CHECK PAGE [LISTA DE NIRE's]
             value = await page.evaluate(() => document.querySelector('*').outerHTML);
-            retCheckPage = await checkPage({ 'body': value, });
+            retCheckPage = await checkPage({ 'e': e, 'body': value, });
             if (!retCheckPage.ret) {
                 err = `$ [serverJucesp] ${retCheckPage.msg}`
                 console.log(err);

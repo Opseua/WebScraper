@@ -1,5 +1,5 @@
 // let infSendData, retSendData // 'logFun': true,
-// infSendData = { 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
+// infSendData = { 'e': e, 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
 // retSendData = await sendData(infSendData)
 // console.log(retSendData)
 
@@ -24,7 +24,7 @@ async function sendData(inf) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A32'
                 let sheetData = typeof inf.status1 === 'object' ? JSON.parse(inf.status1) : inf.status1
                 let infGoogleSheets = {
-                    'action': 'send',
+                    'e': e, 'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': range,
@@ -39,7 +39,7 @@ async function sendData(inf) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status2 ? gO.inf.sheetKepp.range.status2 : 'A34'
                 let sheetData = typeof inf.status2 === 'object' ? JSON.parse(inf.status2) : inf.status2
                 let infGoogleSheets = {
-                    'action': 'send',
+                    'e': e, 'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': range,
@@ -53,7 +53,7 @@ async function sendData(inf) {
             if (inf.results) {
                 let sheetData = typeof inf.results === 'object' ? JSON.parse(inf.results) : inf.results
                 let infGoogleSheets = {
-                    'action': 'send',
+                    'e': e, 'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': 'D**',

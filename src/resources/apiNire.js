@@ -25,9 +25,10 @@ async function apiNire(inf) {
 
         // API
         let infApi = {
-            'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
+            'e': e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
             'headers': { 'Cookie': aut }
-        }; let retApi = await api(infApi); if (!retApi.ret) {
+        };
+        let retApi = await api(infApi); if (!retApi.ret) {
             let err = `$ [apiNire] FALSE: retApi`
             console.log(err);
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
@@ -58,7 +59,7 @@ async function apiNire(inf) {
             ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
-            infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
+            infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
             retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
@@ -71,7 +72,7 @@ async function apiNire(inf) {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
 
                 // PEGAR A RAZÃO SOCIAL
-                infRegex = { 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
+                infRegex = { 'e': e, 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
                 retRegex = regex(infRegex);
                 if (!retRegex.ret || !retRegex.res['1']) {
                     ret['msg'] = `Razão Social do CNPJ não encontrada`;
@@ -84,7 +85,7 @@ async function apiNire(inf) {
                     let razaoSocial = retRegex.res['1']
 
                     // PEGAR TIPO DE EMPRESA DO CNPJ
-                    infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
+                    infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
                     retRegex = regex(infRegex);
                     if (!retRegex.ret || !retRegex.res['1']) {
                         ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
@@ -103,7 +104,7 @@ async function apiNire(inf) {
                             ret['ret'] = true;
                         } else {
                             // PEGAR DATA DE EMPRESA DO CNPJ
-                            infRegex = { 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
+                            infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['1']) {
                                 ret['msg'] = `Data do CNPJ não encontrada`;
