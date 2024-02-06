@@ -53,10 +53,10 @@ async function serverC6(inf) {
             gO.inf['sheetKepp'] = JSON.parse(json)
         } catch (e) {
             infApi = { // ###### → json/object
-                'e': e, 'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
+                'e': e, 'method': 'POST', 'url': `http://${windowGlobal.devSend.split('://')[1]}`,
                 'headers': { 'Content-Type': 'application/json' }, 'body': {
                     'fun': [{
-                        'securityPass': securityPass, 'retInf': false, 'name': 'notification',
+                        'securityPass': windowGlobal.securityPass, 'retInf': false, 'name': 'notification',
                         'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
                     }]
                 }
@@ -177,10 +177,10 @@ async function serverC6(inf) {
                         gO.inf['sheetKepp'] = JSON.parse(json)
                     } catch (e) {
                         infApi = { // ###### → json/object
-                            'e': e, 'method': 'POST', 'url': `http://${devSend.split('://')[1]}`,
+                            'e': e, 'method': 'POST', 'url': `http://${windowGlobal.devSend.split('://')[1]}`,
                             'headers': { 'Content-Type': 'application/json' }, 'body': {
                                 'fun': [{
-                                    'securityPass': securityPass, 'retInf': false, 'name': 'notification',
+                                    'securityPass': windowGlobal.securityPass, 'retInf': false, 'name': 'notification',
                                     'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
                                 }]
                             }
