@@ -359,7 +359,7 @@ async function serverC6(inf) {
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                             // CHECAR SE É CONTA ANTIGA OU NOVA
-                            let data = leadDate.split('/');
+                            let data = leadDate[0].split('/');
                             let day = parseInt(data[0], 10).toString().padStart(2, '0');
                             let mon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
                             let yea = parseInt(data[2], 10).toString().padStart(4, '0');
