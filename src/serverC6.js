@@ -358,8 +358,19 @@ async function serverC6(inf) {
                             leadDate = await pageResult.jsonValue();
                             await new Promise(resolve => { setTimeout(resolve, 1000) })
 
+                            // CHECAR SE É CONTA ANTIGA OU NOVA
+                            let data = leadDate.split('/');
+                            let day = parseInt(data[0], 10).toString().padStart(2, '0');
+                            let mon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
+                            let yea = parseInt(data[2], 10).toString().padStart(4, '0');
+                            // DATA ENCONTRADA EM TIMESTAMP SEM MILESEGUNDOS
+                            let dataC6 = new Date(yea, mon, day, 0, 0, 0); // ANO-MÊS-DIA 00:00:00
+                            dataC6 = Math.floor(dataC6.getTime() / 1000);
+                            // DIFERENÇA MAIR QUE 5 DIAS 'true' DO CONTRÁRIO 'false' | + DE 5 DIAS → JÁ POSSUI CONTA | - DE 5 DIAS → ABERTO SF
+                            dataC6 = (Number(dateHour().res.tim) - dataC6) > ((5 * 86400) + 86400) ? true : false
+
                             // STATUS1 [STATUS DA CONSULTA]
-                            statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `ABERTO SF ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
+                            statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `${dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF'} ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
                             infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
                             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                             retSendData = await sendData(infSendData)
@@ -371,7 +382,7 @@ async function serverC6(inf) {
                             let results = [[
                                 'ID AQUI',
                                 `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                                leadStatus == 'ENCONTRADO_CONTA' ? `ABERTO SF` : `INDICAÇÃO OK`,
+                                leadStatus == 'ENCONTRADO_CONTA' ? `${dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF'}` : `INDICAÇÃO OK`,
                                 leadDate[0]
                             ]]
                             results = results[0].join(conSpl)
