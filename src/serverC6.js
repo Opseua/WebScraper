@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 await import('./resources/@export.js')
 let e = import.meta.url, ee = e
 async function serverC6(inf) {
@@ -9,16 +8,21 @@ async function serverC6(inf) {
         else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
     }
     try {
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `[C6]\n` })
+        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `*** SERVER ***` })
 
-        let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
-        let element, cookies, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
-        let infButtonElement, retButtonElement, infGetTextElement, retGetTextElement, infFile, retFile, infLog, retLog, lastPage = false, err, conSpl, leads, leadsQtd, col, leadsTxt
-        let statusText, browser, page, pageValue, pageInput, pageImputs, pageResult, leadPageId, leadPageName, leadDate, leadRandomNames, leadLastAut = Number(time.tim), leadLastMan = Number(time.tim)
-        let infApi, retApi, json, leadDif = 50, leadsQtdOld = 9999, chromiumHeadless, scriptHour
+        let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex
+        let results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut
+        let infFile, retFile, infLog, retLog, err, conSpl, leads, leadsQtd, col
+        let statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull
+        let infApi, retApi, json, leadsQtdOld = 9999, chromiumHeadless, scriptHour, retClientSearch, retClientGetData, retClientImput, dataDayMonYea, dataDayMonYeaFull, dataRes, dataBoolean, imputRes
 
-        gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); let time = dateHour().res;
-        let repet1 = 1000, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
+        gO.inf['stop'] = false; let time = dateHour().res, mon, day
+        let lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
+
+        // CRIAR PASTA DOS REGISTROS
+        time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`;
+        infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }
+        retFile = await file(infFile);
 
         // ENCERRAR SCRIPT E INTERROMPER PM2
         async function pm2Stop() {
@@ -26,18 +30,12 @@ async function serverC6(inf) {
             // infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/1_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/2_SCRIPT.bat" "pm2"` }
             infCommandLine = { 'e': e, 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperC6/2_SCRIPT.bat" "off" "hide" "WebScraperC6"` }
             retCommandLine = await commandLine(infCommandLine);
-            await new Promise(resolve => { setTimeout(resolve, 30000) })
-            browser.close()
-            process.exit();
+            await new Promise(resolve => { setTimeout(resolve, 5000) });
+            browser.close(); process.exit();
         }
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-        infGoogleSheets = {
-            'e': e, 'action': 'get',
-            'id': gO.inf.sheetId,
-            'tab': gO.inf.sheetTab,
-            'range': range,
-        }
+        infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }
         retGoogleSheets = await googleSheets(infGoogleSheets);
         if (!retGoogleSheets.ret) {
             err = `$ [serverC6] Erro ao pegar dados para planilha`
@@ -65,22 +63,11 @@ async function serverC6(inf) {
             // ENCERRAR SCRIPT E INTERROMPER PM2
             await pm2Stop()
         }
-        aut = gO.inf.sheetKepp.autC6
-        col = gO.inf.sheetKepp.colC6
-        conSpl = gO.inf.sheetKepp.conSpl
-        leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
-        leadRandomNames = gO.inf.sheetKepp.randomNames
-        chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
-        scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
+        aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
+        leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
         // '0' → APARECE | '1' OCUTO
-        if (chromiumHeadless == '0') {
-            chromiumHeadless = false
-        } else if (chromiumHeadless == '1') {
-            chromiumHeadless = 'new'
-        } else {
-            chromiumHeadless = false
-        }
+        if (chromiumHeadless == '0') { chromiumHeadless = false } else if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
 
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }
@@ -89,25 +76,14 @@ async function serverC6(inf) {
 
         // INICIAR PUPPETEER
         browser = await _puppeteer.launch({
-            // headless: letter == 'D' ? false : 'new', // false | 'new'
             headless: chromiumHeadless, // false | 'new'
             args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-accelerated-2d-canvas',
-                '--no-first-run',
-                '--no-zygote',
-                // '--single-process',
-                '--disable-gpu',
-                '--disable-extensions',
+                '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run',
+                '--no-zygote', // '--single-process', '--disable-gpu', '--disable-extensions',
             ],
         });
         page = await browser.newPage();
-        await page.setViewport({
-            //width: 1280, height: 800
-            'width': 1024, 'height': 768
-        });
+        await page.setViewport({ 'width': 1024, 'height': 768 });
         // FECHAR ABA EM BRANCO 
         await (await browser.pages())[0].close();
 
@@ -144,24 +120,17 @@ async function serverC6(inf) {
 
         let whileQtd = 0, whileStop = false
         while (!whileStop) {
-            whileQtd++;
-            time = dateHour().res;
+            whileQtd++; time = dateHour().res;
 
             // SEG <> SAB | [??:00] <> [??:00]
             if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1]))) {
 
                 console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]` })
-
-                gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO_[TELEIN]'
+                gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO'
 
                 async function run() {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-                    infGoogleSheets = {
-                        'e': e, 'action': 'get',
-                        'id': gO.inf.sheetId,
-                        'tab': gO.inf.sheetTab,
-                        'range': range,
-                    }
+                    infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }
                     retGoogleSheets = await googleSheets(infGoogleSheets);
                     if (!retGoogleSheets.ret) {
                         err = `$ [serverC6] Erro ao pegar dados para planilha`
@@ -220,344 +189,87 @@ async function serverC6(inf) {
                             leadSobrenome = leadAdministrador[1]
                         }
 
-                        // STATUS1 [Checando se é da base]
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
+                        // CLIENTE: BUSCAR NA LUPA
+                        retClientSearch = await clientSearch({ 'page': page, 'leadCnpj': leadCnpj })
+                        if (!retClientSearch.ret) { console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT SEACH` }); browser.close(); process.exit(); }
+                        else { retClientSearch = retClientSearch.res.leadStatus }; leadStatus = retClientSearch
+
+                        // ZERAR VARIÁVEIS
+                        statusInf = 'STATUS NÃO DEFINIDO 1'; statusDate = ''; statusDateFull = ''
+
+                        if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD' || leadStatus == 'ENCONTRADO_EXPIRADO') {
+                            // LEAD DA BASE [SIM] ******************************************************************
+
+                            // CLIENTE: PEGAR DADOS DO CONTA/LEAD
+                            retClientGetData = await clientGetData({ 'page': page, 'leadCnpj': leadCnpj })
+                            if (!retClientGetData.ret) { console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); process.exit(); }
+                            else { retClientGetData = retClientGetData.res }; dataRes = retClientGetData.dataRes; dataDayMonYea = retClientGetData.dataDayMonYea;
+                            dataDayMonYeaFull = retClientGetData.dataDayMonYeaFull; dataBoolean = retClientGetData.dataBoolean;
+                            statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes;
+                            statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull
+                        }
+
+                        if (leadStatus == 'NADA_ENCONTRADO' || leadStatus == 'ENCONTRADO_EXPIRADO') {
+                            // CLIENTE: INDICAR → LEAD DA BASE [NÃO] | EXPIRADO
+                            retClientImput = await clientImput({
+                                'page': page, 'browser': browser, 'leadCnpj': leadCnpj, 'leadPrimeiroNome': leadPrimeiroNome,
+                                'leadSobrenome': leadSobrenome, 'leadEmail': leadEmail, 'leadTelefone': leadTelefone,
+                            })
+                            if (!retClientImput.ret) { console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT IMPUT` }); browser.close(); process.exit(); }
+                            else { retClientImput = retClientImput.res }; imputRes = retClientImput.imputRes
+
+                            // STATUS DE ACORDO COM O ERRO VERMELHO
+                            if (imputRes == 'Já existe um lead cadastrado com o CNPJ informado') {
+                                statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'INDICAÇÃO OUTRO ECE' : 'INDICAÇÃO OK'
+                            } else if (imputRes == 'Já existe um cliente cadastrado com o CNPJ informado') {
+                                statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF'
+                            } else if (imputRes == 'Já existe um lead e um cliente cadastrado com o CNPJ informado') {
+                                statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF'
+                            } else if (imputRes == 'Lead expirou' || imputRes == 'Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo') {
+                                statusInf = 'FORA DO PRAZO'
+                            } else if (imputRes == 'INDICAÇÃO OK') {
+                                statusInf = 'INDICAÇÃO OK'
+                            } else {
+                                statusInf = 'STATUS NÃO DEFINIDO 1'
+                            }
+                        }
+
+                        // STATUS1 [STATUS DA CONSULTA]
+                        statusText = `${leadCnpj} | ${statusInf} ${statusDate}`
+                        infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
                         console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
                         retSendData = await sendData(infSendData)
                         await page.screenshot({ path: `log/screenshot_C6.jpg` });
                         await new Promise(resolve => { setTimeout(resolve, 1000) })
 
-                        // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
-                        pageValue = await page.content()
-                        infRegex = { 'e': e, 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
-                        retRegex = regex(infRegex);
-                        if (!retRegex.ret || !retRegex.res['1']) {
-                            err = `$ Não achou o ID da lupa de pesquisa`
+                        // MANDAR PARA A PLANILHA O RESULTADO 
+                        time = dateHour().res;
+                        results = [[
+                            'ID AQUI',
+                            `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
+                            statusInf,
+                            statusDateFull
+                        ]]
+                        results = results[0].join(conSpl)
+                        infGoogleSheets = {
+                            'e': e, 'action': 'send',
+                            'id': gO.inf.sheetId,
+                            'tab': gO.inf.sheetTab,
+                            'range': `${col}${leadLinha}`,
+                            'values': [[results]]
+                        }
+                        retGoogleSheets = await googleSheets(infGoogleSheets);
+                        if (!retGoogleSheets.ret) {
+                            err = `$ [serverC6] Erro ao enviar dados para planilha`
                             console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                            retSendData = await sendData(infSendData)
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
                             retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6_err_2.jpg` });
-                            browser.close()
-                            process.exit();
+                            await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
+                            // ENCERRAR SCRIPT E INTERROMPER PM2
+                            await pm2Stop()
                         }
-                        retRegex = retRegex.res['1']
-                        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
-                        // BUSCAR LEAD NA LUPA
-                        pageInput = await page.$(`input[id="${retRegex}"]`);
-                        if (!pageInput) {
-                            err = `$ Não achou o campo de imput da lupa`
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                            retSendData = await sendData(infSendData)
-                            pageValue = await page.content()
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                            retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6_err_3.jpg` });
-                            browser.close()
-                            process.exit();
-                        }
-                        await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        await page.type(`input[id="${retRegex}"]`, leadCnpj);
-                        await new Promise(resolve => setTimeout(resolve, 750));
-                        await pageInput.press('Enter');
-                        await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                        // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
-                        pageResult = await page.waitForFunction(() => {
-                            let conteudo = document.body.innerText;
-                            if (conteudo.includes('NOME DA CONTA')) {
-                                return 'ENCONTRADO_CONTA';
-                            } else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) {
-                                return 'ENCONTRADO_EXPIRADO';
-                            } else if (conteudo.includes('NOME COMPLETO')) {
-                                return 'ENCONTRADO_LEAD';
-                            } else if (conteudo.includes('Nenhum resultado para')) {
-                                return 'NADA_ENCONTRADO';
-                            }
-                            return false;
-                        }, { timeout: 30000 }).catch(async () => {
-                            return false;
-                        });
-                        if (!pageResult) {
-                            err = `$ Não achou o resultado da consulta`
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                            retSendData = await sendData(infSendData)
-                            pageValue = await page.content()
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                            retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6_err_4.jpg` });
-                            browser.close()
-                            process.exit();
-                        }
-                        leadStatus = await pageResult.jsonValue();
-                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${leadStatus}` });
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                        await new Promise(resolve => setTimeout(resolve, 1500));
-
-                        // LEAD DA BASE [SIM] ******************************************************************
-                        if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD') {
-                            // PEGAR O ID DO LINK DA PÁGINA DO LEAD
-                            pageValue = await page.content()
-                            infRegex = { 'e': e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
-                            retRegex = regex(infRegex);
-                            if (!retRegex.ret || !retRegex.res['1']) {
-                                err = `$ Não achou o ID do link da página do lead`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                                retSendData = await sendData(infSendData)
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                                retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6__err_5.jpg` });
-                                browser.close()
-                                process.exit();
-                            }
-                            leadPageId = retRegex.res['1']
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // STATUS1 [Abrindo dados do cliente]
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-                            retSendData = await sendData(infSendData)
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // CLICAR NO LINK DO ID DO LEAD
-                            let linkSelector = `a[data-recordid="${leadPageId}"]`;
-                            await page.waitForSelector(linkSelector);
-                            let link = await page.$(linkSelector);
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-                            await link.click();
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // ESPERAR A DATA DO LEAD APARECER
-                            pageResult = await page.waitForFunction(() => {
-                                const elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
-                                if (elements.length > 0) {
-                                    const values = Array.from(elements).map(element => element.textContent.trim());
-                                    return values;
-                                }
-                                return false;
-                            }, { timeout: 30000 }).catch(async () => { return false; });
-                            if (!pageResult) {
-                                err = `$ Não achou a data de abertura`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                                retSendData = await sendData(infSendData)
-                                pageValue = await page.content()
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                                retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6_err_6.jpg` });
-                                browser.close()
-                                process.exit();
-                            }
-                            leadDate = await pageResult.jsonValue();
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // CHECAR SE É CONTA ANTIGA OU NOVA
-                            let data = leadDate[0].split('/');
-                            let day = parseInt(data[0], 10).toString().padStart(2, '0');
-                            let mon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
-                            let yea = parseInt(data[2], 10).toString().padStart(4, '0');
-                            // DATA ENCONTRADA EM TIMESTAMP SEM MILESEGUNDOS
-                            let dataC6 = new Date(yea, mon, day, 0, 0, 0); // ANO-MÊS-DIA 00:00:00
-                            dataC6 = Math.floor(dataC6.getTime() / 1000);
-                            // DIFERENÇA MAIR QUE 5 DIAS 'true' DO CONTRÁRIO 'false' | + DE 5 DIAS → JÁ POSSUI CONTA | - DE 5 DIAS → ABERTO SF
-                            dataC6 = (Number(dateHour().res.tim) - dataC6) > ((5 * 86400) + 86400) ? true : false
-
-                            // STATUS1 [STATUS DA CONSULTA]
-                            statusText = `${leadCnpj} | ${leadStatus == 'ENCONTRADO_CONTA' ? `${dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF'} ${leadDate[0].substring(0, 10)}` : `INDICAÇÃO OK ${leadDate[0].substring(0, 10)}`}`
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-                            retSendData = await sendData(infSendData)
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // MANDAR PARA A PLANILHA O RESULTADO 
-                            time = dateHour().res;
-                            let results = [[
-                                'ID AQUI',
-                                `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                                leadStatus == 'ENCONTRADO_CONTA' ? `${dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF'}` : `INDICAÇÃO OK`,
-                                leadDate[0]
-                            ]]
-                            results = results[0].join(conSpl)
-                            infGoogleSheets = {
-                                'e': e, 'action': 'send',
-                                'id': gO.inf.sheetId,
-                                'tab': gO.inf.sheetTab,
-                                'range': `${col}${leadLinha}`,
-                                'values': [[results]]
-                            }
-                            retGoogleSheets = await googleSheets(infGoogleSheets);
-                            if (!retGoogleSheets.ret) {
-                                err = `$ [serverC6] Erro ao enviar dados para planilha`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                                retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
-                                // ENCERRAR SCRIPT E INTERROMPER PM2
-                                await pm2Stop()
-                            }
-
-                            // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                            await page.goBack();
-                            await new Promise(resolve => setTimeout(resolve, 1500));
-                            await page.goBack();
-
-                        } else {
-                            // LEAD DA BASE [NÃO] ******************************************************************
-
-                            // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                            await page.goBack();
-                            await new Promise(resolve => setTimeout(resolve, 3000));
-
-                            // ESPERAR OS CAMPOS APARECEREM
-                            pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
-                            if (!pageInput) {
-                                err = `$ Formulário não apareceu`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                                retSendData = await sendData(infSendData)
-                                pageValue = await page.content()
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                                retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6_erro_8.jpg` });
-                                browser.close()
-                                process.exit();
-                            }
-
-                            // REGEX PARA PEGAR O ID DOS CAMPOS
-                            pageValue = await page.content()
-                            infRegex = { 'e': e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
-                            retRegex = regex(infRegex);
-                            if (!retRegex.ret || !retRegex.res['5']) {
-                                err = `$ Não achou o ID dos campos`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                                retSendData = await sendData(infSendData)
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                                retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6_err_9.jpg` });
-                                browser.close()
-                                process.exit();
-                            }
-                            retRegex = retRegex.res['5']
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // STATUS1 [Indicando...]
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-                            retSendData = await sendData(infSendData)
-                            pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            for (let [index, value] of retRegex.entries()) {
-                                pageInput = await page.$(`input[id="${value}"]`);
-                                if (!pageInput) {
-                                    err = `$ Não achou o campo de imput [${index}]`
-                                    console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                    infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                                    retSendData = await sendData(infSendData)
-                                    pageValue = await page.content()
-                                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                                    retLog = await log(infLog);
-                                    await page.screenshot({ path: `log/screenshot_C6_err_10.jpg` });
-                                    browser.close()
-                                    process.exit();
-                                }
-                                await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
-                                await new Promise(resolve => setTimeout(resolve, 500));
-                                await page.type(`input[id="${value}"]`, pageImputs[index]);
-                                await new Promise(resolve => { setTimeout(resolve, 750) });
-                            }
-
-                            // CLICAR NO BOTÃO 'Confirmar'
-                            await page.click('.slds-button.slds-button--neutral.button.uiButton--default.uiButton--brand.uiButton');
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
-                            pageResult = await Promise.race([
-                                page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.contentRegion.comm-layout-column > div > div > div > div.container.EDIT.forceQuickActionLayout > div.pageLevelErrors > div > div', { timeout: 15000 }).then(() => false),
-                                page.waitForNavigation({ timeout: 15000 }).then(() => true),
-                            ]).catch(() => 'NADA_ACONTECEU');
-
-                            time = dateHour().res
-                            pageValue = await page.content()
-                            if (!pageResult) {
-                                if (pageValue.includes(`Já existe um lead cadastrado com o CNPJ informado`)) {
-                                    leadStatus = `INDICAÇÃO OUTRO ECE`
-                                } else if (pageValue.includes(`Já existe um cliente cadastrado com o CNPJ informado`)) {
-                                    leadStatus = `JÁ POSSUI CONTA`
-                                } else if (pageValue.includes(`Já existe um lead e um cliente cadastrado com o CNPJ informado`)) {
-                                    leadStatus = `JÁ POSSUI CONTA`
-                                } else if (pageValue.includes(`Lead expirou`) || pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
-                                    leadStatus = `FORA DO PRAZO`
-                                } else {
-                                    if (pageValue.includes(`O formato correto para o telefone`)) {
-                                        leadStatus = `ALERTA: telefone inválido`
-                                    } else if (pageValue.includes(`CNPJ informado é inválido`)) {
-                                        leadStatus = `ALERTA: CNPJ inválido`
-                                    } else if (pageValue.includes(`endereço de email inválido`)) {
-                                        leadStatus = `ALERTA: email inválido`
-                                    } else if (pageValue.includes(`Os seguintes campos obrigatórios devem ser preenchidos`)) {
-                                        leadStatus = `ALERTA: campo não preenchido`
-                                    } else {
-                                        leadStatus = `ALERTA: status não identificado`
-                                        let infFile, retFile
-                                        infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
-                                        retFile = await file(infFile);
-                                    }
-                                }
-                            } else {
-                                leadStatus = `INDICAÇÃO OK`
-                            }
-
-                            // STATUS1 [STATUS DA CONSULTA]
-                            statusText = `${leadCnpj} | ${leadStatus}`
-                            infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-                            retSendData = await sendData(infSendData)
-                            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                            await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-                            // MANDAR PARA A PLANILHA O RESULTADO
-                            time = dateHour().res;
-                            let results = [[
-                                'ID AQUI',
-                                `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                                leadStatus,
-                            ]]
-                            results = results[0].join(conSpl)
-                            infGoogleSheets = {
-                                'e': e, 'action': 'send',
-                                'id': gO.inf.sheetId,
-                                'tab': gO.inf.sheetTab,
-                                'range': `${col}${leadLinha}`,
-                                'values': [[results]]
-                            }
-                            retGoogleSheets = await googleSheets(infGoogleSheets);
-                            if (!retGoogleSheets.ret) {
-                                err = `$ [serverC6] Erro ao enviar dados para planilha`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                                retLog = await log(infLog);
-                                await page.screenshot({ path: `log/screenshot_C6_err_11.jpg` });
-                                // ENCERRAR SCRIPT E INTERROMPER PM2
-                                await pm2Stop()
-                            }
-
-                            // VOLTAR PARA A PÁGINA DE INDICAÇÃO
-                            if (leadStatus == 'INDICAÇÃO OK') {
-                                await page.goBack();
-                            }
-
-                        }
+                        // console.log(leadStatus, statusInf, statusDate, statusDateFull, imputRes)
                     }
                 }
                 await run()

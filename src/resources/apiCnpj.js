@@ -20,7 +20,7 @@ async function apiCnpj(inf) {
         };
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
             let err = `$ [apiCnpj] FALSE: retApi`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
+            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
             retLog = await log(infLog);
             return retApi
