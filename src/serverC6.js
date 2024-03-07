@@ -178,7 +178,7 @@ async function serverC6(inf) {
                             leadStatus = leadInf[1].replace(/^\s+/g, '')
                             leadCnpj = leadInf[2].replace(/^\s+/g, '')
                             leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
-                            leadAdministrador = leadInf[4].length > 4 ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
+                            leadAdministrador = leadInf[4].length > 4 && leadInf[4].includes(' ') ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
                             leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'
                             leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###')
                             if (leadAdministrador.length < 2) {
@@ -229,6 +229,16 @@ async function serverC6(inf) {
                                 statusInf = 'FORA DO PRAZO'
                             } else if (imputRes == 'INDICAÇÃO OK') {
                                 statusInf = 'INDICAÇÃO OK'
+                            } else if (imputRes == 'ALERTA: telefone inválido') {
+                                statusInf = 'ALERTA: telefone inválido'
+                            } else if (imputRes == 'ALERTA: CNPJ inválido') {
+                                statusInf = 'ALERTA: CNPJ inválido'
+                            } else if (imputRes == 'ALERTA: email inválido') {
+                                statusInf = 'ALERTA: email inválido'
+                            } else if (imputRes == 'ALERTA: campo não preenchido') {
+                                statusInf = 'ALERTA: campo não preenchido'
+                            } else if (imputRes == 'ALERTA: status não identificado') {
+                                statusInf = 'ALERTA: status não identificado'
                             } else {
                                 statusInf = 'STATUS NÃO DEFINIDO 1'
                             }
