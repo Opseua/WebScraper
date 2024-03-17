@@ -30,12 +30,12 @@ async function navigate(inf) {
             let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
         }
-    } catch (e) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
+    } catch (err) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let err = `$ [navigate] TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': err }
+        let errMsg = `$ [navigate] TRYCATCH Script erro!`
+        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         let retSendData = await sendData(infSendData)
     };
     return {

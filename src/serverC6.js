@@ -49,7 +49,7 @@ async function serverC6(inf) {
             json = retGoogleSheets.res[0][0]
             json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
             gO.inf['sheetKepp'] = JSON.parse(json)
-        } catch (e) {
+        } catch (err) {
             infApi = { // ###### → json/object
                 'e': e, 'method': 'POST', 'url': `http://${globalWindow.devSend.split('://')[1]}`,
                 'headers': { 'Content-Type': 'application/json' }, 'body': {
@@ -144,7 +144,7 @@ async function serverC6(inf) {
                         json = retGoogleSheets.res[0][0]
                         json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
                         gO.inf['sheetKepp'] = JSON.parse(json)
-                    } catch (e) {
+                    } catch (err) {
                         infApi = { // ###### → json/object
                             'e': e, 'method': 'POST', 'url': `http://${globalWindow.devSend.split('://')[1]}`,
                             'headers': { 'Content-Type': 'application/json' }, 'body': {
@@ -315,12 +315,12 @@ async function serverC6(inf) {
                 await pm2Stop()
             }
         }
-    } catch (e) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
+    } catch (err) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let err = `$ [serverC6] TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': err }
+        let errMsg = `$ [serverC6] TRYCATCH Script erro!`
+        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         let retSendData = await sendData(infSendData)
     };
     return {

@@ -29,9 +29,9 @@ async function apiNire(inf) {
             'headers': { 'Cookie': aut }
         };
         let retApi = await api(infApi); if (!retApi.ret) {
-            let err = `$ [apiNire] FALSE: retApi`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApi }
+            let errMsg = `$ [apiNire] FALSE: retApi`
+            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
             retLog = await log(infLog);
             return retApi
         } else { retApi = retApi.res }
@@ -51,9 +51,9 @@ async function apiNire(inf) {
         // CHECAR SE ENCONTROU NO BODY UM NIRE VÁLIDO (CNPJ JÁ ESTÁ AQUI)
         if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj') && !texto.includes('mas houve um problema em nosso servidor')) {
             // ### ENCONTROU: NÃO
-            let err = `$ [apiNire] NIRE_INVALIDO`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+            let errMsg = `$ [apiNire] NIRE_INVALIDO`
+            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
             retLog = await log(infLog);
             ret['msg'] = `NIRE inválido`;
             ret['ret'] = true;
@@ -64,9 +64,9 @@ async function apiNire(inf) {
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
                 ret['ret'] = true;
-                let err = `$ [apiNire] ${ret.msg}`
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                let errMsg = `$ [apiNire] ${ret.msg}`
+                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+                infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                 retLog = await log(infLog);
             } else {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
@@ -77,9 +77,9 @@ async function apiNire(inf) {
                 if (!retRegex.ret || !retRegex.res['1']) {
                     ret['msg'] = `Razão Social do CNPJ não encontrada`;
                     ret['ret'] = true;
-                    let err = `$ [apiNire] ${ret.msg}`
-                    console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                    let errMsg = `$ [apiNire] ${ret.msg}`
+                    console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                     retLog = await log(infLog);
                 } else {
                     let razaoSocial = retRegex.res['1']
@@ -90,9 +90,9 @@ async function apiNire(inf) {
                     if (!retRegex.ret || !retRegex.res['1']) {
                         ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
                         ret['ret'] = true;
-                        let err = `$ [apiNire] ${ret.msg}`
-                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                        let errMsg = `$ [apiNire] ${ret.msg}`
+                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                         retLog = await log(infLog);
                     } else {
                         let tipo = retRegex.res['1']
@@ -109,9 +109,9 @@ async function apiNire(inf) {
                             if (!retRegex.ret || !retRegex.res['1']) {
                                 ret['msg'] = `Data do CNPJ não encontrada`;
                                 ret['ret'] = true;
-                                let err = `$ [apiNire] ${ret.msg}`
-                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': texto }
+                                let errMsg = `$ [apiNire] ${ret.msg}`
+                                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                                 retLog = await log(infLog);
                             } else {
                                 let data = retRegex.res['1']
@@ -135,12 +135,12 @@ async function apiNire(inf) {
             let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
         }
-    } catch (e) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': e, 'catchGlobal': false });
+    } catch (err) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let err = `$ [apiNire] TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': err }
+        let errMsg = `$ [apiNire] TRYCATCH Script erro!`
+        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         let retSendData = await sendData(infSendData)
     };
     return {
