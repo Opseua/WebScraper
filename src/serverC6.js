@@ -8,109 +8,83 @@ async function serverC6(inf) {
         else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
     }
     try {
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `*** SERVER ***` })
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `*** SERVER ***` })
 
-        let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex
-        let results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut
-        let infFile, retFile, infLog, retLog, err, conSpl, leads, leadsQtd, col
-        let statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull
-        let infApi, retApi, json, leadsQtdOld = 9999, chromiumHeadless, scriptHour, retClientSearch, retClientGetData, retClientImput, dataDayMonYea, dataDayMonYeaFull, dataRes, dataBoolean, imputRes
-
-        gO.inf['stop'] = false; let time = dateHour().res, mon, day
-        let lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = 'INDICAR_MANUAL'
+        let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex, results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut, infCommandLine, retCommandLine, infApi, retApi
+        let infFile, retFile, infLog, retLog, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull, json
+        let chromiumHeadless, scriptHour, retClientSearch, retClientGetData, retClientImput, dataDayMonYea, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
+        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'INDICAR_AUTOMATICO', 'SOMENTE_CONSULTAR'] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
+        tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = tabsInf.name[0]
 
         // CRIAR PASTA DOS REGISTROS
-        time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`;
-        infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }
-        retFile = await file(infFile);
+        let time = dateHour().res, mon, day; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; let secAwaitNewCheck = 60, startup = Math.floor(Date.now() / 1000)
+        infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }; retFile = await file(infFile);
 
-        // ENCERRAR SCRIPT E INTERROMPER PM2
+        // ENCERRAR SCRIPT E INTERROMPER PM2 | NTFY
         async function pm2Stop() {
-            let infCommandLine, retCommandLine
-            // infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/1_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosC6/2_SCRIPT.bat" "pm2"` }
             infCommandLine = { 'e': e, 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperC6/2_SCRIPT.bat" "off" "hide" "WebScraperC6"` }
-            retCommandLine = await commandLine(infCommandLine);
-            await new Promise(resolve => { setTimeout(resolve, 5000) });
-            browser.close(); process.exit();
-        }
+            retCommandLine = await commandLine(infCommandLine); await new Promise(resolve => { setTimeout(resolve, 7000) }); browser.close(); process.exit();
+        }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) }
+
+        // CONSUMO DE MÉMORIA RAM (A CADA 30 MINUTOS)
+        setInterval(() => {
+            _exec('wmic os get TotalVisibleMemorySize', (error, stdout, stderr) => {
+                if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rT = parseInt(stdout.split('\n')[1].trim());
+                _exec('wmic os get FreePhysicalMemory', (error, stdout, stderr) => {
+                    if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rF = parseInt(stdout.split('\n')[1].trim()); let rU = Number(((rT - rF) / rT) * 100).toFixed(0);
+                    let msg = `RAM USADA: ${rU}%`; console.log(msg); if (rU > 95) { sendNtfy({ 'titleText': `ALERTA\n${msg}` }) }
+                });
+            });
+        }, 1800 * 1000);
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-        infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }
-        retGoogleSheets = await googleSheets(infGoogleSheets);
+        infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }; retGoogleSheets = await googleSheets(infGoogleSheets);
         if (!retGoogleSheets.ret) {
-            err = `$ [serverC6] Erro ao pegar dados para planilha`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-            retLog = await log(infLog);
+            err = `$ [serverC6] Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
             // ENCERRAR SCRIPT E INTERROMPER PM2
             await pm2Stop()
-        }
-        try {
-            json = retGoogleSheets.res[0][0]
-            json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
+        }; try {
+            json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '');
             gO.inf['sheetKepp'] = JSON.parse(json)
-        } catch (err) {
-            infApi = { // ###### → json/object
-                'e': e, 'method': 'POST', 'url': `http://${globalWindow.devSend.split('://')[1]}`,
-                'headers': { 'Content-Type': 'application/json' }, 'body': {
-                    'fun': [{
-                        'securityPass': globalWindow.securityPass, 'retInf': false, 'name': 'notification',
-                        'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
-                    }]
-                }
-            };
-            retApi = await api(infApi);
+        } catch (catchE) {
+            sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
             // ENCERRAR SCRIPT E INTERROMPER PM2
             await pm2Stop()
         }
-        aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
-        leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
+        aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadRandomNames = gO.inf.sheetKepp.randomNames;
+        chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
-        // '0' → APARECE | '1' OCUTO
+        // '0' → APARECE | '1' → OCULTO
         if (chromiumHeadless == '0') { chromiumHeadless = false } else if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
 
         // STATUS1 [Iniciando script, aguarde]
-        infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
+        infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
         retSendData = await sendData(infSendData)
 
-        // INICIAR PUPPETEER
+        // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({
-            headless: chromiumHeadless, // false | 'new'
-            args: [
+            headless: chromiumHeadless, args: [ // false | 'new'
                 '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run',
                 '--no-zygote', // '--single-process', '--disable-gpu', '--disable-extensions',
             ],
-        });
-        page = await browser.newPage();
-        await page.setViewport({ 'width': 1024, 'height': 768 });
-        // FECHAR ABA EM BRANCO 
-        await (await browser.pages())[0].close();
+        }); page = await browser.newPage(); await page.setViewport({ 'width': 1024, 'height': 768 }); await (await browser.pages())[0].close();
 
         // COOKIE [SET]
-        infCookiesGetSet = { 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut }
-        retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
+        infCookiesGetSet = { 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut }; retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 
         // ABRIR PÁGINA DE BUSCA GLOBAL
         async function openHome() {
-            await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, {
-                waitUntil: 'networkidle2'
-            });
-            await new Promise(resolve => { setTimeout(resolve, 1000) })
-            await page.screenshot({ path: `log/screenshot_C6.jpg` });
-        }
-        await openHome()
-        await new Promise(resolve => { setTimeout(resolve, 2000) })
+            await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
+            await new Promise(resolve => { setTimeout(resolve, 1000) }); await page.screenshot({ path: `log/screenshot_C6.jpg` });
+        }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content()
         if (pageValue.includes('Esqueci minha senha')) {
-            err = `$ Cookie inválido!`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
+            err = `$ Cookie inválido!`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
+            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; retSendData = await sendData(infSendData)
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_err_1.jpg` });
             // ENCERRAR SCRIPT E INTERROMPER PM2
             await pm2Stop()
@@ -118,80 +92,66 @@ async function serverC6(inf) {
 
         // **************************************************************************************************************
 
-        let whileQtd = 0, whileStop = false
         while (!whileStop) {
-            whileQtd++; time = dateHour().res;
-
+            time = dateHour().res;
             // SEG <> SAB | [??:00] <> [??:00]
-            if (['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1]))) {
+            if (!(['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1])))) {
+                // STATUS1 [Fora do horário permitido]
+                infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
 
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `LOOP [${whileQtd}${whileQtd % 15 === 0 ? '*' : ''}]` })
-                gO.inf.sheetTab = whileQtd % 2 !== 0 ? 'INDICAR_MANUAL' : 'INDICAR_AUTOMATICO'
+                // ENCERRAR SCRIPT E INTERROMPER PM2
+                await pm2Stop()
+            } else {
+                // DEFINIR ABA ATUAL
+                tabsInf['index'] = tabsInf.index < (tabsInf.name.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.name[tabsInf.index];
 
-                async function run() {
+                if ((tabsInf.lastCheck[tabsInf.index]) > Math.floor(Date.now() / 1000)) {
+                    // IGNORAR CHECAGEM
+                    logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `IGNORADA | ${gO.inf.sheetTab}` })
+                } else {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-                    infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }
-                    retGoogleSheets = await googleSheets(infGoogleSheets);
+                    infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }; retGoogleSheets = await googleSheets(infGoogleSheets);
                     if (!retGoogleSheets.ret) {
-                        err = `$ [serverC6] Erro ao pegar dados para planilha`
-                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                        retLog = await log(infLog);
+                        err = `$ [serverC6] Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
+                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
                         // ENCERRAR SCRIPT E INTERROMPER PM2
                         await pm2Stop()
-                    }
-                    try {
-                        json = retGoogleSheets.res[0][0]
-                        json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
+                    }; try {
+                        json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
                         gO.inf['sheetKepp'] = JSON.parse(json)
-                    } catch (err) {
-                        infApi = { // ###### → json/object
-                            'e': e, 'method': 'POST', 'url': `http://${globalWindow.devSend.split('://')[1]}`,
-                            'headers': { 'Content-Type': 'application/json' }, 'body': {
-                                'fun': [{
-                                    'securityPass': globalWindow.securityPass, 'retInf': false, 'name': 'notification',
-                                    'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': gO.inf.sheetTab }
-                                }]
-                            }
-                        };
-                        retApi = await api(infApi);
+                    } catch (catchE) {
+                        sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
                         // ENCERRAR SCRIPT E INTERROMPER PM2
                         await pm2Stop()
                     }
-                    aut = gO.inf.sheetKepp.autC6
-                    col = gO.inf.sheetKepp.colC6
-                    conSpl = gO.inf.sheetKepp.conSpl
-                    leadsQtd = Number(gO.inf.sheetKepp.leadsQtd)
-                    leadRandomNames = gO.inf.sheetKepp.randomNames
-                    chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless
-                    scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
+                    aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
+                    leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
-                    // CHECAR SE TEM LEAD PENDENTE
-                    if (leadsQtd > 0) {
+                    logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `LEADS: ${tabsInf.leadsQtd[tabsInf.index]} | ${gO.inf.sheetTab}` })
+
+                    if (tabsInf.leadsQtd[tabsInf.index] == 0) {
+                        // STATUS1 [Nada pendente, esperando 2 minutos...] (NOVA CHACAGEM EM x SEGUNDOS)
+                        tabsInf.lastCheck[tabsInf.index] = Math.floor(Date.now() / 1000) + secAwaitNewCheck;
+                        infSendData = { 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` }; retSendData = await sendData(infSendData)
+                    } else {
                         leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`)
 
                         // DADOS DO LEAD
                         let leadInf, leadLinha, leadStatus, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome
                         for (let [index, value] of leads.entries()) {
-                            leadInf = value.split(conSpl)
-                            leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', '')
-                            leadStatus = leadInf[1].replace(/^\s+/g, '')
-                            leadCnpj = leadInf[2].replace(/^\s+/g, '')
-                            leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
+                            leadInf = value.split(conSpl); leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', ''); leadStatus = leadInf[1].replace(/^\s+/g, '')
+                            leadCnpj = leadInf[2].replace(/^\s+/g, ''); leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
                             leadAdministrador = leadInf[4].length > 4 && leadInf[4].includes(' ') ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
-                            leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'
-                            leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###')
+                            leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'; leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###')
                             if (leadAdministrador.length < 2) {
-                                leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
-                                leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
-                            }
-                            leadPrimeiroNome = leadAdministrador[0]
-                            leadSobrenome = leadAdministrador[1]
+                                leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
+                            }; leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]
                         }
 
                         // CLIENTE: BUSCAR NA LUPA
                         retClientSearch = await clientSearch({ 'page': page, 'leadCnpj': leadCnpj })
-                        if (!retClientSearch.ret) { console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT SEACH` }); browser.close(); process.exit(); }
+                        if (!retClientSearch.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT SEACH` }); browser.close(); process.exit(); }
                         else { retClientSearch = retClientSearch.res.leadStatus }; leadStatus = retClientSearch
 
                         // ZERAR VARIÁVEIS
@@ -199,23 +159,23 @@ async function serverC6(inf) {
 
                         if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD' || leadStatus == 'ENCONTRADO_EXPIRADO') {
                             // LEAD DA BASE [SIM] ******************************************************************
-
                             // CLIENTE: PEGAR DADOS DO CONTA/LEAD
                             retClientGetData = await clientGetData({ 'page': page, 'leadCnpj': leadCnpj })
-                            if (!retClientGetData.ret) { console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); process.exit(); }
+                            if (!retClientGetData.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); process.exit(); }
                             else { retClientGetData = retClientGetData.res }; dataRes = retClientGetData.dataRes; dataDayMonYea = retClientGetData.dataDayMonYea;
                             dataDayMonYeaFull = retClientGetData.dataDayMonYeaFull; dataBoolean = retClientGetData.dataBoolean;
-                            statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes;
-                            statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull
+                            statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull
                         }
 
-                        if (leadStatus == 'NADA_ENCONTRADO' || leadStatus == 'ENCONTRADO_EXPIRADO') {
+                        if (gO.inf.sheetTab == 'SOMENTE_CONSULTAR') {
+                            statusInf = statusInf.includes(`STATUS NÃO DEFINIDO`) ? 'NADA ENCONTRADO' : leadStatus == 'ENCONTRADO_EXPIRADO' ? 'FORA DO PRAZO' : statusInf
+                        } else if (leadStatus == 'NADA_ENCONTRADO' || leadStatus == 'ENCONTRADO_EXPIRADO') {
                             // CLIENTE: INDICAR → LEAD DA BASE [NÃO] | EXPIRADO
                             retClientImput = await clientImput({
                                 'page': page, 'browser': browser, 'leadCnpj': leadCnpj, 'leadPrimeiroNome': leadPrimeiroNome,
                                 'leadSobrenome': leadSobrenome, 'leadEmail': leadEmail, 'leadTelefone': leadTelefone,
                             })
-                            if (!retClientImput.ret) { console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT IMPUT` }); browser.close(); process.exit(); }
+                            if (!retClientImput.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT IMPUT` }); browser.close(); process.exit(); }
                             else { retClientImput = retClientImput.res }; imputRes = retClientImput.imputRes
 
                             // STATUS DE ACORDO COM O ERRO VERMELHO
@@ -245,35 +205,22 @@ async function serverC6(inf) {
                         }
 
                         // STATUS1 [STATUS DA CONSULTA]
-                        statusText = `${leadCnpj} | ${statusInf} ${statusDate}`
-                        infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
-                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-                        retSendData = await sendData(infSendData)
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                        await new Promise(resolve => { setTimeout(resolve, 1000) })
+                        statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
+                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
+                        await page.screenshot({ path: `log/screenshot_C6.jpg` }); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
-                        time = dateHour().res;
-                        results = [[
+                        time = dateHour().res; results = [[
                             'ID AQUI',
                             `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
                             statusInf,
                             statusDateFull
-                        ]]
-                        results = results[0].join(conSpl)
-                        infGoogleSheets = {
-                            'e': e, 'action': 'send',
-                            'id': gO.inf.sheetId,
-                            'tab': gO.inf.sheetTab,
-                            'range': `${col}${leadLinha}`,
-                            'values': [[results]]
-                        }
+                        ]]; results = results[0].join(conSpl)
+                        infGoogleSheets = { 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results]] }
                         retGoogleSheets = await googleSheets(infGoogleSheets);
                         if (!retGoogleSheets.ret) {
-                            err = `$ [serverC6] Erro ao enviar dados para planilha`
-                            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
-                            retLog = await log(infLog);
+                            err = `$ [serverC6] Erro ao enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
                             await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
                             // ENCERRAR SCRIPT E INTERROMPER PM2
                             await pm2Stop()
@@ -282,45 +229,23 @@ async function serverC6(inf) {
                         // console.log(leadStatus, statusInf, statusDate, statusDateFull, imputRes)
                     }
                 }
-                await run()
 
-                // ESPERAR PRÓXIMO LOOP
-                if (leadsQtd < 2 && (leadsQtdOld < 2 || leadsQtdOld == 9999)) {
-                    time = dateHour().res;
-                    console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `## ESPERANDO DELAY PARA O PRÓXIMO LOOP ##` });
-
-                    // STATUS1 [Nada pendente, esperando 2 minutos...]
-                    infSendData = { 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` }
-                    retSendData = await sendData(infSendData)
-
-                    // F5 | COOKIE KEEP
-                    if (whileQtd % 15 === 0) {
-                        await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, {
-                            waitUntil: 'networkidle2'
-                        });
-                    }
-
-                    if (leadsQtdOld < 2) {
-                        await new Promise(resolve => { setTimeout(resolve, 50000) }); // 50000 → 50 SEGUNDOS
-                    }
-                }
-                leadsQtdOld = leadsQtd
-            } else {
-                // STATUS1 [Fora do horário permitido]
-                infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-                retSendData = await sendData(infSendData)
-
-                // ENCERRAR SCRIPT E INTERROMPER PM2
-                await pm2Stop()
+                // F5 | COOKIE KEEP (CASO NENHUMA ABA TENHA LEADS PENDENTES)
+                let leadsQtdAll = tabsInf.leadsQtd.reduce((acc, curr) => acc + curr, 0); if (leadsQtdAll == 0 && (startup + 900) < Math.floor(Date.now() / 1000)) {
+                    startup = Math.floor(Date.now() / 1000); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ATUALIZANDO PÁGINA [KEEP COOKIE]` });
+                    await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
+                    await new Promise(resolve => { setTimeout(resolve, 30000) })
+                };
             }
+
+            await new Promise(resolve => { setTimeout(resolve, 1000) })
         }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
+    } catch (catchE) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchE, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `$ [serverC6] TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let err = `$ [serverC6] TRYCATCH Script erro!`
+        let infSendData = { 'e': e, 'stop': true, 'status1': err }
         let retSendData = await sendData(infSendData)
     };
     return {
@@ -330,4 +255,3 @@ async function serverC6(inf) {
     };
 }
 await serverC6()
-

@@ -8,7 +8,7 @@ async function serverJucesp(inf) {
         else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
     }
     try {
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `[Jucesp]\n` });
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `[Jucesp]\n` });
 
         let infNavigate, retNavigate, infImput, retImput, infCookiesGetSet, retCookiesGetSet, infAwaitLoad, retAwaitLoad, infCheckPage, retCheckPage, infRegex, retRegex
         let element, cookies, value, results = [], infSendData, retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date
@@ -39,7 +39,7 @@ async function serverJucesp(inf) {
         retGoogleSheets = await googleSheets(infGoogleSheets);
         if (!retGoogleSheets.ret) {
             err = `$ Erro ao pegar dados para planilha`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }
             retLog = await log(infLog);
             infSendData = { 'e': e, 'stop': false, 'status1': err }
@@ -68,7 +68,7 @@ async function serverJucesp(inf) {
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }
         retSendData = await sendData(infSendData)
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
 
         // INICIAR PUPPETEER
         browser = await _puppeteer.launch({
@@ -99,15 +99,15 @@ async function serverJucesp(inf) {
         //         let bodyNew; if (request.method() === 'POST' || request.method() === 'PUT') {
         //             let body = await request.postData();
         //             if (body && body.includes('__VIEWSTATE') && request.url().includes('https://www.jucesponline.sp.gov.br/ResultadoBusca.aspx?IDProduto')) {
-        //                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `BODY:\n${body}` });   // bodyNew = body;
+        //                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `BODY:\n${body}` });   // bodyNew = body;
         //             }
         //         }; if (bodyNew) { request.continue({ postData: bodyNew }); } else { request.continue(); }
         //     }
         // }); page.on('response', async (response) => {  // INTERCEPTAR RES [GET]
-        //         console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `>> RES:\n${response.url()}` })
+        //         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `>> RES:\n${response.url()}` })
         //     try {
         //         let body = await response.text(); if (body) {
-        //   console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `BODY:\n${body}` });
+        //   logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `BODY:\n${body}` });
         //         }
         //     } catch (error) { }
         // });
@@ -117,11 +117,11 @@ async function serverJucesp(inf) {
             let current = `[${inf.index + 1}/${inf.length}]`
             // RESULTS
             let ok = false
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${valuesLoop.length}\n${inf.value}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${valuesLoop.length}\n${inf.value}` });
             let retApiNire = await apiNire({ 'e': e, 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
                 err = `$ [serverJucesp] FALSE: retApiNire`
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire }
                 retLog = await log(infLog);
                 let status = retApiNire.msg ? retApiNire.msg : err
@@ -130,21 +130,21 @@ async function serverJucesp(inf) {
                 retSendData = await sendData(infSendData)
             } else if (!retApiNire.res) {
                 err = `${inf.value} ${current} | ${retApiNire.msg}`
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                 infSendData = { 'e': e, 'stop': false, 'status2': err }
                 retSendData = await sendData(infSendData)
                 ok = true
             } else {
                 infSendData = { 'e': e, 'stop': false, 'status2': `${inf.value} ${current} | OK` }
                 retSendData = await sendData(infSendData);
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status2}` });
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status2}` });
                 let infApiCnpj, retApiCnpj
                 if (!rate.check()) { await new Promise(resolve => { setTimeout(resolve, 10000) }) }
                 infApiCnpj = { 'e': e, 'cnpj': retApiNire.res[0], }
                 retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
                     err = `$ [serverJucesp] FALSE: retApiCnpj`
-                    console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                    logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }
                     retLog = await log(infLog);
                     await page.screenshot({ path: `log/screenshot_Jucesp_err_2.jpg` });
@@ -185,7 +185,7 @@ async function serverJucesp(inf) {
                     await loopFunRun({ 'value': valuesLoop[indice], 'index': indice, 'length': valuesLoop.length });
                     indice++
                     if (indice == valuesLoop.length && lastPage) {
-                        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `INDICES ACABARAM` });
+                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `INDICES ACABARAM` });
                         infSendData = { 'e': e, 'stop': false, 'status2': 'Terminou de consultar tudo' }
                         retSendData = await sendData(infSendData);
                         // ENCERRAR SCRIPT E INTERROMPER PM2
@@ -195,7 +195,7 @@ async function serverJucesp(inf) {
                     await new Promise((resolve) => setTimeout(resolve, 1000))
                 }
             };
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `PAROU O LOOP` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `PAROU O LOOP` });
         }; loopFun();
 
         // NAVIGATE [ABRINDO JUCESP]
@@ -209,7 +209,7 @@ async function serverJucesp(inf) {
         retCheckPage = await checkPage({ 'e': e, 'body': value, 'search': `Pesquisa Avançada` });
         if (!retCheckPage.ret) {
             err = `$ Não encontrou a página de pesquisa`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_Jucesp_err_3.jpg` });
@@ -226,7 +226,7 @@ async function serverJucesp(inf) {
         // STATUS [INSERINDO DATA DE PESQUISA]
         infSendData = { 'e': e, 'stop': false, 'status1': 'Inserindo data de pesquisa' }
         retSendData = await sendData(infSendData)
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
         await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
         // IMPUT [DATA INÍCIO]
@@ -254,7 +254,7 @@ async function serverJucesp(inf) {
         retCheckPage = await checkPage({ 'e': e, 'body': value, });
         if (!retCheckPage.ret) {
             err = `$ [serverJucesp] ${retCheckPage.msg}`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_Jucesp_err_4.jpg` });
@@ -267,7 +267,7 @@ async function serverJucesp(inf) {
         // STATUS [BUSCANDO NOVOS NIRE's]
         infSendData = { 'e': e, 'stop': false, 'status1': `Buscando novos NIRE's` }
         retSendData = await sendData(infSendData)
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
         await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
         // CHECK PAGE [LISTA DE NIRE's]
@@ -275,7 +275,7 @@ async function serverJucesp(inf) {
         retCheckPage = await checkPage({ 'e': e, 'body': value, });
         if (!retCheckPage.ret) {
             err = `$ [serverJucesp] ${retCheckPage.msg}`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_Jucesp_err_5.jpg` });
@@ -319,7 +319,7 @@ async function serverJucesp(inf) {
             retCheckPage = await checkPage({ 'e': e, 'body': value, });
             if (!retCheckPage.ret) {
                 err = `$ [serverJucesp] ${retCheckPage.msg}`
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
                 await page.screenshot({ path: `log/screenshot_Jucesp_err_6.jpg` });
@@ -334,7 +334,7 @@ async function serverJucesp(inf) {
             pg = mode == '→' ? 1 : Math.ceil(Number(value[2]) / 15)
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
         }
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `INÍCIO\n${results}` });
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `INÍCIO\n${results}` });
 
         // *****************************************************************
         for (let i = 0; i < repet1; i++) {
@@ -343,7 +343,7 @@ async function serverJucesp(inf) {
             retCheckPage = await checkPage({ 'e': e, 'body': value, });
             if (!retCheckPage.ret) {
                 err = `$ [serverJucesp] ${retCheckPage.msg}`
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage }
                 retLog = await log(infLog);
                 await page.screenshot({ path: `log/screenshot_Jucesp_err_7.jpg` });
@@ -356,7 +356,7 @@ async function serverJucesp(inf) {
             retGetTextElement = await getTextElement(infGetTextElement); value = [retGetTextElement.res[0][0], retGetTextElement.res[0][1], retGetTextElement.res[0][2]]
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]
             let repet2 = Number(value[1]) - Number(value[0]) + 1
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `MEIO\n${repet2}\n${results}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `MEIO\n${repet2}\n${results}` });
             await page.screenshot({ path: `log/screenshot_Jucesp.jpg` });
 
             // ADICIONAR NO LOOP DA CONSULTA
@@ -375,7 +375,7 @@ async function serverJucesp(inf) {
 
             if (mode == '→') { pg++ } else { pg-- }
             if ((mode == '→' && Number(value[1]) == Number(value[2])) || (mode == '←' && Number(value[0]) == 1)) {
-                console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `ACABARAM AS PÁGINAS DO JUCESP` });
+                logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ACABARAM AS PÁGINAS DO JUCESP` });
                 lastPage = true
                 break
             } else {
@@ -398,7 +398,7 @@ async function serverJucesp(inf) {
         }
         // *****************************************************************
 
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `FIM - QTD [${valuesJucesp.length}]` });
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `FIM - QTD [${valuesJucesp.length}]` });
     } catch (err) {
         let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res

@@ -1,9 +1,6 @@
 // FUNCTIONS
 await import('../../../Chrome_Extension/src/resources/@functions.js');
-
-// DEFINIR → LETTER | ROOT | FUNCTION | PROJECT | FILE | LINE
-let retGetPathNew = await getPathNew({ 'e': new Error(), 'isFunction': false, })
-// globalWindow.devResWs = cng == 1 ? 'CHROME' : 'NODEJS';
+await getPath({ 'e': new Error(), 'mode': 1, 'keep': true })
 
 // FUNÇÕES DESSE PROJETO
 await import('./apiCnpj.js')

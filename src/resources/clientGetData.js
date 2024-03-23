@@ -22,7 +22,7 @@ async function clientGetData(inf) {
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `$ Não achou o ID do link da página do lead`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             retSendData = await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -36,7 +36,7 @@ async function clientGetData(inf) {
 
         // STATUS1 [Abrindo dados do cliente]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
-        console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
+        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
         retSendData = await sendData(infSendData)
         await page.screenshot({ path: `log/screenshot_C6.jpg` });
         // await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -60,7 +60,7 @@ async function clientGetData(inf) {
         }, { timeout: 30000 }).catch(async () => { return false; });
         if (!pageResult) {
             err = `$ Não achou a data de abertura`
-            console.log({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             retSendData = await sendData(infSendData)
             pageValue = await page.content()
