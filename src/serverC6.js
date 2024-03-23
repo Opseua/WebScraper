@@ -47,7 +47,7 @@ async function serverC6(inf) {
         }; try {
             json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '');
             gO.inf['sheetKepp'] = JSON.parse(json)
-        } catch (catchE) {
+        } catch (catchErr) {
             sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
             // ENCERRAR SCRIPT E INTERROMPER PM2
             await pm2Stop()
@@ -120,7 +120,7 @@ async function serverC6(inf) {
                     }; try {
                         json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '')
                         gO.inf['sheetKepp'] = JSON.parse(json)
-                    } catch (catchE) {
+                    } catch (catchErr) {
                         sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
                         // ENCERRAR SCRIPT E INTERROMPER PM2
                         await pm2Stop()
@@ -240,8 +240,8 @@ async function serverC6(inf) {
 
             await new Promise(resolve => { setTimeout(resolve, 1000) })
         }
-    } catch (catchE) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchE, 'catchGlobal': false });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
         let err = `$ [serverC6] TRYCATCH Script erro!`

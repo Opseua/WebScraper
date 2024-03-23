@@ -289,7 +289,7 @@ async function serverJucesp(inf) {
         retFile = await file(infFile);
         infFile = { 'e': e, 'action': 'read', 'functionLocal': false, 'path': './log/NIREs.txt' }
         retFile = await file(infFile);
-        try { sheetNire = JSON.parse(retFile.res) } catch (err) { sheetNire = [] }
+        try { sheetNire = JSON.parse(retFile.res) } catch (catchErr) { sheetNire = [] }
 
         // ###################################################################################
         // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
@@ -399,8 +399,8 @@ async function serverJucesp(inf) {
         // *****************************************************************
 
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `FIM - QTD [${valuesJucesp.length}]` });
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ [serverJucesp] TRYCATCH Script erro!`

@@ -77,8 +77,8 @@ async function sendData(inf) {
             gO.inf['stop'] = true
             process.exit();
         }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
         process.exit();
     };
