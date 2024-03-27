@@ -180,11 +180,32 @@ async function serverC6(inf) {
 
                             // STATUS DE ACORDO COM O ERRO VERMELHO
                             if (imputRes == 'Já existe um lead cadastrado com o CNPJ informado') {
-                                statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'INDICAÇÃO OUTRO ECE' : 'INDICAÇÃO OK'
+                                // statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'INDICAÇÃO OUTRO ECE' : 'INDICAÇÃO OK' // STATUS: BRUNA
+
+                                if (leadStatus == 'ENCONTRADO_EXPIRADO') {
+                                    statusInf = 'FORA DO PRAZO' // STATUS: ADRYEL
+                                } else {
+                                    statusInf = 'INDICAÇÃO OUTRO ECE' // STATUS: ADRYEL
+                                }
+
                             } else if (imputRes == 'Já existe um cliente cadastrado com o CNPJ informado') {
-                                statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF'
+                                // statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' // STATUS: BRUNA
+
+                                if (leadStatus == 'ENCONTRADO_EXPIRADO') {
+                                    statusInf = 'FORA DO PRAZO' // STATUS: ADRYEL 
+                                } else {
+                                    statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' // STATUS: BRUNA
+                                }
+
                             } else if (imputRes == 'Já existe um lead e um cliente cadastrado com o CNPJ informado') {
-                                statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF'
+                                // statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF'
+
+                                if (leadStatus == 'ENCONTRADO_EXPIRADO') {
+                                    statusInf = 'FORA DO PRAZO' // STATUS: ADRYEL 
+                                } else {
+                                    statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' // STATUS: BRUNA
+                                }
+
                             } else if (imputRes == 'Lead expirou' || imputRes == 'Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo') {
                                 statusInf = 'FORA DO PRAZO'
                             } else if (imputRes == 'INDICAÇÃO OK') {
