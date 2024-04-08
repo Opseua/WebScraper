@@ -14,7 +14,7 @@ async function checkPage(inf) {
     try {
         let infLog, retLog
         if (!inf.body) {
-            ret['msg'] = `\n\n #### ERRO #### CHECK PAGE \n INFORMAR O 'body' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### CHECK PAGE \n INFORMAR O 'body' \n\n`;
         } else {
             ret['msg'] = `Erro não definido`;
             if (inf.search) {

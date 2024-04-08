@@ -12,9 +12,9 @@ async function cookiesGetSet(inf) {
     }
     try {
         if (!inf.action || (!inf.action == 'get' || !inf.action == 'set')) {
-            ret['msg'] = `\n\n #### ERRO #### COOKIES \n INFORMAR O 'action' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### COOKIES \n INFORMAR O 'action' \n\n`;
         } else if (!inf.value) {
-            ret['msg'] = `\n\n #### ERRO #### COOKIES \n INFORMAR O 'value' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### COOKIES \n INFORMAR O 'value' \n\n`;
         } else {
             let browser = inf.browser
             let page = inf.page

@@ -14,7 +14,7 @@ async function getTextElement(inf) {
     try {
         let infRegex, retRegex
         if (!inf.element) { // SELECTOR #jo_encontrados
-            ret['msg'] = `\n\n #### ERRO #### RESULTS \n INFORMAR O 'element' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### RESULTS \n INFORMAR O 'element' \n\n`;
         } else {
             if (inf.element == 'results') {
                 infRegex = { 'e': e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': inf.value.replace(/\n/g, ' ') }

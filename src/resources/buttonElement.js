@@ -14,7 +14,7 @@ async function buttonElement(inf) {
     try {
         let element
         if (!inf.button || !['search', 'first', 'prev', 'next', 'last'].includes(inf.button)) {
-            ret['msg'] = `\n\n #### ERRO #### BUTTON \n INFORMAR O 'action' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### BUTTON \n INFORMAR O 'action' \n\n`;
         } else {
             let button
             if (inf.button == 'search') { // PESQUISAR (XPATH)

@@ -13,9 +13,9 @@ async function imput(inf) {
     }
     try {
         if (!inf.element) {
-            ret['msg'] = `\n\n #### ERRO #### IMPUT \n INFORMAR O 'element' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### IMPUT \n INFORMAR O 'element' \n\n`;
         } else if (!inf.value) {
-            ret['msg'] = `\n\n #### ERRO #### IMPUT \n INFORMAR O 'value' \n\n`;
+            ret['msg'] = `\n\n#### ERRO #### IMPUT \n INFORMAR O 'value' \n\n`;
         } else {
             let browser = inf.browser
             let page = inf.page
