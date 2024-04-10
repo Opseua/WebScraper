@@ -33,7 +33,7 @@ async function serverC6(inf) {
                 if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rT = parseInt(stdout.split('\n')[1].trim());
                 _exec('wmic os get FreePhysicalMemory', (error, stdout, stderr) => {
                     if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rF = parseInt(stdout.split('\n')[1].trim()); let rU = Number(((rT - rF) / rT) * 100).toFixed(0);
-                    let msg = `RAM USADA: ${rU}%`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${msg}` }); if (rU > 95) { sendNtfy({ 'titleText': `ALERTA\n${msg}` }) }
+                    let msg = `RAM USADA: ${rU}%`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${msg}` }); if (rU > 97) { sendNtfy({ 'titleText': `ALERTA\n${msg}` }) }
                 });
             });
         }, 1800 * 1000);
