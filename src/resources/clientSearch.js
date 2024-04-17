@@ -3,7 +3,7 @@
 // retClientSearch = await clientSearch(infClientSearch)
 // console.log(retClientSearch)
 
-let e = import.meta.url, ee = e
+let e = import.meta.url, ee = e;
 async function clientSearch(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     if (catchGlobal) {

@@ -3,7 +3,7 @@
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)
 
-let e = import.meta.url, ee = e
+let e = import.meta.url, ee = e;
 async function apiCnpj(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     if (catchGlobal) {

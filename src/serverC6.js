@@ -1,15 +1,15 @@
 await import('./resources/@export.js')
 
-let e = import.meta.url, ee = e
-async function serverC6(inf) {
+let e = import.meta.url, ee = e;
+async function serverRun(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     if (catchGlobal) {
-        let errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; let retRegexE = await regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } }
+        let errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } };
         if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
         else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
     }
     try {
-        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `*** SERVER ***` })
+        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `**************** SERVER ****************` })
 
         let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex, results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut, infCommandLine, retCommandLine, infApi, retApi
         let infFile, retFile, infLog, retLog, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull, json
@@ -276,4 +276,7 @@ async function serverC6(inf) {
         ...(ret.res && { res: ret.res }),
     };
 }
-await serverC6()
+// TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM ser 'serverRun'!!!
+serverRun()
+
+
