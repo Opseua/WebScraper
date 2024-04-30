@@ -13,7 +13,7 @@ async function navigate(inf) {
     }
     try {
         if (!inf.url) {
-            ret['msg'] = `\n\n#### ERRO #### URL \n INFORMAR O 'url' \n\n`;
+            ret['msg'] = `NAVIGATE: ERRO | INFORMAR O 'url'`;
         } else {
             let browser = inf.browser
             let page = inf.page

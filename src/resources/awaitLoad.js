@@ -13,7 +13,7 @@ async function awaitLoad(inf) {
     }
     try {
         if (!inf.element) { // SELECTOR #jo_encontrados
-            ret['msg'] = `\n\n#### ERRO #### AWAIT LOAD \n INFORMAR O 'element' \n\n`;
+            ret['msg'] = `AWAIT LOAD: ERRO | INFORMAR O 'element'`;
         } else {
             let browser = inf.browser
             let page = inf.page
