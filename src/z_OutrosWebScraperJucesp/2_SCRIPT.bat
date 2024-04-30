@@ -50,7 +50,7 @@ rem sendData [status]
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
 set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-set "body={"fun":[{"securityPass":"Password@2023WebSocketRet","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8","tab":"RESULTADOS","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}]}"
+set "body={"fun":[{"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8","tab":"RESULTADOS","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}]}"
 set "bodyPath=!TEMP!\wgetBody.txt"
 echo !body! > !bodyPath!
 if "!arg1!" == "toggle" (
@@ -66,7 +66,7 @@ rem sendData [status]
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
 set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-set "body={"fun":[{"securityPass":"Password@2023WebSocketRet","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8","tab":"RESULTADOS","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}]}"
+set "body={"fun":[{"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8","tab":"RESULTADOS","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}]}"
 set "bodyPath=!TEMP!\wgetBody.txt"
 echo !body! > !bodyPath!
 if "!arg1!" == "toggle" (

@@ -48,7 +48,7 @@ rem !1_BACKGROUND! "explorer"
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
 set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-set "body={"fun":[{"securityPass":"Password@2023WebSocketRet","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}]}"
+set "body={"fun":[{"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}]}"
 set "bodyPath=!TEMP!\wgetBody.txt" && echo !body! > !bodyPath! && if "%~1" == "toggle" ( "!wget!" --post-file=!bodyPath! !headers! --quiet -O- !url! )
 
 exit
@@ -59,7 +59,7 @@ rem !1_BACKGROUND! "notepad"
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
 set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-set "body={"fun":[{"securityPass":"Password@2023WebSocketRet","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}]}"
+set "body={"fun":[{"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}]}"
 set "bodyPath=!TEMP!\wgetBody.txt" && echo !body! > !bodyPath! && if "%~1" == "toggle" ( "!wget!" --post-file=!bodyPath! !headers! --quiet -O- !url! )
 
 exit
