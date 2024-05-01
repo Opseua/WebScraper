@@ -45,7 +45,6 @@ if "!ret!"=="true" (
 
 
 :ENCONTROU_[SIM]
-rem !1_BACKGROUND! "explorer"
 rem sendData [status]
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
@@ -61,7 +60,6 @@ exit
 exit
 
 :ENCONTROU_[NAO]
-rem !1_BACKGROUND! "notepad"
 rem sendData [status]
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"

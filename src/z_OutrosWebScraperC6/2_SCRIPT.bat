@@ -44,7 +44,6 @@ if "!ret!"=="true" (
 )
 
 :ENCONTROU_[SIM]
-rem !1_BACKGROUND! "explorer"
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
 set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
@@ -55,7 +54,6 @@ exit
 exit
 
 :ENCONTROU_[NAO]
-rem !1_BACKGROUND! "notepad"
 set "url=http://!confHostOld!:!confPortOld!/EC2_NODEJS"
 set "method=POST"
 set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
