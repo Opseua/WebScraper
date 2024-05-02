@@ -66,11 +66,6 @@ async function sendData(inf) {
         ret['msg'] = 'SEND DATA: OK'
         ret['ret'] = true
 
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
 
         // STOP
         if (inf.stop) {
