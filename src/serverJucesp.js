@@ -17,7 +17,6 @@ async function serverRun(inf) {
         // ENCERRAR SCRIPT E INTERROMPER PM2
         async function pm2Stop() {
             let infCommandLine, retCommandLine
-            // infCommandLine = { 'command': `"!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosJucesp/2_BACKGROUND.exe" "!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosJucesp/2_SCRIPT.bat" "pm2"` }
             infCommandLine = { 'e': e, 'command': `"${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_OutrosWebScraperJucesp/2_SCRIPT.bat" "off" "hide" "WebScraperJucesp"` }
             retCommandLine = await commandLine(infCommandLine);
             await new Promise(resolve => { setTimeout(resolve, 30000) })
