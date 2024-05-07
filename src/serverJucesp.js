@@ -181,7 +181,7 @@ async function serverRun(inf) {
                     indice++
                     if (indice == valuesLoop.length && lastPage) {
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `INDICES ACABARAM` });
-                        infSendData = { 'e': e, 'stop': false, 'status2': 'Terminou de consultar tudo' }
+                        infSendData = { 'e': e, 'stop': false, 'status2': '$ Terminou de consultar tudo' }
                         retSendData = await sendData(infSendData);
                         // ENCERRAR SCRIPT E INTERROMPER PM2
                         await pm2Stop()
