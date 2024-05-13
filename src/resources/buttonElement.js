@@ -1,4 +1,4 @@
-// let infButtonElement, retButtonElement // 'logFun': true,
+// let infButtonElement, retButtonElement
 // infButtonElement = { 'e': e,'browser': browser, 'page': page, 'button': 'search' }
 // retButtonElement = await buttonElement(infButton)
 // console.log(retButtonElement)

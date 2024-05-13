@@ -1,4 +1,4 @@
-// let infClientGetData, retClientGetData // 'logFun': true,
+// let infClientGetData, retClientGetData
 // infClientGetData = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retClientGetData = await clientGetData(infClientGetData)
 // console.log(retClientGetData)

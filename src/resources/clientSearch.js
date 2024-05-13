@@ -1,4 +1,4 @@
-// let infClientSearch, retClientSearch // 'logFun': true,
+// let infClientSearch, retClientSearch
 // infClientSearch = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retClientSearch = await clientSearch(infClientSearch)
 // console.log(retClientSearch)

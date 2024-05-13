@@ -1,4 +1,4 @@
-// let infApiCnpj, retApiCnpj // 'logFun': true,
+// let infApiCnpj, retApiCnpj
 // infApiCnpj = {'e': e, 'cnpj': '52957711000152' }
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)

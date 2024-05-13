@@ -1,4 +1,4 @@
-// let infImput, retImput // 'logFun': true,
+// let infImput, retImput
 // infImput = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': '13112023' }
 // retImput = await imput(infImput)
 // console.log(retImput)

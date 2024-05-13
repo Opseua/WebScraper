@@ -1,4 +1,4 @@
-// let infClientImput, retClientImput // 'logFun': true,
+// let infClientImput, retClientImput
 // infClientImput = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retClientImput = await clientImput(infClientImput)
 // console.log(retClientImput)

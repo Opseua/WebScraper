@@ -1,4 +1,4 @@
-// let infGetTextElement, retGetTextElement // 'logFun': true,
+// let infGetTextElement, retGetTextElement
 // infGetTextElement = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
 // retGetTextElement = await getTextElement(infGetTextElement)
 // console.log(retGetTextElement)
