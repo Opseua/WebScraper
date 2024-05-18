@@ -39,7 +39,7 @@ async function apiNire(inf) {
         // CHECAR SE O COOKIE EXPIROU
         let texto = JSON.stringify(retApi.body)
         if (texto.includes('CaptchaImage')) {
-            ret['msg'] = `Cookie expirou`;
+            ret['msg'] = `API NIRE: ERRO | COOKIE EXPIROU`;
             return ret
         }
 
@@ -50,14 +50,14 @@ async function apiNire(inf) {
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
             retLog = await log(infLog);
-            ret['msg'] = `NIRE inválido`;
+            ret['msg'] = `API NIRE: ERRO | NIRE INVÁLIDO`;
             ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
             infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
             retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
-                ret['msg'] = `CNPJ do NIRE não encotrado`;
+                ret['msg'] = `API NIRE: ERRO | CNPJ DO NIRE NÃO ENCONTRADO`;
                 ret['ret'] = true;
                 let errMsg = `$ [apiNire] ${ret.msg}`
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -70,7 +70,7 @@ async function apiNire(inf) {
                 infRegex = { 'e': e, 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
                 retRegex = regex(infRegex);
                 if (!retRegex.ret || !retRegex.res['1']) {
-                    ret['msg'] = `Razão Social do CNPJ não encontrada`;
+                    ret['msg'] = `API NIRE: ERRO | RAZÃO SOCIAL DO CNPJ NÃO ENCONTRADA`;
                     ret['ret'] = true;
                     let errMsg = `$ [apiNire] ${ret.msg}`
                     logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -83,7 +83,7 @@ async function apiNire(inf) {
                     infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
                     retRegex = regex(infRegex);
                     if (!retRegex.ret || !retRegex.res['1']) {
-                        ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
+                        ret['msg'] = `API NIRE: ERRO | TIPO DE EMPRESA DO CNPJ NÃO ENCONTRADA`;
                         ret['ret'] = true;
                         let errMsg = `$ [apiNire] ${ret.msg}`
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -102,7 +102,7 @@ async function apiNire(inf) {
                             infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['1']) {
-                                ret['msg'] = `Data do CNPJ não encontrada`;
+                                ret['msg'] = `API NIRE: ERRO | DATA DO CNPJ NÃO ENCONTRADA`;
                                 ret['ret'] = true;
                                 let errMsg = `$ [apiNire] ${ret.msg}`
                                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })

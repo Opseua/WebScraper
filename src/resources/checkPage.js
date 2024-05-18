@@ -11,7 +11,7 @@ async function checkPage(inf) {
         if (!inf.body) {
             ret['msg'] = `CHECK PAGE: ERRO | INFORMAR O 'body'`;
         } else {
-            ret['msg'] = `Erro não definido`;
+            ret['msg'] = `CHECK PAGE: ERRO | NÃO DEFINIDO`;
             if (inf.search) {
                 ret['ret'] = inf.body.includes(inf.search)
                 ret['msg'] = ret.ret ? `ENCONTRADO [SIM]: '${inf.search}'` : `ENCONTRADO [NÃO]: '${inf.search}'`
@@ -22,9 +22,9 @@ async function checkPage(inf) {
                 }
             } else {
                 if (inf.body.includes('Digite o código da imagem')) {
-                    ret['msg'] = `Cookie expirou`;
+                    ret['msg'] = `CHECK PAGE: ERRO | COOKIE EXPIROU`;
                 } else if (!(inf.body.includes('Mostrando') && inf.body.includes('Anterior') && inf.body.includes('Próximo'))) {
-                    ret['msg'] = `Não achou a lista de NIRE's`;
+                    ret['msg'] = `CHECK PAGE: ERRO | NÃO ACHOU A LISTA DE NIRE'S`;
                     let errMsg = `$ [checkPage] ${ret.msg}`
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': inf.body }
                     retLog = await log(infLog);
