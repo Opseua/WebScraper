@@ -1,7 +1,6 @@
 // let infApiNire, retApiNire
 // infApiNire = {'e': e, 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
-// retApiNire = await apiNire(infApiNire)
-// console.log(retApiNire)
+// retApiNire = await apiNire(infApiNire); console.log(retApiNire)
 
 let e = import.meta.url, ee = e;
 async function apiNire(inf) {

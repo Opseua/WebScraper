@@ -1,6 +1,5 @@
 // let infCookiesGetSet = { 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': valueCookie }
-// let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
-// console.log(retCookiesGetSet)
+// let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet); console.log(retCookiesGetSet)
 
 let e = import.meta.url, ee = e;
 async function cookiesGetSet(inf) {

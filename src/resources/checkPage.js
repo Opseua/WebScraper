@@ -1,7 +1,6 @@
 // let infCheckPage, retCheckPage
 // infCheckPage = {'e': e, 'body': body }
-// retCheckPage = await checkPage(infCheckPage)
-// console.log(retCheckPage)
+// retCheckPage = await checkPage(infCheckPage); console.log(retCheckPage)
 
 let e = import.meta.url, ee = e;
 async function checkPage(inf) {

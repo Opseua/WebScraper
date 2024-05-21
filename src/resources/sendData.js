@@ -1,7 +1,6 @@
 // let infSendData, retSendData
 // infSendData = { 'e': e, 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
-// retSendData = await sendData(infSendData)
-// console.log(retSendData)
+// retSendData = await sendData(infSendData); console.log(retSendData)
 
 let e = import.meta.url, ee = e;
 async function sendData(inf) {

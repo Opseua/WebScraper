@@ -1,7 +1,6 @@
 // let infNavigate, retNavigate
 // infNavigate = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retNavigate = await navigate(infNavigate)
-// console.log(retNavigate)
+// retNavigate = await navigate(infNavigate); console.log(retNavigate)
 
 let e = import.meta.url, ee = e;
 async function navigate(inf) {

@@ -1,7 +1,6 @@
 // let infAwaitLoad, retAwaitLoad
 // infAwaitLoad = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
-// retAwaitLoad = await awaitLoad(infAwaitLoad)
-// console.log(retAwaitLoad)
+// retAwaitLoad = await awaitLoad(infAwaitLoad); console.log(retAwaitLoad)
 
 let e = import.meta.url, ee = e;
 async function awaitLoad(inf) {

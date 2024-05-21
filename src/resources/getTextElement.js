@@ -1,7 +1,6 @@
 // let infGetTextElement, retGetTextElement
 // infGetTextElement = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
-// retGetTextElement = await getTextElement(infGetTextElement)
-// console.log(retGetTextElement)
+// retGetTextElement = await getTextElement(infGetTextElement); console.log(retGetTextElement)
 
 let e = import.meta.url, ee = e;
 async function getTextElement(inf) {

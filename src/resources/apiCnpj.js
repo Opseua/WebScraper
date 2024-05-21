@@ -1,7 +1,6 @@
 // let infApiCnpj, retApiCnpj
 // infApiCnpj = {'e': e, 'cnpj': '52957711000152' }
-// retApiCnpj = await apiCnpj(infApiCnpj)
-// console.log(retApiCnpj)
+// retApiCnpj = await apiCnpj(infApiCnpj); console.log(retApiCnpj)
 
 let e = import.meta.url, ee = e;
 async function apiCnpj(inf) {

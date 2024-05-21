@@ -1,7 +1,6 @@
 // let infButtonElement, retButtonElement
 // infButtonElement = { 'e': e,'browser': browser, 'page': page, 'button': 'search' }
-// retButtonElement = await buttonElement(infButton)
-// console.log(retButtonElement)
+// retButtonElement = await buttonElement(infButton); console.log(retButtonElement)
 
 let e = import.meta.url, ee = e;
 async function buttonElement(inf) {

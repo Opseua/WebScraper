@@ -1,7 +1,6 @@
 // let infClientImput, retClientImput
 // infClientImput = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retClientImput = await clientImput(infClientImput)
-// console.log(retClientImput)
+// retClientImput = await clientImput(infClientImput); console.log(retClientImput)
 
 let e = import.meta.url, ee = e;
 async function clientImput(inf) {

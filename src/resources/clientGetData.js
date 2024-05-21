@@ -1,7 +1,6 @@
 // let infClientGetData, retClientGetData
 // infClientGetData = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retClientGetData = await clientGetData(infClientGetData)
-// console.log(retClientGetData)
+// retClientGetData = await clientGetData(infClientGetData); console.log(retClientGetData)
 
 let e = import.meta.url, ee = e;
 async function clientGetData(inf) {
