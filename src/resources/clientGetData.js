@@ -43,15 +43,38 @@ async function clientGetData(inf) {
         await link.click();
         await new Promise(resolve => { setTimeout(resolve, 1000) })
 
-        // ESPERAR A DATA DO LEAD APARECER
+        // ESPERAR A DATA DO LEAD APARECER (TELA ANTIGA)
         pageResult = await page.waitForFunction(() => {
-            const elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
+            let elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
             if (elements.length > 0) {
-                const values = Array.from(elements).map(element => element.textContent.trim());
+                let values = Array.from(elements).map(element => element.textContent.trim());
+
                 return values;
             }
             return false;
-        }, { timeout: 30000 }).catch(async () => { return false; });
+        }, { timeout: 10000 }).catch(async () => { return false; });
+        if (pageResult) { leadDate = await pageResult.jsonValue(); }
+        console.log('PRIMEIRO', pageResult ? true : false)
+
+        // ESPERAR A DATA DO LEAD APARECER (TELA NOVA)
+        if (!pageResult) {
+            try {
+                await page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.comm-content-header.comm-layout-column > div > div > c-c6-business-highlights > div > div.slds-col.slds-size_6-of-7 > c-c6-business-highlights-information > lightning-card > article > div.slds-card__body > slot > div:nth-child(2) > div:nth-child(5) > p', { timeout: 10000 });
+                pageResult = await page.evaluate(() => {
+                    let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                    if (element) { return element.textContent.trim(); }
+                    return false;
+                });
+            } catch (error) {
+                // console.log('NÃO APARECEU');
+            }
+            if (pageResult) {
+                infRegex = { 'e': e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': pageResult }
+                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; leadDate = [`${pageResult} 00:00`] }
+            }
+            console.log('SEGUNDO', pageResult ? true : false)
+        }
+
         if (!pageResult) {
             err = `$ Não achou a data de abertura`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
@@ -64,8 +87,6 @@ async function clientGetData(inf) {
             browser.close()
             process.exit();
         }
-        leadDate = await pageResult.jsonValue();
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // CHECAR SE É CONTA ANTIGA OU NOVA
         let data = leadDate[0].split('/');
