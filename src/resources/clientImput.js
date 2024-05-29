@@ -121,11 +121,11 @@ async function clientImput(inf) {
                 leadStatus = `Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`
                 fileStatus = 5
             } else {
-                if (pageValue.includes(`O formato correto para o telefone`)) {
-                    leadStatus = `ALERTA: telefone inválido`
-                    fileStatus = 99
-                } else if (pageValue.includes(`CNPJ informado é inválido`)) {
+                if (pageValue.includes(`CNPJ informado é inválido`)) {
                     leadStatus = `ALERTA: CNPJ inválido`
+                    fileStatus = 99
+                } else if (pageValue.includes(`O formato correto para o telefone`)) {
+                    leadStatus = `ALERTA: telefone inválido`
                     fileStatus = 99
                 } else if (pageValue.includes(`endereço de email inválido`)) {
                     leadStatus = `ALERTA: email inválido`

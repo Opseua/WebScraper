@@ -25,7 +25,11 @@ async function sendData(inf) {
                     'values': [[`${time.tim} | ${sheetData}`]]
                 }
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
+                if (!retGoogleSheets.ret) {
+                    logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO GOOGLE SHEETS` });
+                    console.log(retGoogleSheets);
+                    return retGoogleSheets
+                } else { retGoogleSheets = retGoogleSheets.msg }
             }
 
             // [STATUS2]
