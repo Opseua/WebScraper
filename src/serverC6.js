@@ -1,4 +1,4 @@
-let eng = typeof window !== 'undefined'; let gloWin = eng ? window : global; gloWin['eng'] = eng; // [true] CHROME | [false] NODEJS
+if (typeof window !== 'undefined') { window['eng'] = true } else { global['eng'] = false }; // [true] CHROME | [false] NODEJS
 function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m = a % 1000; let f = m.toString().padStart(3, '0'); return `${s}.${f}` }; let startup = new Date();
 await import('./resources/@export.js');
 
@@ -20,7 +20,7 @@ async function serverRun(inf) {
 
         // ENCERRAR SCRIPT E INTERROMPER PM2 | NTFY
         async function processStop() {
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000) }); infCommandLine = { 'e': e, 'command': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/TOGGLE_VIEW.vbs ONLY_START_STOP` }
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000) }); infCommandLine = { 'e': e, 'command': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/TOGGLE_VIEW.vbs FORCE_STOP` }
             retCommandLine = await commandLine(infCommandLine); await new Promise(resolve => { setTimeout(resolve, 5000) }); process.exit();
         }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) }
 
