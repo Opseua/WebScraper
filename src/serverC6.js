@@ -90,9 +90,8 @@ async function serverRun(inf) {
 
         while (!whileStop) {
             time = dateHour().res;
-            // SEG <> SAB | [??:00] <> [??:00]
-            // if (!(['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB',].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1])))) {
-            if (infApi) {
+            // SEG <> DOM | [??:00] <> [??:00]
+            if (!(['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1])))) {
                 // STATUS1 [Fora do horário permitido]
                 infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
