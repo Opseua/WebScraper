@@ -1,10 +1,12 @@
-await import('./resources/@export.js')
+let eng = typeof window !== 'undefined'; let gloWin = eng ? window : global; gloWin['eng'] = eng; // [true] CHROME | [false] NODEJS
+function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m = a % 1000; let f = m.toString().padStart(3, '0'); return `${s}.${f}` }; let startup = new Date();
+await import('./resources/@export.js');
 
 let e = import.meta.url, ee = e;
 async function serverRun(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `**************** SERVER ****************` })
+        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]` })
 
         let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex, results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut, infCommandLine, retCommandLine, infApi, retApi
         let infFile, retFile, infLog, retLog, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull, json
@@ -13,7 +15,7 @@ async function serverRun(inf) {
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2'; gO.inf['sheetId'] = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['sheetTab'] = tabsInf.name[0]
 
         // CRIAR PASTA DOS REGISTROS
-        let time = dateHour().res, mon, day; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; let secAwaitNewCheck = 60, startup = Math.floor(Date.now() / 1000)
+        let time = dateHour().res, mon, day; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; let secAwaitNewCheck = 60, startupFolder = Math.floor(Date.now() / 1000)
         infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }; retFile = await file(infFile);
 
         // ENCERRAR SCRIPT E INTERROMPER PM2 | NTFY
@@ -248,8 +250,8 @@ async function serverRun(inf) {
                 }
 
                 // F5 | COOKIE KEEP (CASO NENHUMA ABA TENHA LEADS PENDENTES)
-                let leadsQtdAll = tabsInf.leadsQtd.reduce((acc, curr) => acc + curr, 0); if (leadsQtdAll == 0 && (startup + 900) < Math.floor(Date.now() / 1000)) {
-                    startup = Math.floor(Date.now() / 1000); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ATUALIZANDO PÁGINA [KEEP COOKIE]` });
+                let leadsQtdAll = tabsInf.leadsQtd.reduce((acc, curr) => acc + curr, 0); if (leadsQtdAll == 0 && (startupFolder + 900) < Math.floor(Date.now() / 1000)) {
+                    startupFolder = Math.floor(Date.now() / 1000); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ATUALIZANDO PÁGINA [KEEP COOKIE]` });
                     await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
                     await new Promise(resolve => { setTimeout(resolve, 30000) })
                 };
