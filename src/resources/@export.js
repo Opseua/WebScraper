@@ -1,4 +1,4 @@
-let gloWin = eng ? window : global; // [true] CHROME | [false] NODEJS
+let gloWin; if (typeof window !== 'undefined') { window['eng'] = true; gloWin = window } else { global['eng'] = false; gloWin = global }; // [true] CHROME | [false] NODEJS
 // DEFINIR O 'devChildren' → [CHROME] EMAIL DO USUÁRIO | [NODEJS] PRIMEIRO ARQUIVO A SER EXECUTADO (NA MAIORIA DOS CASOS 'server')
 let devC = new Error().stack.split('\n'); devC = devC[devC.length - 1]; let devChildren = devC.includes('.js:') ? devC.match(/\/([^/]+)\.[^/]+$/)[1] : false
 if (eng) { devChildren = await new Promise((resolve) => { chrome.identity.getProfileUserInfo(function (u) { resolve(u.email) }) }) }
@@ -25,6 +25,7 @@ async function functionGeneric(infOk) { let { name, inf, retInf } = infOk; let r
 gloWin['apiCnpj'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'apiCnpj', 'path': './apiCnpj.js', 'inf': inf }); };
 gloWin['apiNire'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'apiNire', 'path': './apiNire.js', 'inf': inf }); };
 gloWin['awaitLoad'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'awaitLoad', 'path': './awaitLoad.js', 'inf': inf }); };
+gloWin['browsers'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'browsers', 'path': './browsers.js', 'inf': inf }); };
 gloWin['buttonElement'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'buttonElement', 'path': './buttonElement.js', 'inf': inf }); };
 gloWin['checkPage'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'checkPage', 'path': './checkPage.js', 'inf': inf }); };
 gloWin['clientGetData'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'clientGetData', 'path': './clientGetData.js', 'inf': inf }); };
