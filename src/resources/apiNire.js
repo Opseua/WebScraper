@@ -1,19 +1,33 @@
-// let infApiNire, retApiNire
+// let infApiNire, retApiNire // 'logFun': true,
 // infApiNire = {'e': e, 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
-// retApiNire = await apiNire(infApiNire); console.log(retApiNire)
+// retApiNire = await apiNire(infApiNire)
+// console.log(retApiNire)
 
-let e = import.meta.url, ee = e;
+let e = import.meta.url, ee = e
 async function apiNire(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    if (catchGlobal) {
+        let errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } };
+        if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
+        else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
+    }
     try {
         let infRegex, retRegex, infLog, retLog
         let nire = inf && inf.nire ? inf.nire : '12345678'
         let aut = inf && inf.aut ? inf.aut : 'ASP.NET_SessionId=aaaaaaaaaaaa'
 
-        for (let [index, value] of aut.entries()) { if (value.name == 'ASP.NET_SessionId') { aut = `ASP.NET_SessionId=${value.value}`; break } }
+        for (let [index, value] of aut.entries()) {
+            if (value.name == 'ASP.NET_SessionId') {
+                aut = `ASP.NET_SessionId=${value.value}`
+                break
+            }
+        }
 
         // API
-        let infApi = { 'e': e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`, 'headers': { 'Cookie': aut } };
+        let infApi = {
+            'e': e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
+            'headers': { 'Cookie': aut }
+        };
         let retApi = await api(infApi); if (!retApi.ret) {
             let errMsg = `$ [apiNire] FALSE: retApi`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -23,12 +37,14 @@ async function apiNire(inf) {
         } else { retApi = retApi.res }
 
         // CHECAR SE A API DEU CÓDIGO 200
-        if (retApi.code !== 200) { return retApi }
+        if (retApi.code !== 200) {
+            return retApi
+        }
 
         // CHECAR SE O COOKIE EXPIROU
         let texto = JSON.stringify(retApi.body)
         if (texto.includes('CaptchaImage')) {
-            ret['msg'] = `API NIRE: ERRO | COOKIE EXPIROU`;
+            ret['msg'] = `Cookie expirou`;
             return ret
         }
 
@@ -39,14 +55,14 @@ async function apiNire(inf) {
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
             retLog = await log(infLog);
-            ret['msg'] = `API NIRE: ERRO | NIRE INVÁLIDO`;
+            ret['msg'] = `NIRE inválido`;
             ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
             infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
             retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
-                ret['msg'] = `API NIRE: ERRO | CNPJ DO NIRE NÃO ENCONTRADO`;
+                ret['msg'] = `CNPJ do NIRE não encotrado`;
                 ret['ret'] = true;
                 let errMsg = `$ [apiNire] ${ret.msg}`
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -59,7 +75,7 @@ async function apiNire(inf) {
                 infRegex = { 'e': e, 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
                 retRegex = regex(infRegex);
                 if (!retRegex.ret || !retRegex.res['1']) {
-                    ret['msg'] = `API NIRE: ERRO | RAZÃO SOCIAL DO CNPJ NÃO ENCONTRADA`;
+                    ret['msg'] = `Razão Social do CNPJ não encontrada`;
                     ret['ret'] = true;
                     let errMsg = `$ [apiNire] ${ret.msg}`
                     logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -72,7 +88,7 @@ async function apiNire(inf) {
                     infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
                     retRegex = regex(infRegex);
                     if (!retRegex.ret || !retRegex.res['1']) {
-                        ret['msg'] = `API NIRE: ERRO | TIPO DE EMPRESA DO CNPJ NÃO ENCONTRADA`;
+                        ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
                         ret['ret'] = true;
                         let errMsg = `$ [apiNire] ${ret.msg}`
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -91,7 +107,7 @@ async function apiNire(inf) {
                             infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['1']) {
-                                ret['msg'] = `API NIRE: ERRO | DATA DO CNPJ NÃO ENCONTRADA`;
+                                ret['msg'] = `Data do CNPJ não encontrada`;
                                 ret['ret'] = true;
                                 let errMsg = `$ [apiNire] ${ret.msg}`
                                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -114,8 +130,13 @@ async function apiNire(inf) {
             }
         }
 
-    } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
+        // ### LOG FUN ###
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
+        }
+    } catch (err) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ [apiNire] TRYCATCH Script erro!`

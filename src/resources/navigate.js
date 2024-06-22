@@ -1,13 +1,19 @@
-// let infNavigate, retNavigate
+// let infNavigate, retNavigate // 'logFun': true,
 // infNavigate = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retNavigate = await navigate(infNavigate); console.log(retNavigate)
+// retNavigate = await navigate(infNavigate)
+// console.log(retNavigate)
 
-let e = import.meta.url, ee = e;
+let e = import.meta.url, ee = e
 async function navigate(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    if (catchGlobal) {
+        let errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } };
+        if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
+        else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
+    }
     try {
         if (!inf.url) {
-            ret['msg'] = `NAVIGATE: ERRO | INFORMAR O 'url'`;
+            ret['msg'] = `\n\n #### ERRO #### URL \n INFORMAR O 'url' \n\n`;
         } else {
             let browser = inf.browser
             let page = inf.page
@@ -19,8 +25,13 @@ async function navigate(inf) {
             ret['ret'] = true;
         }
 
-    } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
+        // ### LOG FUN ###
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
+        }
+    } catch (err) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ [navigate] TRYCATCH Script erro!`

@@ -1,10 +1,16 @@
-// let infApiCnpj, retApiCnpj
+// let infApiCnpj, retApiCnpj // 'logFun': true,
 // infApiCnpj = {'e': e, 'cnpj': '52957711000152' }
-// retApiCnpj = await apiCnpj(infApiCnpj); console.log(retApiCnpj)
+// retApiCnpj = await apiCnpj(infApiCnpj)
+// console.log(retApiCnpj)
 
-let e = import.meta.url, ee = e;
+let e = import.meta.url, ee = e
 async function apiCnpj(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    if (catchGlobal) {
+        let errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } };
+        if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
+        else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
+    }
     try {
         let infApi, retApi, infLog, retLog
         let token = inf && inf.token ? inf.token : gO.inf.token
@@ -21,10 +27,16 @@ async function apiCnpj(inf) {
         } else { retApi = JSON.parse(retApi.res.body) }
 
         // CRIAÇÃO
-        let criacao = !retApi.updated ? 'null' : retApi.updated; if (criacao !== 'null') {
-            let time2 = new Date(criacao); time2.setHours(time2.getHours());
-            let day = ("0" + time2.getDate()).slice(-2); let mon = ("0" + (time2.getMonth() + 1)).slice(-2); let hou = ("0" + time2.getHours()).slice(-2);
-            let min = ("0" + time2.getMinutes()).slice(-2); let sec = ("0" + time2.getSeconds()).slice(-2); criacao = `${day}/${mon} ${hou}:${min}:${sec}`;
+        let criacao = !retApi.updated ? 'null' : retApi.updated
+        if (criacao !== 'null') {
+            let time2 = new Date(criacao);
+            time2.setHours(time2.getHours());
+            let day = ("0" + time2.getDate()).slice(-2);
+            let mon = ("0" + (time2.getMonth() + 1)).slice(-2);
+            let hou = ("0" + time2.getHours()).slice(-2);
+            let min = ("0" + time2.getMinutes()).slice(-2);
+            let sec = ("0" + time2.getSeconds()).slice(-2);
+            criacao = `${day}/${mon} ${hou}:${min}:${sec}`;
         }
 
         let razaoSocial = !retApi.company.name ? 'null' : retApi.company.name
@@ -69,20 +81,42 @@ async function apiCnpj(inf) {
         let endEstado = !retApi.address.state ? 'null' : retApi.address.state
         let endCep = !retApi.address.zip ? 'null' : retApi.address.zip
         let endereco = {
-            'endLogradouro': endLogradouro, 'endNome': endNome, 'endNumero': endNumero, 'endBairro': endBairro, 'endMunicipio': endMunicipio, 'endEstado': endEstado, 'endCep': endCep,
+            'endLogradouro': endLogradouro,
+            'endNome': endNome,
+            'endNumero': endNumero,
+            'endBairro': endBairro,
+            'endMunicipio': endMunicipio,
+            'endEstado': endEstado,
+            'endCep': endCep,
         }
 
         // RES
         let res = {
-            'criacao': criacao, 'cnpj': retApi.taxId, 'razaoSocial': razaoSocial, 'telefones': telefones, 'telefone1': telefone1, 'telefone2': telefone2,
-            'email': email, 'email1': email1, 'email2': email2, 'gestor': gestor, 'gestor1': gestor1, 'gestor2': gestor2, 'endereco': endereco
+            'criacao': criacao,
+            'cnpj': retApi.taxId,
+            'razaoSocial': razaoSocial,
+            'telefones': telefones,
+            'telefone1': telefone1,
+            'telefone2': telefone2,
+            'email': email,
+            'email1': email1,
+            'email2': email2,
+            'gestor': gestor,
+            'gestor1': gestor1,
+            'gestor2': gestor2,
+            'endereco': endereco
         }
         ret['res'] = res
         ret['msg'] = 'API CNPJ: OK';
         ret['ret'] = true;
 
-    } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
+        // ### LOG FUN ###
+        if (inf && inf.logFun) {
+            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
+            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
+        }
+    } catch (err) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ [apiCnpj] TRYCATCH Script erro!`
