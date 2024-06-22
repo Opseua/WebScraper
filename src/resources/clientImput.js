@@ -160,19 +160,11 @@ async function clientImput(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `$ [clientImput] TRYCATCH Script erro!`
+        let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         let retSendData = await sendData(infSendData)
-    };
-    return {
-        ...({ ret: ret.ret }),
-        ...(ret.msg && { msg: ret.msg }),
-        ...(ret.res && { res: ret.res }),
-    };
-}
+    }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
+};
 
-if (eng) { // CHROME
-    window['clientImput'] = clientImput;
-} else { // NODEJS
-    global['clientImput'] = clientImput;
-}
+// CHROME | NODEJS
+(eng ? window : global)['clientImput'] = clientImput

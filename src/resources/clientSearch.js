@@ -6,11 +6,6 @@
 let e = import.meta.url, ee = e
 async function clientSearch(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
-    if (catchGlobal) {
-        let errs = async (errC, ret) => { if (!ret.stop) { ret['stop'] = true; regexE({ 'e': errC, 'inf': inf, 'catchGlobal': true }) } };
-        if (typeof window !== 'undefined') { window.addEventListener('error', (errC) => errs(errC, ret)); window.addEventListener('unhandledrejection', (errC) => errs(errC, ret)) }
-        else { process.on('uncaughtException', (errC) => errs(errC, ret)); process.on('unhandledRejection', (errC) => errs(errC, ret)) }
-    }
     try {
         let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageInput, pageResult, retLog, time, mon, day, hou, leadStatus
 
@@ -131,22 +126,14 @@ async function clientSearch(inf) {
             infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
         }
     } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, 'catchGlobal': false });
+        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `$ [clientSearch] TRYCATCH Script erro!`
+        let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         let retSendData = await sendData(infSendData)
-    };
-    return {
-        ...({ ret: ret.ret }),
-        ...(ret.msg && { msg: ret.msg }),
-        ...(ret.res && { res: ret.res }),
-    };
-}
+    }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
+};
 
-if (eng) { // CHROME
-    window['clientSearch'] = clientSearch;
-} else { // NODEJS
-    global['clientSearch'] = clientSearch;
-}
+// CHROME | NODEJS
+(eng ? window : global)['clientSearch'] = clientSearch

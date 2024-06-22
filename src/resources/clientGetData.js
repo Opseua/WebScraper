@@ -116,19 +116,11 @@ async function clientGetData(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `$ [clientGetData] TRYCATCH Script erro!`
+        let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         let retSendData = await sendData(infSendData)
-    };
-    return {
-        ...({ ret: ret.ret }),
-        ...(ret.msg && { msg: ret.msg }),
-        ...(ret.res && { res: ret.res }),
-    };
-}
+    }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
+};
 
-if (eng) { // CHROME
-    window['clientGetData'] = clientGetData;
-} else { // NODEJS
-    global['clientGetData'] = clientGetData;
-}
+// CHROME | NODEJS
+(eng ? window : global)['clientGetData'] = clientGetData
