@@ -7,7 +7,7 @@ async function cookiesGetSet(inf) {
     try {
         if (!inf.action || (!inf.action == 'get' || !inf.action == 'set')) {
             ret['msg'] = `COOKIES GET SET: ERRO | INFORMAR O 'action'`;
-        } else if (!inf.value) {
+        } else if (inf.action == 'set' && !inf.value) {
             ret['msg'] = `COOKIES GET SET: ERRO | INFORMAR O 'value'`;
         } else {
             let browser = inf.browser

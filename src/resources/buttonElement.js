@@ -7,7 +7,7 @@ async function buttonElement(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
         let element
-        if (!inf.button || !['search', 'first', 'prev', 'next', 'last'].includes(inf.button)) {
+        if (!inf.button || !['search', 'first', 'prev', 'next', 'last', 'continue'].includes(inf.button)) {
             ret['msg'] = `BUTTON: ERRO | INFORMAR O 'action'`;
         } else {
             let button
@@ -21,6 +21,8 @@ async function buttonElement(inf) {
                 button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrNext_lbtText"]`
             } else if (inf.button == 'last') { // ÚLTIMA PÁGINA [last] (XPATH)
                 button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrLast_lbtText"]`
+            } else if (inf.button == 'continue') { // CONTINUAR [captcha] (XPATH)
+                button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_btEntrar"]`
             }
             let browser = inf.browser
             let page = inf.page

@@ -10,18 +10,10 @@ async function apiNire(inf) {
         let nire = inf && inf.nire ? inf.nire : '12345678'
         let aut = inf && inf.aut ? inf.aut : 'ASP.NET_SessionId=aaaaaaaaaaaa'
 
-        for (let [index, value] of aut.entries()) {
-            if (value.name == 'ASP.NET_SessionId') {
-                aut = `ASP.NET_SessionId=${value.value}`
-                break
-            }
-        }
+        for (let [index, value] of aut.entries()) { if (value.name == 'ASP.NET_SessionId') { aut = `ASP.NET_SessionId=${value.value}`; break } }
 
         // API
-        let infApi = {
-            'e': e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
-            'headers': { 'Cookie': aut }
-        };
+        let infApi = { 'e': e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`, 'headers': { 'Cookie': aut } };
         let retApi = await api(infApi); if (!retApi.ret) {
             let errMsg = `$ [apiNire] FALSE: retApi`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
@@ -31,9 +23,7 @@ async function apiNire(inf) {
         } else { retApi = retApi.res }
 
         // CHECAR SE A API DEU CÓDIGO 200
-        if (retApi.code !== 200) {
-            return retApi
-        }
+        if (retApi.code !== 200) { return retApi }
 
         // CHECAR SE O COOKIE EXPIROU
         let texto = JSON.stringify(retApi.body)

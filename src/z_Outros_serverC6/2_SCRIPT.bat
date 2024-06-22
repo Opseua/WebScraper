@@ -48,6 +48,9 @@ if "!ret!"=="TRUE" (
 	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]} }  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 	del /f /s /q "!pathRes!" & del /f /s /q "!pathReq!"
+	
+	rem ENCERRAR PROCESSOS DO CHROME
+	!2_BACKGROUND! wmic Path win32_process Where "CommandLine Like '%%Chrome_USER_C6%%'" Call Terminate
 )
 
 rem ESTAVA RODANDO [NAO]

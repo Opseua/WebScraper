@@ -6,7 +6,7 @@ let e = import.meta.url, ee = e;
 async function clientGetData(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageResult, retLog, time, mon, day, hou, leadPageId, leadDate, dataC6
+        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageResult, retLog, time, mon, day, hou, leadPageId, leadDate, dataC6, infCommandLine
 
         let { page, leadCnpj } = inf
 
@@ -22,8 +22,8 @@ async function clientGetData(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6__err_5.jpg` });
-            browser.close()
-            process.exit();
+            // FORÇAR PARADA DO SCRIPT
+            await browsers({ 'e': e, 'project': 'C6', 'close': true, 'path': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/OFF.vbs`, });
         }
         leadPageId = retRegex.res['1']
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -46,15 +46,9 @@ async function clientGetData(inf) {
         // ESPERAR A DATA DO LEAD APARECER (TELA ANTIGA)
         pageResult = await page.waitForFunction(() => {
             let elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
-            if (elements.length > 0) {
-                let values = Array.from(elements).map(element => element.textContent.trim());
-
-                return values;
-            }
-            return false;
+            if (elements.length > 0) { let values = Array.from(elements).map(element => element.textContent.trim()); return values; }; return false;
         }, { timeout: 10000 }).catch(async () => { return false; });
-        if (pageResult) { leadDate = await pageResult.jsonValue(); }
-        console.log('PRIMEIRO', pageResult ? true : false)
+        if (pageResult) { leadDate = await pageResult.jsonValue(); }; console.log('PRIMEIRO', pageResult ? true : false)
 
         // ESPERAR A DATA DO LEAD APARECER (TELA NOVA)
         if (!pageResult) {
@@ -62,17 +56,14 @@ async function clientGetData(inf) {
                 await page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.comm-content-header.comm-layout-column > div > div > c-c6-business-highlights > div > div.slds-col.slds-size_6-of-7 > c-c6-business-highlights-information > lightning-card > article > div.slds-card__body > slot > div:nth-child(2) > div:nth-child(5) > p', { timeout: 10000 });
                 pageResult = await page.evaluate(() => {
                     let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                    if (element) { return element.textContent.trim(); }
-                    return false;
+                    if (element) { return element.textContent.trim(); }; return false;
                 });
             } catch (error) {
                 // console.log('NÃO APARECEU');
-            }
-            if (pageResult) {
+            }; if (pageResult) {
                 infRegex = { 'e': e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': pageResult }
                 retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; leadDate = [`${pageResult} 00:00`] }
-            }
-            console.log('SEGUNDO', pageResult ? true : false)
+            }; console.log('SEGUNDO', pageResult ? true : false)
         }
 
         if (!pageResult) {
@@ -84,15 +75,13 @@ async function clientGetData(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_err_6.jpg` });
-            browser.close()
-            process.exit();
+            // FORÇAR PARADA DO SCRIPT
+            await browsers({ 'e': e, 'project': 'C6', 'close': true, 'path': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/OFF.vbs`, });
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA
-        let data = leadDate[0].split('/');
-        let dataDay = parseInt(data[0], 10).toString().padStart(2, '0');
-        let dataMon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
-        let dataYea = parseInt(data[2], 10).toString().padStart(4, '0');
+        let data = leadDate[0].split('/'); let dataDay = parseInt(data[0], 10).toString().padStart(2, '0');
+        let dataMon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0'); let dataYea = parseInt(data[2], 10).toString().padStart(4, '0');
         // DATA ENCONTRADA EM TIMESTAMP SEM MILESEGUNDOS
         dataC6 = new Date(dataYea, dataMon, dataDay, 0, 0, 0); // ANO-MÊS-DIA 00:00:00
         dataC6 = Math.floor(dataC6.getTime() / 1000);

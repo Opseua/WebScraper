@@ -6,22 +6,18 @@ let e = import.meta.url, ee = e;
 async function clientSearch(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageInput, pageResult, retLog, time, mon, day, hou, leadStatus
+        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageInput, pageResult, retLog, time, mon, day, hou, leadStatus, infCommandLine
 
         let { page, leadCnpj } = inf
 
-        let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'
-        currentURL = page.url()
+        let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'; currentURL = page.url()
         // CHECAR SE É A PÁGINA DE INDICAÇÃO, SE NÃO FOR ABRIR ELA
         if (!currentURL.includes(url)) {
             while (qtd < 3) {
-                await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; }; qtd++;
-                if (qtd > 2) {
+                await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; }; qtd++; if (qtd > 2) {
                     // ABRIR PÁGINA DE BUSCA GLOBAL
-                    await page.goto(url, { waitUntil: 'networkidle2' });
-                    await new Promise(resolve => { setTimeout(resolve, 1000) })
-                    await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                    await new Promise(resolve => { setTimeout(resolve, 1000) })
+                    await page.goto(url, { waitUntil: 'networkidle2' }); await new Promise(resolve => { setTimeout(resolve, 1000) })
+                    await page.screenshot({ path: `log/screenshot_C6.jpg` }); await new Promise(resolve => { setTimeout(resolve, 1000) })
                 }
             }
         }
@@ -45,8 +41,8 @@ async function clientSearch(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_err_2.jpg` });
-            browser.close()
-            process.exit();
+            // FORÇAR PARADA DO SCRIPT
+            await browsers({ 'e': e, 'project': 'C6', 'close': true, 'path': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/OFF.vbs`, });
         }
         retRegex = retRegex.res['1']
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -62,35 +58,22 @@ async function clientSearch(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_err_3.jpg` });
-            browser.close()
-            process.exit();
+            // FORÇAR PARADA DO SCRIPT
+            await browsers({ 'e': e, 'project': 'C6', 'close': true, 'path': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/OFF.vbs`, });
         }
-        await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await page.type(`input[id="${retRegex}"]`, leadCnpj);
-        await new Promise(resolve => setTimeout(resolve, 750));
-        await pageInput.press('Enter');
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        await page.$eval(`input[id="${retRegex}"]`, input => (input.value = '')); await new Promise(resolve => setTimeout(resolve, 500));
+        await page.type(`input[id="${retRegex}"]`, leadCnpj); await new Promise(resolve => setTimeout(resolve, 750));
+        await pageInput.press('Enter'); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
         pageResult = await page.waitForFunction(() => {
             let conteudo = document.body.innerText;
-            if (conteudo.includes('NOME DA CONTA')) {
-                return 'ENCONTRADO_CONTA';
-            } else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) {
-                fileStatus = 2
-                return 'ENCONTRADO_EXPIRADO';
-            } else if (conteudo.includes('NOME COMPLETO')) {
-                fileStatus = 3
-                return 'ENCONTRADO_LEAD';
-            } else if (conteudo.includes('Nenhum resultado para')) {
-                fileStatus = 4
-                return 'NADA_ENCONTRADO';
-            }
+            if (conteudo.includes('NOME DA CONTA')) { return 'ENCONTRADO_CONTA'; }
+            else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) { fileStatus = 2; return 'ENCONTRADO_EXPIRADO'; }
+            else if (conteudo.includes('NOME COMPLETO')) { fileStatus = 3; return 'ENCONTRADO_LEAD'; }
+            else if (conteudo.includes('Nenhum resultado para')) { fileStatus = 4; return 'NADA_ENCONTRADO'; }
             return false;
-        }, { timeout: 30000 }).catch(async () => {
-            return false;
-        });
+        }, { timeout: 30000 }).catch(async () => { return false; });
 
         if (!pageResult) {
             err = `$ Não achou o resultado da consulta`
@@ -101,8 +84,8 @@ async function clientSearch(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_err_4.jpg` });
-            browser.close()
-            process.exit();
+            // FORÇAR PARADA DO SCRIPT
+            await browsers({ 'e': e, 'project': 'C6', 'close': true, 'path': `${letter}:/ARQUIVOS/PROJETOS/WebScraper/src/z_Outros_serverC6/OFF.vbs`, });
         }
         leadStatus = await pageResult.jsonValue();
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${leadStatus}` });
