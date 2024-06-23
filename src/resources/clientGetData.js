@@ -6,86 +6,63 @@ let e = import.meta.url, ee = e;
 async function clientGetData(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageResult, retLog, time, mon, day, hou, leadPageId, leadDate, dataC6
+        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageResult, retLog, time, mon, day, hou, leadPageId, leadDate = [], dataC6
 
         let { page, leadCnpj } = inf
 
         // PEGAR O ID DO LINK DA PÁGINA DO LEAD
-        pageValue = await page.content()
-        infRegex = { 'e': e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }
-        retRegex = regex(infRegex);
+        pageValue = await page.content(); infRegex = { 'e': e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }; retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `$ Não achou o ID do link da página do lead`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6__err_5.jpg` });
-            browser.close()
-            process.exit();
-        }
-        leadPageId = retRegex.res['1']
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
-
-        // STATUS1 [Abrindo dados do cliente]
-        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }
-        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-        retSendData = await sendData(infSendData)
-        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; retSendData = await sendData(infSendData)
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; retLog = await log(infLog); await page.screenshot({ path: `log/screenshot_C6__err_5.jpg` });
+            browser.close(); process.exit();
+        }; leadPageId = retRegex.res['1']
         // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
+        // STATUS1 [Abrindo dados do cliente]
+        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
+        retSendData = await sendData(infSendData); await page.screenshot({ path: `log/screenshot_C6.jpg` });
+
         // CLICAR NO LINK DO ID DO LEAD
-        let linkSelector = `a[data-recordid="${leadPageId}"]`;
-        await page.waitForSelector(linkSelector);
-        let link = await page.$(linkSelector);
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
+        // await new Promise(resolve => { setTimeout(resolve, 1000) })
         await link.click();
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
-        // ESPERAR A DATA DO LEAD APARECER (TELA ANTIGA)
-        pageResult = await page.waitForFunction(() => {
-            let elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview');
-            if (elements.length > 0) {
-                let values = Array.from(elements).map(element => element.textContent.trim());
+        // E DEFINIR SE É TELA ANTIGA OU NOVA
+        let timeout = 10000; let selectors = [
+            '.uiOutputDateTime.forceOutputModStampWithPreview', '.slds-form.slds-form_stacked.slds-grid.slds-page-header__detail-row'
+        ]; try { let result = await Promise.race([page.waitForSelector(selectors[0], { timeout }).then(() => 'ANTIGO'), page.waitForSelector(selectors[1], { timeout }).then(() => 'NOVO')]); pageResult = result; }
+        catch (e) { pageResult = false }
 
-                return values;
-            }
-            return false;
-        }, { timeout: 10000 }).catch(async () => { return false; });
-        if (pageResult) { leadDate = await pageResult.jsonValue(); }
-        console.log('PRIMEIRO', pageResult ? true : false)
-
-        // ESPERAR A DATA DO LEAD APARECER (TELA NOVA)
-        if (!pageResult) {
-            try {
-                await page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.comm-content-header.comm-layout-column > div > div > c-c6-business-highlights > div > div.slds-col.slds-size_6-of-7 > c-c6-business-highlights-information > lightning-card > article > div.slds-card__body > slot > div:nth-child(2) > div:nth-child(5) > p', { timeout: 10000 });
+        // DATA FOI ENCONTRADA
+        if (pageResult) {
+            if (pageResult === 'ANTIGO') {
+                // PEGAR O VALOR [TELA ANTIGA]
                 pageResult = await page.evaluate(() => {
-                    let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                    if (element) { return element.textContent.trim(); }
-                    return false;
+                    let elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview'); return Array.from(elements).map(element => element.textContent.trim());
+                }); leadDate = [pageResult[0]]
+            } else {
+                // ESPERAR O ELEMENTO APARECER [TELA NOVA]
+                await page.waitForFunction(() => {
+                    let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
+                }, { timeout });
+                // PEGAR O VALOR
+                leadDate = await page.evaluate(() => {
+                    let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element ? element.textContent.trim() : null;
                 });
-            } catch (error) {
-                // console.log('NÃO APARECEU');
-            }
-            if (pageResult) {
-                infRegex = { 'e': e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': pageResult }
+                // EXTRAIR DATA
+                infRegex = { 'e': e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDate }
                 retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; leadDate = [`${pageResult} 00:00`] }
             }
-            console.log('SEGUNDO', pageResult ? true : false)
-        }
+        }; // console.log(pageResult ? true : false, leadDate)
 
         if (!pageResult) {
             err = `$ Não achou a data de abertura`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
-            pageValue = await page.content()
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_err_6.jpg` });
-            browser.close()
-            process.exit();
+            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+            retSendData = await sendData(infSendData); pageValue = await page.content(); infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; retLog = await log(infLog);
+            await page.screenshot({ path: `log/screenshot_C6_err_6.jpg` }); browser.close(); process.exit();
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA

@@ -69,8 +69,10 @@ async function serverRun(inf) {
         // ABRIR PÁGINA DE BUSCA GLOBAL
         async function openHome() {
             await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
-            await new Promise(resolve => { setTimeout(resolve, 1000) }); await page.screenshot({ path: `log/screenshot_C6.jpg` });
-        }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 2000) })
+            await new Promise(resolve => { setTimeout(resolve, 1000) });
+            await page.screenshot({ path: `log/screenshot_C6.jpg` });
+        }; await openHome();
+        // await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
@@ -210,7 +212,8 @@ async function serverRun(inf) {
                         // STATUS1 [STATUS DA CONSULTA]
                         statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` }); await new Promise(resolve => { setTimeout(resolve, 1000) })
+                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+                        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
                         time = dateHour().res; results = [[

@@ -21,13 +21,13 @@ async function clientImput(inf) {
                     await page.goto(url, { waitUntil: 'networkidle2' });
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
                     await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                    await new Promise(resolve => { setTimeout(resolve, 2000) })
+                    // await new Promise(resolve => { setTimeout(resolve, 2000) })
                 }
             }
         }
 
         // ESPERAR OS CAMPOS APARECEREM
-        pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 30000 });
+        pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000 });
         if (!pageInput) {
             err = `$ Formulário não apareceu`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
@@ -57,7 +57,7 @@ async function clientImput(inf) {
             process.exit();
         }
         retRegex = retRegex.res['5']
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // STATUS1 [Indicando...]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
@@ -65,7 +65,6 @@ async function clientImput(inf) {
         retSendData = await sendData(infSendData)
         pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
         await page.screenshot({ path: `log/screenshot_C6.jpg` });
-        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         for (let [index, value] of retRegex.entries()) {
             pageInput = await page.$(`input[id="${value}"]`);
@@ -82,9 +81,9 @@ async function clientImput(inf) {
                 process.exit();
             }
             await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 250));
             await page.type(`input[id="${value}"]`, pageImputs[index]);
-            await new Promise(resolve => { setTimeout(resolve, 750) });
+            await new Promise(resolve => { setTimeout(resolve, 400) });
         }
 
         // PRINT PARA LOG
@@ -93,12 +92,12 @@ async function clientImput(inf) {
 
         // CLICAR NO BOTÃO 'Confirmar'
         await page.click('.slds-button.slds-button_neutral.button.uiButton--default.uiButton--brand.uiButton');
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
         pageResult = await Promise.race([
-            page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.contentRegion.comm-layout-column > div > div > div > div.container.EDIT.forceQuickActionLayout > div.pageLevelErrors > div > div', { timeout: 15000 }).then(() => false),
-            page.waitForNavigation({ timeout: 15000 }).then(() => true),
+            page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.contentRegion.comm-layout-column > div > div > div > div.container.EDIT.forceQuickActionLayout > div.pageLevelErrors > div > div', { timeout: 10000 }).then(() => false),
+            page.waitForNavigation({ timeout: 10000 }).then(() => true),
         ]).catch(() => 'NADA_ACONTECEU');
 
         time = dateHour().res

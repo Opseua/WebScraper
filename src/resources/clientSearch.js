@@ -22,7 +22,7 @@ async function clientSearch(inf) {
                     await page.goto(url, { waitUntil: 'networkidle2' });
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
                     await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                    await new Promise(resolve => { setTimeout(resolve, 1000) })
+                    // await new Promise(resolve => { setTimeout(resolve, 1000) })
                 }
             }
         }
@@ -32,7 +32,6 @@ async function clientSearch(inf) {
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
         retSendData = await sendData(infSendData)
         await page.screenshot({ path: `log/screenshot_C6.jpg` });
-        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
         pageValue = await page.content()
@@ -50,7 +49,7 @@ async function clientSearch(inf) {
             process.exit();
         }
         retRegex = retRegex.res['1']
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // BUSCAR LEAD NA LUPA
         pageInput = await page.$(`input[id="${retRegex}"]`);
@@ -71,7 +70,7 @@ async function clientSearch(inf) {
         await page.type(`input[id="${retRegex}"]`, leadCnpj);
         await new Promise(resolve => setTimeout(resolve, 750));
         await pageInput.press('Enter');
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // ESPERAR A BUSCA GLOBAL TERMINAR DE CONSULTAR
         pageResult = await page.waitForFunction(() => {
