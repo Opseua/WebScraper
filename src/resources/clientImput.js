@@ -136,8 +136,8 @@ async function clientImput(inf) {
                 } else {
                     leadStatus = `ALERTA: status não identificado`
                     let infFile, retFile
-                    infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
-                    retFile = await file(infFile);
+                    // infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
+                    // retFile = await file(infFile);
                     fileStatus = 99
                 }
             }

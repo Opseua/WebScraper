@@ -16,7 +16,7 @@ async function serverRun(inf) {
             await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) }; let shortcut = 'z_Outros_serverJucesp';
 
-        let infNavigate, retNavigate, infImput, retImput, retCookiesGetSet, infAwaitLoad, retAwaitLoad, retCheckPage, value, results = [], infSendData, infGetTextElement, retGetTextElement, browser
+        let infNavigate, retNavigate, infImput, retImput, retCookiesGetSet, infAwaitLoad, retAwaitLoad, retCheckPage, value, results = [], infSendData, infGetTextElement, retGetTextElement, browser, page
         let retSendData, infGoogleSheets, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date, infButtonElement, retButtonElement, infLog, retLog, lastPage = false, err, conSpl, chromiumHeadless, token;
         gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 });
         let repet1 = 999999, pg, mode, lin, range = 'A2'; gO.inf['sheetId'] = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['sheetTab'] = 'RESULTADOS'
