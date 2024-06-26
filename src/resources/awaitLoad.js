@@ -7,27 +7,20 @@ let e = import.meta.url, ee = e
 async function awaitLoad(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        if (!inf.element) { // SELECTOR #jo_encontrados
+        let { browser, page, element } = inf
+        if (element) { // SELECTOR #jo_encontrados
             ret['msg'] = `\n\n #### ERRO #### AWAIT LOAD \n INFORMAR O 'element' \n\n`;
         } else {
-            let browser = inf.browser
-            let page = inf.page
             // AGUARDAR ELEMENTO
-            await page.waitForSelector(inf.element, {
+            await page.waitForSelector(element, {
                 visible: true,
             });
             await new Promise(resolve => { setTimeout(resolve, 1000) })
             ret['msg'] = `AWAIT ELEMENT: OK`;
             ret['ret'] = true;
         }
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`

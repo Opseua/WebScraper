@@ -12,20 +12,22 @@ async function serverRun(inf) {
         let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }; let retFile = await file(infFile);
 
         // FORÇAR PARADA DO SCRIPT | NTFY
-        async function processForceStop() {
-            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
-        }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) }; let shortcut = '';
+        async function processForceStop(inf) {
+            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` });
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ORIGEM: ${inf.origin}` })
+            await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+        }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) };
 
-        let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex, results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut, infCommandLine, retCommandLine, infApi, retApi
+        let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex, results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut, infCommandLine, retCommandLine, infApi, retApi, coldList
         let infLog, retLog, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull, json, chromiumHeadless, scriptHour, retClientSearch
         let retClientGetData, retClientImput, dataDayMonYea, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
-        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'INDICAR_AUTOMATICO', 'SOMENTE_CONSULTAR', 'LISTA_FRIA'] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
+        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         let googleSheetsId, retGetPath = await getPath({ 'e': new Error() }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file
-        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; shortcut = 'z_Outros_serverC6' }
-        else { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; shortcut = 'z_Outros_serverC6_New2' }; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]
+        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['shortcut'] = 'z_Outros_serverC6'; }
+        else { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_Outros_serverC6_New2'; }; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]
 
         // CONSUMO DE MÉMORIA RAM (A CADA 30 MINUTOS)
         setInterval(() => {
@@ -40,15 +42,15 @@ async function serverRun(inf) {
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }; retGoogleSheets = await googleSheets(infGoogleSheets);
         if (!retGoogleSheets.ret) {
-            err = `$ [serverC6] Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
+            err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
             // FORÇAR PARADA DO SCRIPT
-            await processForceStop();
+            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });
         }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
         catch (catchErr) {
             sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` });
             // FORÇAR PARADA DO SCRIPT
-            await processForceStop();
+            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' });
         }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadRandomNames = gO.inf.sheetKepp.randomNames;
         chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
@@ -70,16 +72,16 @@ async function serverRun(inf) {
         async function openHome() {
             await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
             await new Promise(resolve => { setTimeout(resolve, 1000) });
-            await page.screenshot({ path: `log/screenshot_C6.jpg` });
+            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
         }; await openHome();
-        // await new Promise(resolve => { setTimeout(resolve, 2000) })
+        await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
             err = `$ Cookie inválido!`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; retSendData = await sendData(infSendData)
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; retLog = await log(infLog); await page.screenshot({ path: `log/screenshot_C6_err_1.jpg` });
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; retLog = await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg` });
             // FORÇAR PARADA DO SCRIPT
-            await processForceStop()
+            await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' });
         }
 
         // **************************************************************************************************************
@@ -90,7 +92,7 @@ async function serverRun(inf) {
                 infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
                 // FORÇAR PARADA DO SCRIPT
-                await processForceStop()
+                await processForceStop({ 'origin': 'serverC6 STATUS1 [Fora do horário permitido]' });
             } else {
                 // DEFINIR ABA ATUAL
                 tabsInf['index'] = tabsInf.index < (tabsInf.name.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.name[tabsInf.index];
@@ -102,16 +104,16 @@ async function serverRun(inf) {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
                     infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }; retGoogleSheets = await googleSheets(infGoogleSheets);
                     if (!retGoogleSheets.ret) {
-                        err = `$ [serverC6] Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
+                        err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
                         infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
                         // FORÇAR PARADA DO SCRIPT
-                        await processForceStop()
+                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' });
                     }; try {
                         json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json)
                     } catch (catchErr) {
                         sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
                         // FORÇAR PARADA DO SCRIPT
-                        await processForceStop()
+                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });
                     }
                     aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
@@ -123,20 +125,21 @@ async function serverRun(inf) {
                         tabsInf.lastCheck[tabsInf.index] = Math.floor(Date.now() / 1000) + secAwaitNewCheck;
                         infSendData = { 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` }; retSendData = await sendData(infSendData)
                     } else {
-                        leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`)
+                        leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`);
 
                         // DADOS DO LEAD
-                        let leadInf, leadLinha, leadStatus, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome; for (let [index, value] of leads.entries()) {
+                        let leadInf, leadLinha, leadStatus, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome, leadOrigem; for (let [index, value] of leads.entries()) {
                             leadInf = value.split(conSpl); leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', ''); leadStatus = leadInf[1].replace(/^\s+/g, '')
                             leadCnpj = leadInf[2].replace(/^\s+/g, ''); leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
                             leadAdministrador = leadInf[4].length > 4 && leadInf[4].includes(' ') ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
                             leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'; leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###'); if (leadAdministrador.length < 2) {
                                 leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
-                            }; leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]
+                            }; leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = leadInf[7];
+                            coldList = gO.inf.sheetTab == 'LISTA_FRIA' || leadOrigem.includes('JSF') || leadOrigem.includes('JUCESP') ? true : false; leadTelefone = coldList ? '887766' : leadTelefone
                         }
 
                         // CLIENTE: BUSCAR NA LUPA
-                        retClientSearch = await clientSearch({ 'page': page, 'leadCnpj': leadCnpj })
+                        retClientSearch = await clientSearch({ 'page': page, 'browser': browser, 'leadCnpj': leadCnpj })
                         if (!retClientSearch.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT SEACH` }); browser.close(); process.exit(); }
                         else { retClientSearch = retClientSearch.res.leadStatus }; leadStatus = retClientSearch
 
@@ -146,7 +149,7 @@ async function serverRun(inf) {
                         if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD' || leadStatus == 'ENCONTRADO_EXPIRADO') {
                             // LEAD DA BASE [SIM] ******************************************************************
                             // CLIENTE: PEGAR DADOS DO CONTA/LEAD
-                            retClientGetData = await clientGetData({ 'page': page, 'leadCnpj': leadCnpj })
+                            retClientGetData = await clientGetData({ 'page': page, 'browser': browser, 'leadCnpj': leadCnpj })
                             if (!retClientGetData.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); process.exit(); }
                             else { retClientGetData = retClientGetData.res }; dataRes = retClientGetData.dataRes; dataDayMonYea = retClientGetData.dataDayMonYea; dataDayMonYeaFull = retClientGetData.dataDayMonYeaFull;
                             dataBoolean = retClientGetData.dataBoolean; statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull
@@ -158,7 +161,7 @@ async function serverRun(inf) {
                             // CLIENTE: INDICAR → LEAD DA BASE [NÃO] | EXPIRADO
                             retClientImput = await clientImput({
                                 'page': page, 'browser': browser, 'leadCnpj': leadCnpj, 'leadPrimeiroNome': leadPrimeiroNome,
-                                'leadSobrenome': leadSobrenome, 'leadEmail': leadEmail, 'leadTelefone': gO.inf.sheetTab == 'LISTA_FRIA' ? leadTelefone.replace('55219', '219') : leadTelefone,
+                                'leadSobrenome': leadSobrenome, 'leadEmail': leadEmail, 'leadTelefone': coldList ? leadTelefone.replace('55219', '219') : leadTelefone,
                             }); if (!retClientImput.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT IMPUT` }); browser.close(); process.exit(); }
                             else { retClientImput = retClientImput.res }; imputRes = retClientImput.imputRes
 
@@ -195,7 +198,7 @@ async function serverRun(inf) {
                             } else if (imputRes == 'INDICAÇÃO OK') {
                                 statusInf = 'INDICAÇÃO OK'
                             } else if (imputRes == 'ALERTA: telefone inválido') {
-                                statusInf = gO.inf.sheetTab == 'LISTA_FRIA' ? 'DISPONÍVEL' : 'ALERTA: telefone inválido'
+                                statusInf = coldList ? 'DISPONÍVEL' : 'ALERTA: telefone inválido'
                             } else if (imputRes == 'ALERTA: CNPJ inválido') {
                                 statusInf = 'ALERTA: CNPJ inválido'
                             } else if (imputRes == 'ALERTA: email inválido') {
@@ -212,8 +215,8 @@ async function serverRun(inf) {
                         // STATUS1 [STATUS DA CONSULTA]
                         statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
-                        await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                        // await new Promise(resolve => { setTimeout(resolve, 1000) })
+                        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+                        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
                         time = dateHour().res; results = [[
@@ -225,11 +228,11 @@ async function serverRun(inf) {
                         infGoogleSheets = { 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results]] }
                         retGoogleSheets = await googleSheets(infGoogleSheets);
                         if (!retGoogleSheets.ret) {
-                            err = `$ [serverC6] Erro ao enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+                            err = `$ Erro ao enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
-                            await page.screenshot({ path: `log/screenshot_C6_err_7.jpg` });
+                            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_7.jpg` });
                             // FORÇAR PARADA DO SCRIPT
-                            await processForceStop()
+                            await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO' });
                         }
 
                         // console.log(leadStatus, statusInf, statusDate, statusDateFull, imputRes)

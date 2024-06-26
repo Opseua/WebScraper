@@ -7,9 +7,9 @@ let e = import.meta.url, ee = e
 async function clientSearch(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, retSendData, infLog, err, browser, pageValue, pageInput, pageResult, retLog, time, mon, day, hou, leadStatus
+        let infRegex, retRegex, infSendData, retSendData, infLog, err, pageValue, pageInput, pageResult, retLog, time, mon, day, hou, leadStatus
 
-        let { page, leadCnpj } = inf
+        let { page, browser, leadCnpj } = inf
 
         let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'
         currentURL = page.url()
@@ -21,8 +21,8 @@ async function clientSearch(inf) {
                     // ABRIR PÁGINA DE BUSCA GLOBAL
                     await page.goto(url, { waitUntil: 'networkidle2' });
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
-                    await page.screenshot({ path: `log/screenshot_C6.jpg` });
-                    // await new Promise(resolve => { setTimeout(resolve, 1000) })
+                    await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+                    await new Promise(resolve => { setTimeout(resolve, 1000) })
                 }
             }
         }
@@ -31,7 +31,7 @@ async function clientSearch(inf) {
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
         retSendData = await sendData(infSendData)
-        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
         pageValue = await page.content()
@@ -44,12 +44,12 @@ async function clientSearch(inf) {
             retSendData = await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_err_2.jpg` });
+            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg` });
             browser.close()
             process.exit();
         }
         retRegex = retRegex.res['1']
-        // await new Promise(resolve => { setTimeout(resolve, 1000) })
+        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // BUSCAR LEAD NA LUPA
         pageInput = await page.$(`input[id="${retRegex}"]`);
@@ -61,7 +61,7 @@ async function clientSearch(inf) {
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_err_3.jpg` });
+            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_3.jpg` });
             browser.close()
             process.exit();
         }
@@ -100,13 +100,13 @@ async function clientSearch(inf) {
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_err_4.jpg` });
+            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_4.jpg` });
             browser.close()
             process.exit();
         }
         leadStatus = await pageResult.jsonValue();
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${leadStatus}` });
-        await page.screenshot({ path: `log/screenshot_C6.jpg` });
+        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
         let fileStatus = leadStatus == 'ENCONTRADO_CONTA' ? 1 : leadStatus == 'ENCONTRADO_EXPIRADO' ? 2 : leadStatus == 'ENCONTRADO_LEAD' ? 3 : leadStatus == 'NADA_ENCONTRADO' ? 4 : 'X'
         // PRINT PARA LOG
@@ -118,14 +118,8 @@ async function clientSearch(inf) {
         ret['res'] = {
             'leadStatus': leadStatus
         };
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`

@@ -8,14 +8,15 @@ async function getTextElement(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex
-        if (!inf.element) { // SELECTOR #jo_encontrados
+        let { browser, page, element, value } = inf
+        if (!element) { // SELECTOR #jo_encontrados
             ret['msg'] = `\n\n #### ERRO #### RESULTS \n INFORMAR O 'element' \n\n`;
         } else {
-            if (inf.element == 'results') {
-                infRegex = { 'e': e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': inf.value.replace(/\n/g, ' ') }
+            if (element == 'results') {
+                infRegex = { 'e': e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': value.replace(/\n/g, ' ') }
                 retRegex = regex(infRegex); retRegex = String(retRegex.res['5']);
                 let nire = retRegex.split(',')
-                infRegex = { 'e': e, 'pattern': `pgrGridView_lblResults">Mostrando (.*?)</div><span id="`, 'text': inf.value.replace(/\n/g, ' ') }
+                infRegex = { 'e': e, 'pattern': `pgrGridView_lblResults">Mostrando (.*?)</div><span id="`, 'text': value.replace(/\n/g, ' ') }
                 retRegex = regex(infRegex); retRegex = String(retRegex.res['5'])
                 retRegex = retRegex.replace('</span> de <span id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_lblResultCount"', '')
                 retRegex = retRegex.split('</span>')
@@ -24,24 +25,16 @@ async function getTextElement(inf) {
                 let resultsPage = retRegex
                 ret['res'] = [resultsPage, nire];
             } else {
-                let browser = inf.browser
-                let page = inf.page
                 // PEGAR VALOR DO ELEMENTO
-                let element = await page.waitForSelector(inf.element);
+                let element = await page.waitForSelector(element);
                 let value = await element.evaluate(el => el.textContent);
                 ret['res'] = value;
             }
             ret['msg'] = `GET TEXT ELEMENT: OK`;
             ret['ret'] = true;
         }
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`

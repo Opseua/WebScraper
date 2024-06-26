@@ -14,7 +14,7 @@ async function apiCnpj(inf) {
             'headers': { 'Authorization': token }
         };
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
-            let errMsg = `$ [apiCnpj] FALSE: retApi`
+            let errMsg = `$ FALSE: retApi`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
             retLog = await log(infLog);
@@ -39,13 +39,13 @@ async function apiCnpj(inf) {
         // TELEFONE
         let telefones = retApi.phones[0] || retApi.phones[1] ? '' : 'null'
         if (retApi.phones[0] && retApi.phones[0].area) {
-            telefones = `55${retApi.phones[0].area}${retApi.phones[0].number.replace(/[^0-9]/g, '')}`
+            telefones = `55${retApi.phones[0].area}9${retApi.phones[0].number.replace(/[^0-9]/g, '')}`
         }
         if (retApi.phones[1] && retApi.phones[1].area) {
-            telefones = `${telefones} 55${retApi.phones[1].area}${retApi.phones[1].number.replace(/[^0-9]/g, '')} / `
+            telefones = `${telefones} 55${retApi.phones[1].area}9${retApi.phones[1].number.replace(/[^0-9]/g, '')} / `
         }
-        let telefone1 = retApi.phones[0] ? `55${retApi.phones[0].area}${retApi.phones[0].number.replace(/[^0-9]/g, '')}` : 'null'
-        let telefone2 = retApi.phones[1] ? `55${retApi.phones[1].area}${retApi.phones[1].number.replace(/[^0-9]/g, '')}` : 'null'
+        let telefone1 = retApi.phones[0] ? `55${retApi.phones[0].area}9${retApi.phones[0].number.replace(/[^0-9]/g, '')}` : 'null'
+        let telefone2 = retApi.phones[1] ? `55${retApi.phones[1].area}9${retApi.phones[1].number.replace(/[^0-9]/g, '')}` : 'null'
 
         // EMAIL
         let email = retApi.emails[0] || retApi.emails[1] ? '' : 'null'
@@ -104,14 +104,8 @@ async function apiCnpj(inf) {
         ret['res'] = res
         ret['msg'] = 'API CNPJ: OK';
         ret['ret'] = true;
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`

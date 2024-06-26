@@ -8,25 +8,26 @@ async function checkPage(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
         let infLog, retLog
-        if (!inf.body) {
+        let { body, search } = inf
+        if (!body) {
             ret['msg'] = `\n\n #### ERRO #### CHECK PAGE \n INFORMAR O 'body' \n\n`;
         } else {
             ret['msg'] = `Erro não definido`;
-            if (inf.search) {
-                ret['ret'] = inf.body.includes(inf.search)
-                ret['msg'] = ret.ret ? `ENCONTRADO [SIM]: '${inf.search}'` : `ENCONTRADO [NÃO]: '${inf.search}'`
+            if (search) {
+                ret['ret'] = body.includes(search)
+                ret['msg'] = ret.ret ? `ENCONTRADO [SIM]: '${search}'` : `ENCONTRADO [NÃO]: '${search}'`
                 if (!ret.ret) {
-                    let errMsg = `$ [checkPage] ${ret.msg}`
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': inf.body }
+                    let errMsg = `$ ${ret.msg}`
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     retLog = await log(infLog);
                 }
             } else {
-                if (inf.body.includes('Digite o código da imagem')) {
+                if (body.includes('Digite o código da imagem')) {
                     ret['msg'] = `Cookie expirou`;
-                } else if (!(inf.body.includes('Mostrando') && inf.body.includes('Anterior') && inf.body.includes('Próximo'))) {
+                } else if (!(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
-                    let errMsg = `$ [checkPage] ${ret.msg}`
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': inf.body }
+                    let errMsg = `$ ${ret.msg}`
+                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     retLog = await log(infLog);
                 } else {
                     ret['msg'] = `NIRE's ENCONTRADOS`;
@@ -34,14 +35,8 @@ async function checkPage(inf) {
                 }
             }
         }
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`

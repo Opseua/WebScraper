@@ -24,7 +24,7 @@ async function apiNire(inf) {
             'headers': { 'Cookie': aut }
         };
         let retApi = await api(infApi); if (!retApi.ret) {
-            let errMsg = `$ [apiNire] FALSE: retApi`
+            let errMsg = `$ FALSE: retApi`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
             retLog = await log(infLog);
@@ -46,7 +46,7 @@ async function apiNire(inf) {
         // CHECAR SE ENCONTROU NO BODY UM NIRE VÁLIDO (CNPJ JÁ ESTÁ AQUI)
         if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj') && !texto.includes('mas houve um problema em nosso servidor')) {
             // ### ENCONTROU: NÃO
-            let errMsg = `$ [apiNire] NIRE_INVALIDO`
+            let errMsg = `$ NIRE_INVALIDO`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
             retLog = await log(infLog);
@@ -59,7 +59,7 @@ async function apiNire(inf) {
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
                 ret['ret'] = true;
-                let errMsg = `$ [apiNire] ${ret.msg}`
+                let errMsg = `$ ${ret.msg}`
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                 retLog = await log(infLog);
@@ -72,7 +72,7 @@ async function apiNire(inf) {
                 if (!retRegex.ret || !retRegex.res['1']) {
                     ret['msg'] = `Razão Social do CNPJ não encontrada`;
                     ret['ret'] = true;
-                    let errMsg = `$ [apiNire] ${ret.msg}`
+                    let errMsg = `$ ${ret.msg}`
                     logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                     retLog = await log(infLog);
@@ -85,7 +85,7 @@ async function apiNire(inf) {
                     if (!retRegex.ret || !retRegex.res['1']) {
                         ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
                         ret['ret'] = true;
-                        let errMsg = `$ [apiNire] ${ret.msg}`
+                        let errMsg = `$ ${ret.msg}`
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                         infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                         retLog = await log(infLog);
@@ -104,7 +104,7 @@ async function apiNire(inf) {
                             if (!retRegex.ret || !retRegex.res['1']) {
                                 ret['msg'] = `Data do CNPJ não encontrada`;
                                 ret['ret'] = true;
-                                let errMsg = `$ [apiNire] ${ret.msg}`
+                                let errMsg = `$ ${ret.msg}`
                                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                                 retLog = await log(infLog);
@@ -124,14 +124,8 @@ async function apiNire(inf) {
                 }
             }
         }
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`

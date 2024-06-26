@@ -12,12 +12,14 @@ async function sendData(inf) {
         let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'RESULTADOS'
         let range = inf && inf.range ? inf.range : 'A32'
 
+        let { status1, status2, results } = inf
+
         // ENVIAR DADOS DA PLANILHA
-        if (inf.status1 || inf.status2 || inf.results) {
+        if (status1 || status2 || results) {
             // [STATUS1]
-            if (inf.status1) {
+            if (status1) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A32'
-                let sheetData = typeof inf.status1 === 'object' ? JSON.parse(inf.status1) : inf.status1
+                let sheetData = typeof status1 === 'object' ? JSON.parse(status1) : status1
                 let infGoogleSheets = {
                     'e': e, 'action': 'send',
                     'id': id,
@@ -30,9 +32,9 @@ async function sendData(inf) {
             }
 
             // [STATUS2]
-            if (inf.status2) {
+            if (status2) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status2 ? gO.inf.sheetKepp.range.status2 : 'A34'
-                let sheetData = typeof inf.status2 === 'object' ? JSON.parse(inf.status2) : inf.status2
+                let sheetData = typeof status2 === 'object' ? JSON.parse(status2) : status2
                 let infGoogleSheets = {
                     'e': e, 'action': 'send',
                     'id': id,
@@ -45,8 +47,8 @@ async function sendData(inf) {
             }
 
             // [RESULTS]
-            if (inf.results) {
-                let sheetData = typeof inf.results === 'object' ? JSON.parse(inf.results) : inf.results
+            if (results) {
+                let sheetData = typeof results === 'object' ? JSON.parse(results) : results
                 let infGoogleSheets = {
                     'e': e, 'action': 'send',
                     'id': id,
@@ -61,19 +63,13 @@ async function sendData(inf) {
         ret['msg'] = 'SEND DATA: OK'
         ret['ret'] = true
 
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-
         // STOP
         if (inf.stop) {
             gO.inf['stop'] = true
-            process.exit();
+            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
         process.exit();
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

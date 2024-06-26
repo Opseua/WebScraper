@@ -7,28 +7,20 @@ let e = import.meta.url, ee = e
 async function imput(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        if (!inf.element) {
+        let { browser, page, element, value } = inf
+        if (!element) {
             ret['msg'] = `\n\n #### ERRO #### IMPUT \n INFORMAR O 'element' \n\n`;
-        } else if (!inf.value) {
+        } else if (!value) {
             ret['msg'] = `\n\n #### ERRO #### IMPUT \n INFORMAR O 'value' \n\n`;
         } else {
-            let browser = inf.browser
-            let page = inf.page
-
             // IMPUTAR VALOR
-            await page.focus(inf.element)
-            page.keyboard.type(inf.value)
+            await page.focus(element)
+            page.keyboard.type(value)
             ret['msg'] = `IMPUT: OK`;
             ret['ret'] = true;
         }
-
-        // ### LOG FUN ###
-        if (inf && inf.logFun) {
-            let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'logFun': new Error().stack, 'path': 'AUTO', }
-            infFile['rewrite'] = false; infFile['text'] = { 'inf': inf, 'ret': ret }; file(infFile);
-        }
-    } catch (err) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': err, });
+    } catch (catchErr) {
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
         let errMsg = `$ TRYCATCH Script erro!`
