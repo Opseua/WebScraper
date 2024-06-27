@@ -34,7 +34,7 @@ async function clientGetData(inf) {
         let timeout = 10000; let selectors = [
             '.uiOutputDateTime.forceOutputModStampWithPreview', '.slds-form.slds-form_stacked.slds-grid.slds-page-header__detail-row'
         ]; try { let result = await Promise.race([page.waitForSelector(selectors[0], { timeout }).then(() => 'ANTIGO'), page.waitForSelector(selectors[1], { timeout }).then(() => 'NOVO')]); pageResult = result; }
-        catch (catchErr) { pageResult = false }
+        catch (catchErr) { pageResult = false; esLintIgnore = catchErr; }
 
         // DATA FOI ENCONTRADA
         if (pageResult) {

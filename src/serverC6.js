@@ -50,7 +50,7 @@ async function serverRun(inf) {
         catch (catchErr) {
             sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` });
             // FORÇAR PARADA DO SCRIPT
-            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' });
+            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' }); esLintIgnore = catchErr;
         }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadRandomNames = gO.inf.sheetKepp.randomNames;
         chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
@@ -113,7 +113,7 @@ async function serverRun(inf) {
                     } catch (catchErr) {
                         sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
                         // FORÇAR PARADA DO SCRIPT
-                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });
+                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });; esLintIgnore = catchErr;
                     }
                     aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')

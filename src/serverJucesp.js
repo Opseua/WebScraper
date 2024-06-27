@@ -8,7 +8,7 @@ async function serverRun(inf) {
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]` })
 
         // CRIAR PASTA DOS REGISTROS
-        let time = dateHour().res, mon, day; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; let secAwaitNewCheck = 60, startupTab = Math.floor(Date.now() / 1000)
+        let time = dateHour().res, mon, day; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`;
         let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }; let retFile = await file(infFile);
 
         // FORÇAR PARADA DO SCRIPT | NTFY
@@ -147,7 +147,7 @@ async function serverRun(inf) {
                             await page.click('input[name="ctl00$cphContent$gdvResultadoBusca$btEntrar"]'); ret['msg'] = 'CAPTHCA OK: CAPTCHA ENVIADO'; ret['ret'] = true
                         }
                     }
-                } catch (catchErr) { ret['msg'] = 'ERRO: AO CAPTURAR/INSERIR CAPTCHA' }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
+                } catch (catchErr) { ret['msg'] = 'ERRO: AO CAPTURAR/INSERIR CAPTCHA'; esLintIgnore = catchErr; }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
             }
 
             // CHECAR SE O CAPTCHA APARECEU
@@ -224,7 +224,7 @@ async function serverRun(inf) {
         retFile = await file(infFile);
         infFile = { 'e': e, 'action': 'read', 'functionLocal': false, 'path': './log/NIREs.txt' }
         retFile = await file(infFile);
-        try { sheetNire = JSON.parse(retFile.res) } catch (catchErr) { sheetNire = [] }
+        try { sheetNire = JSON.parse(retFile.res) } catch (catchErr) { sheetNire = []; esLintIgnore = catchErr; }
 
         // ###################################################################################
         // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]

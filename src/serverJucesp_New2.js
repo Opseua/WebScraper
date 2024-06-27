@@ -1,7 +1,7 @@
 // await import('./resources/@export.js'); // NÃO HABILITAR!!!
 
 let e = import.meta.url, ee = e;
-async function serverRunNew(inf) {
+async function serverRunNew(/*inf*/) {
     let _fs_2 = await import('fs'); const { spawn } = await import('child_process'); let _spawn_2 = spawn
 
     // ARQUIVO ATUAL/TEMP: PATH

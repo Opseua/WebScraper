@@ -1,8 +1,8 @@
 // await import('./resources/@export.js'); // NÃO HABILITAR!!!
 
 let e = import.meta.url, ee = e;
-async function serverRunNew(inf) {
-    let _fs_2 = await import('fs'); const { spawn } = await import('child_process'); let _spawn_2 = spawn
+async function serverRunNew(/*inf*/) {
+    let _fs_2 = await import('fs'); const { spawn } = await import('child_process'); let _spawn_2 = spawn;
 
     // ARQUIVO ATUAL/TEMP: PATH
     let fileCurrentTemp = /\/src\/(.+)$/.exec(e)[1]; fileCurrentTemp = fileCurrentTemp.split('_New'); fileCurrentTemp = [fileCurrentTemp[0], fileCurrentTemp[1].replace('.js', '')]
