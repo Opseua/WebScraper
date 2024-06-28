@@ -39,7 +39,7 @@ async function apiNire(inf) {
         // CHECAR SE O COOKIE EXPIROU
         let texto = JSON.stringify(retApi.body)
         if (texto.includes('CaptchaImage')) {
-            ret['msg'] = `Cookie expirou`;
+            ret['msg'] = `Cookie inválido`;
             return ret
         }
 

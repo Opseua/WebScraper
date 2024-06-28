@@ -9,18 +9,16 @@ async function serverRun(inf) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; let secAwaitNewCheck = 60, startupTab = Math.floor(Date.now() / 1000)
-        let infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }; let retFile = await file(infFile);
+        await file({ 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' });
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop(inf) {
-            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` });
-            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ORIGEM: ${inf.origin}` })
+            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ORIGEM: ${inf.origin}` })
             await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) };
 
-        let infCookiesGetSet, retCookiesGetSet, infRegex, retRegex, results, infSendData, retSendData, infGoogleSheets, retGoogleSheets, aut, infCommandLine, retCommandLine, infApi, retApi, coldList
-        let infLog, retLog, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, statusInf, statusDate, statusDateFull, json, chromiumHeadless, scriptHour, retClientSearch
-        let retClientGetData, retClientImput, dataDayMonYea, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
+        let results, infSendData, retSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
+        let statusInf, statusDate, statusDateFull, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
         gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2';
 
@@ -40,10 +38,8 @@ async function serverRun(inf) {
         }, 1800 * 1000);
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-        infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }; retGoogleSheets = await googleSheets(infGoogleSheets);
-        if (!retGoogleSheets.ret) {
-            err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
+        retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
+            err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
             // FORÇAR PARADA DO SCRIPT
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });
         }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
@@ -66,20 +62,18 @@ async function serverRun(inf) {
         }); page = await browser.newPage(); await page.setViewport({ 'width': 1024, 'height': 768 }); await (await browser.pages())[0].close();
 
         // COOKIE [SET]
-        infCookiesGetSet = { 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut }; retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
+        await cookiesGetSet({ 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut })
 
         // ABRIR PÁGINA DE BUSCA GLOBAL
         async function openHome() {
-            await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
-            await new Promise(resolve => { setTimeout(resolve, 1000) });
+            await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' }); await new Promise(resolve => { setTimeout(resolve, 1000) });
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
-        }; await openHome();
-        await new Promise(resolve => { setTimeout(resolve, 2000) })
+        }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
-            err = `$ Cookie inválido!`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; retSendData = await sendData(infSendData)
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; retLog = await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg` });
+            err = `$ Cookie inválido!`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await sendData({ 'e': e, 'stop': false, 'status1': `${err}` })
+            await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg` });
             // FORÇAR PARADA DO SCRIPT
             await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' });
         }
@@ -102,28 +96,23 @@ async function serverRun(inf) {
                     logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `IGNORADA | ${gO.inf.sheetTab}` })
                 } else {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-                    infGoogleSheets = { 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }; retGoogleSheets = await googleSheets(infGoogleSheets);
-                    if (!retGoogleSheets.ret) {
-                        err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` })
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
+                    retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
+                        err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
                         // FORÇAR PARADA DO SCRIPT
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' });
-                    }; try {
-                        json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json)
-                    } catch (catchErr) {
+                    }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
+                    catch (catchErr) {
                         sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
                         // FORÇAR PARADA DO SCRIPT
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });; esLintIgnore = catchErr;
-                    }
-                    aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
+                    }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
                     logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `LEADS: ${tabsInf.leadsQtd[tabsInf.index]} | ${gO.inf.sheetTab}` })
 
                     if (tabsInf.leadsQtd[tabsInf.index] == 0) {
                         // STATUS1 [Nada pendente, esperando 2 minutos...] (NOVA CHACAGEM EM x SEGUNDOS)
-                        tabsInf.lastCheck[tabsInf.index] = Math.floor(Date.now() / 1000) + secAwaitNewCheck;
-                        infSendData = { 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` }; retSendData = await sendData(infSendData)
+                        tabsInf.lastCheck[tabsInf.index] = Math.floor(Date.now() / 1000) + secAwaitNewCheck; await sendData({ 'e': e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` })
                     } else {
                         leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`);
 
@@ -167,32 +156,13 @@ async function serverRun(inf) {
 
                             // STATUS DE ACORDO COM O ERRO VERMELHO
                             if (imputRes == 'Já existe um lead cadastrado com o CNPJ informado') {
-                                // statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'INDICAÇÃO OUTRO ECE' : 'INDICAÇÃO OK' // STATUS: BRUNA
-
-                                if (leadStatus == 'ENCONTRADO_EXPIRADO') {
-                                    statusInf = 'FORA DO PRAZO' // STATUS: ADRYEL
-                                } else {
-                                    statusInf = 'INDICAÇÃO OUTRO ECE' // STATUS: ADRYEL
-                                }
-
+                                if (leadStatus == 'ENCONTRADO_EXPIRADO') { statusInf = 'FORA DO PRAZO' } else { statusInf = 'INDICAÇÃO OUTRO ECE' }
                             } else if (imputRes == 'Já existe um cliente cadastrado com o CNPJ informado') {
-                                // statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' // STATUS: BRUNA
-
-                                if (leadStatus == 'ENCONTRADO_EXPIRADO') {
-                                    statusInf = 'FORA DO PRAZO' // STATUS: ADRYEL 
-                                } else {
-                                    statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' // STATUS: BRUNA
-                                }
-
+                                if (leadStatus == 'ENCONTRADO_EXPIRADO') { statusInf = 'FORA DO PRAZO' }
+                                else { statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' }
                             } else if (imputRes == 'Já existe um lead e um cliente cadastrado com o CNPJ informado') {
-                                // statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF'
-
-                                if (leadStatus == 'ENCONTRADO_EXPIRADO') {
-                                    statusInf = 'FORA DO PRAZO' // STATUS: ADRYEL 
-                                } else {
-                                    statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' // STATUS: BRUNA
-                                }
-
+                                if (leadStatus == 'ENCONTRADO_EXPIRADO') { statusInf = 'FORA DO PRAZO' }
+                                else { statusInf = leadStatus == 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF' }
                             } else if (imputRes == 'Lead expirou' || imputRes == 'Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo') {
                                 statusInf = 'FORA DO PRAZO'
                             } else if (imputRes == 'INDICAÇÃO OK') {
@@ -215,35 +185,23 @@ async function serverRun(inf) {
                         // STATUS1 [STATUS DA CONSULTA]
                         statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData)
-                        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
-                        await new Promise(resolve => { setTimeout(resolve, 1000) })
+                        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` }); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
-                        time = dateHour().res; results = [[
-                            'ID AQUI',
-                            `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`,
-                            statusInf,
-                            statusDateFull
-                        ]]; results = results[0].join(conSpl)
-                        infGoogleSheets = { 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results]] }
-                        retGoogleSheets = await googleSheets(infGoogleSheets);
-                        if (!retGoogleSheets.ret) {
-                            err = `$ Erro ao enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
-                            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets }; retLog = await log(infLog);
+                        time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull]]; results = results[0].join(conSpl)
+                        retGoogleSheets = await googleSheets({ 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results]] }); if (!retGoogleSheets.ret) {
+                            err = `$ Erro ao enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
                             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_7.jpg` });
                             // FORÇAR PARADA DO SCRIPT
                             await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO' });
                         }
-
-                        // console.log(leadStatus, statusInf, statusDate, statusDateFull, imputRes)
                     }
                 }
 
                 // F5 | COOKIE KEEP (CASO NENHUMA ABA TENHA LEADS PENDENTES)
                 let leadsQtdAll = tabsInf.leadsQtd.reduce((acc, curr) => acc + curr, 0); if (leadsQtdAll == 0 && (startupTab + 900) < Math.floor(Date.now() / 1000)) {
                     startupTab = Math.floor(Date.now() / 1000); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ATUALIZANDO PÁGINA [KEEP COOKIE]` });
-                    await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' });
-                    await new Promise(resolve => { setTimeout(resolve, 30000) })
+                    await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' }); await new Promise(resolve => { setTimeout(resolve, 30000) })
                 };
             }
 
@@ -254,8 +212,7 @@ async function serverRun(inf) {
         ret['msg'] = retRegexE.res
 
         let err = `$ TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': err }
-        let retSendData = await sendData(infSendData)
+        await sendData({ 'e': e, 'stop': true, 'status1': err })
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!

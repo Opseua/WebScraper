@@ -23,7 +23,7 @@ async function checkPage(inf) {
                 }
             } else {
                 if (body.includes('Digite o código da imagem')) {
-                    ret['msg'] = `Cookie expirou`;
+                    ret['msg'] = `Cookie inválido`;
                 } else if (!(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
                     let errMsg = `$ ${ret.msg}`
