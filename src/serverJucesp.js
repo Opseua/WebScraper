@@ -76,7 +76,7 @@ async function serverRun(inf) {
             let indice = 0; while (!gO.inf.stop) {
                 if (indice < valuesLoop.length) {
                     await loopFunRun({ 'value': valuesLoop[indice], 'index': indice, 'length': valuesLoop.length }); indice++; if (indice == valuesLoop.length && lastPage) {
-                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `INDICES ACABARAM` }); await sendData({ 'e': e, 'stop': false, 'status2': 'Terminou de consultar tudo' });
+                        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `INDICES ACABARAM` }); await sendData({ 'e': e, 'stop': false, 'status2': '$ Terminou de consultar tudo' });
                         // FORÇAR PARADA DO SCRIPT
                         await processForceStop()
                     }
@@ -196,11 +196,9 @@ async function serverRun(inf) {
 
         if (mode == '←' && results[3] > 15) {
             // BUTTON [ULTIMA PÁGINA]
-            await buttonElement({ 'browser': browser, 'page': page, 'button': 'last' })
-            await new Promise(resolve => { setTimeout(resolve, 2000) })
+            await buttonElement({ 'browser': browser, 'page': page, 'button': 'last' }); await new Promise(resolve => { setTimeout(resolve, 2000) })
             // AGUARDAR PÁGINA TERMINAR DE CARREGAR
-            await awaitLoad({ 'e': e, 'browser': browser, 'page': page, 'element': '#jo_encontrados' })
-            await new Promise(resolve => { setTimeout(resolve, 2000) })
+            await awaitLoad({ 'e': e, 'browser': browser, 'page': page, 'element': '#jo_encontrados' }); await new Promise(resolve => { setTimeout(resolve, 2000) })
             // AGUARDAR 'Lista de NIRE' APARECER
             await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
             // CHECK PAGE [LISTA DE NIRE's]
