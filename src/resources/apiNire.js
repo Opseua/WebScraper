@@ -25,7 +25,7 @@ async function apiNire(inf) {
         };
         let retApi = await api(infApi); if (!retApi.ret) {
             let errMsg = `$ FALSE: retApi`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
             retLog = await log(infLog);
             return retApi

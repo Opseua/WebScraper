@@ -12,19 +12,26 @@ async function buttonElement(inf) {
             ret['msg'] = `\n\n #### ERRO #### BUTTON \n INFORMAR O 'action' \n\n`;
         } else {
             if (button == 'search') { // PESQUISAR (XPATH)
-                button = `//*[@id="ctl00_cphContent_frmBuscaAvancada_btPesquisar"]`
+                // button = `//*[@id="ctl00_cphContent_frmBuscaAvancada_btPesquisar"]`
+                button = `#ctl00_cphContent_frmBuscaAvancada_btPesquisar`
             } else if (button == 'first') { // PRIMEIRA PÁGINA [first] (XPATH)
-                button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrFirst_lbtText"]`
+                // button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrFirst_lbtText"]`
+                button = `#ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrFirst_lbtText`
             } else if (button == 'prev') { // PÁGINA ANTERIOR [prev] (XPATH)
-                button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrPrev_lbtText"]`
+                // button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrPrev_lbtText"]`
+                button = `#ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrPrev_lbtText`
             } else if (button == 'next') { // PRÓXIMA PÁGINA [next] (XPATH)
-                button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrNext_lbtText"]`
+                // button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrNext_lbtText"]`
+                button = `#ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrNext_lbtText`
             } else if (button == 'last') { // ÚLTIMA PÁGINA [last] (XPATH)
-                button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrLast_lbtText"]`
+                // button = `//*[@id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrLast_lbtText"]`
+                button = `#ctl00_cphContent_gdvResultadoBusca_pgrGridView_btrLast_lbtText`
             }
             // CLICAR NO BOTÃO PRÓXIMA PÁGINA
-            element = await page.$x(button)
-            await element[0].click()
+            // element = await page.$x(button)
+            // await element[0].click()
+            await page.click(button);
+
             ret['msg'] = `BUTTON ELEMENT: OK [${button}]`;
             ret['ret'] = true;
         }

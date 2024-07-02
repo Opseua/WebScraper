@@ -13,10 +13,10 @@ async function serverRun(inf) {
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
-            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
         }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) };
 
-        let retCookiesGetSet, retCheckPage, value, results = [], infSendData, retGetTextElement, browser, page, sheetTab, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date, infButtonElement
+        let retCookiesGetSet, retCheckPage, value, results = [], infSendData, retGetTextElement, browser, page, sheetTab, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date, infButtonElement, retFile
         let lastPage = false, err, conSpl, chromiumHeadless, token; gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); let repet1 = 999999, pg, mode, lin, range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
@@ -37,31 +37,34 @@ async function serverRun(inf) {
         if (chromiumHeadless == '0') { chromiumHeadless = false } else if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
 
         // STATUS1 [Iniciando script, aguarde]
-        infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
+        // infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
 
         // STATUS2 [LIMPAR]
-        await sendData({ 'e': e, 'stop': false, 'status2': ' ' });
+        // await sendData({ 'e': e, 'stop': false, 'status2': ' ' });
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
-        browser = await _puppeteer.launch({ // false | 'new'
-            headless: chromiumHeadless, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
-        }); page = await browser.newPage(); await page.setViewport({ 'width': 1024, 'height': 768 }); await (await browser.pages())[0].close();
+        browser = await _puppeteer.launch({
+            'userDataDir': `./log/z_CHROME_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'defaultViewport': { width: 1280, height: 720 }, 'headless': chromiumHeadless, // false | 'new'
+            'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
+        }); page = await browser.newPage(); await (await browser.pages())[0].close();
+
+        await new Promise(resolve => { setTimeout(resolve, 1000000) })
 
         // LOOP API | // RESULTS
         async function loopFunRun(inf) {
             let current = `[${inf.index + 1}/${inf.length}]`
             let ok = false; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${valuesLoop.length}\n${inf.value}` }); let retApiNire = await apiNire({ 'e': e, 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
-                err = `$ FALSE: retApiNire`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire });
-                let status = retApiNire.msg ? retApiNire.msg : err; await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_1.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': status })
+                // err = `$ FALSE: retApiNire`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire });
+                // let status = retApiNire.msg ? retApiNire.msg : err; await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_1.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': status })
             } else if (!retApiNire.res) {
-                err = `${inf.value} ${current} | ${retApiNire.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await sendData({ 'e': e, 'stop': false, 'status2': err }); ok = true
+                // err = `${inf.value} ${current} | ${retApiNire.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await sendData({ 'e': e, 'stop': false, 'status2': err }); ok = true
             } else {
                 infSendData = { 'e': e, 'stop': false, 'status2': `${inf.value} ${current} | OK` }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status2}` });
                 let infApiCnpj, retApiCnpj; if (!rate.check()) { await new Promise(resolve => { setTimeout(resolve, 10000) }) }; infApiCnpj = { 'e': e, 'cnpj': retApiNire.res[0], }; retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
                     // err = `$ FALSE: retApiCnpj`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }); 
-                    // await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_2.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err })
+                    // await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_2.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err });
                 } else {
                     let time = dateHour().res; retApiCnpj = retApiCnpj.res; let results = [[
                         `${inf.value}`, // NIRE
@@ -88,7 +91,7 @@ async function serverRun(inf) {
         await navigate({ 'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }); await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // CHECK PAGE [PAGINA DE PESQUISA]
-        value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'search': `Pesquisa Avançada` }); if (!retCheckPage.ret) {
+        value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'search': `Pesquisa Avançada`, 'step': 'CHECK PAGE [PAGINA DE PESQUISA]', }); if (!retCheckPage.ret) {
             err = `$ Não encontrou a página de pesquisa`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_3.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
         };
@@ -162,13 +165,13 @@ async function serverRun(inf) {
                 retCookiesGetSet = await cookiesGetSet({ 'e': e, 'browser': browser, 'page': page, 'action': 'get', }); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': 'Salvando cookie na planilha e reiniciando' });
                 await googleSheets({ 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A36`, 'values': [[JSON.stringify(retCookiesGetSet.res),]] });
                 await googleSheets({ 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A85`, 'values': [['',]] }); // LIMPAR O TEXTO DA COMUNICAÇÃO ANTIGO
-                process.exit(); // FORÇAR A PARADA PARA REINICIAR SOZINHO (PARA APAGAR O 'CaptchaImage' DO BODY)
+                browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit(); // FORÇAR A PARADA PARA REINICIAR SOZINHO (PARA APAGAR O 'CaptchaImage' DO BODY)
             }; // await new Promise(resolve => { setTimeout(resolve, 1000000) })
         }
         // ********************************************************************************************************************************************************************************************
 
         // CHECK PAGE [COOKIE]
-        value = await page.evaluate(() => document.querySelector('*').outerHTML); retCheckPage = await checkPage({ 'e': e, 'body': value, }); if (!retCheckPage.ret) {
+        value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [COOKIE]', }); if (!retCheckPage.ret) {
             err = `$ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_4.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err });
             // FORÇAR PARADA DO SCRIPT
@@ -180,7 +183,7 @@ async function serverRun(inf) {
         await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg` });
 
         // CHECK PAGE [LISTA DE NIRE's]
-        value = await page.evaluate(() => document.querySelector('*').outerHTML); retCheckPage = await checkPage({ 'e': e, 'body': value, }); if (!retCheckPage.ret) {
+        value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
             err = `$ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
         };
@@ -202,7 +205,7 @@ async function serverRun(inf) {
             // AGUARDAR 'Lista de NIRE' APARECER
             await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
             // CHECK PAGE [LISTA DE NIRE's]
-            value = await page.evaluate(() => document.querySelector('*').outerHTML); retCheckPage = await checkPage({ 'e': e, 'body': value, }); if (!retCheckPage.ret) {
+            value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
                 err = `$ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
                 await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_6.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
             };
@@ -214,7 +217,7 @@ async function serverRun(inf) {
         // *****************************************************************
         for (let i = 0; i < repet1; i++) {
             // CHECK PAGE [LISTA DE NIRE's]
-            value = await page.evaluate(() => document.querySelector('*').outerHTML); retCheckPage = await checkPage({ 'e': e, 'body': value, }); if (!retCheckPage.ret) {
+            value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
                 err = `$ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
                 await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_7.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return
             };

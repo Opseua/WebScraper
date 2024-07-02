@@ -37,8 +37,7 @@ async function clientImput(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg` });
-            browser.close()
-            process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
 
         // REGEX PARA PEGAR O ID DOS CAMPOS
@@ -53,8 +52,7 @@ async function clientImput(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg` });
-            browser.close()
-            process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         retRegex = retRegex.res['5']
         // await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -77,8 +75,7 @@ async function clientImput(inf) {
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                 retLog = await log(infLog);
                 await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg` });
-                browser.close()
-                process.exit();
+                browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
             }
             await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
             await new Promise(resolve => setTimeout(resolve, 250));

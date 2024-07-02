@@ -45,8 +45,7 @@ async function clientSearch(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg` });
-            browser.close()
-            process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         retRegex = retRegex.res['1']
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -62,8 +61,7 @@ async function clientSearch(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_3.jpg` });
-            browser.close()
-            process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -101,8 +99,7 @@ async function clientSearch(inf) {
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             retLog = await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_4.jpg` });
-            browser.close()
-            process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         leadStatus = await pageResult.jsonValue();
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${leadStatus}` });

@@ -8,7 +8,7 @@ async function checkPage(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
         let infLog, retLog
-        let { body, search } = inf
+        let { body, search, step } = inf
         if (!body) {
             ret['msg'] = `\n\n #### ERRO #### CHECK PAGE \n INFORMAR O 'body' \n\n`;
         } else {
@@ -24,7 +24,7 @@ async function checkPage(inf) {
             } else {
                 if (body.includes('Digite o código da imagem')) {
                     ret['msg'] = `Cookie inválido`;
-                } else if (!(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
+                } else if (step == 'CHECK PAGE [LISTA DE NIREs]' && !(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
                     let errMsg = `$ ${ret.msg}`
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
@@ -35,6 +35,9 @@ async function checkPage(inf) {
                 }
             }
         }
+
+        // await new Promise(resolve => { setTimeout(resolve, 100000) });
+
     } catch (catchErr) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res

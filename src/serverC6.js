@@ -12,9 +12,8 @@ async function serverRun(inf) {
         await file({ 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' });
 
         // FORÇAR PARADA DO SCRIPT | NTFY
-        async function processForceStop(inf) {
-            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ORIGEM: ${inf.origin}` })
-            await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+        async function processForceStop() {
+            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) };
 
         let results, infSendData, retSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
@@ -54,12 +53,15 @@ async function serverRun(inf) {
         if (chromiumHeadless == '0') { chromiumHeadless = false } else if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
 
         // STATUS1 [Iniciando script, aguarde]
-        infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData);
+        // infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` }); retSendData = await sendData(infSendData);
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
-        browser = await _puppeteer.launch({ // false | 'new'
-            headless: chromiumHeadless, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
-        }); page = await browser.newPage(); await page.setViewport({ 'width': 1024, 'height': 768 }); await (await browser.pages())[0].close();
+        browser = await _puppeteer.launch({
+            'userDataDir': `./log/z_CHROME_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'defaultViewport': { width: 1280, height: 720 }, 'headless': chromiumHeadless, // false | 'new'
+            'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
+        }); page = await browser.newPage(); await (await browser.pages())[0].close();
+
+        await new Promise(resolve => { setTimeout(resolve, 1000000) })
 
         // COOKIE [SET]
         await cookiesGetSet({ 'e': e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut })
@@ -129,7 +131,7 @@ async function serverRun(inf) {
 
                         // CLIENTE: BUSCAR NA LUPA
                         retClientSearch = await clientSearch({ 'page': page, 'browser': browser, 'leadCnpj': leadCnpj })
-                        if (!retClientSearch.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT SEACH` }); browser.close(); process.exit(); }
+                        if (!retClientSearch.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT SEACH` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit(); }
                         else { retClientSearch = retClientSearch.res.leadStatus }; leadStatus = retClientSearch
 
                         // ZERAR VARIÁVEIS
@@ -139,7 +141,7 @@ async function serverRun(inf) {
                             // LEAD DA BASE [SIM] ******************************************************************
                             // CLIENTE: PEGAR DADOS DO CONTA/LEAD
                             retClientGetData = await clientGetData({ 'page': page, 'browser': browser, 'leadCnpj': leadCnpj })
-                            if (!retClientGetData.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); process.exit(); }
+                            if (!retClientGetData.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit(); }
                             else { retClientGetData = retClientGetData.res }; dataRes = retClientGetData.dataRes; dataDayMonYea = retClientGetData.dataDayMonYea; dataDayMonYeaFull = retClientGetData.dataDayMonYeaFull;
                             dataBoolean = retClientGetData.dataBoolean; statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull
                         }
@@ -151,7 +153,7 @@ async function serverRun(inf) {
                             retClientImput = await clientImput({
                                 'page': page, 'browser': browser, 'leadCnpj': leadCnpj, 'leadPrimeiroNome': leadPrimeiroNome,
                                 'leadSobrenome': leadSobrenome, 'leadEmail': leadEmail, 'leadTelefone': coldList ? leadTelefone.replace('55219', '219') : leadTelefone,
-                            }); if (!retClientImput.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT IMPUT` }); browser.close(); process.exit(); }
+                            }); if (!retClientImput.ret) { logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `ERRO CLIENT IMPUT` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit(); }
                             else { retClientImput = retClientImput.res }; imputRes = retClientImput.imputRes
 
                             // STATUS DE ACORDO COM O ERRO VERMELHO
