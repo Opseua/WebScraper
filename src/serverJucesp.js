@@ -37,18 +37,16 @@ async function serverRun(inf) {
         if (chromiumHeadless == '0') { chromiumHeadless = false } else if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
 
         // STATUS1 [Iniciando script, aguarde]
-        // infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
+        infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` })
 
         // STATUS2 [LIMPAR]
-        // await sendData({ 'e': e, 'stop': false, 'status2': ' ' });
+        await sendData({ 'e': e, 'stop': false, 'status2': ' ' });
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
-        browser = await _puppeteer.launch({
-            'userDataDir': `./log/z_CHROME_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'defaultViewport': { width: 1280, height: 720 }, 'headless': chromiumHeadless, // false | 'new'
+        browser = await _puppeteer.launch({ // false | 'new'
+            'userDataDir': `./log/z_CHROME_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, // 'defaultViewport': { width: 1280, height: 720 },
             'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
-
-        await new Promise(resolve => { setTimeout(resolve, 1000000) })
 
         // LOOP API | // RESULTS
         async function loopFunRun(inf) {

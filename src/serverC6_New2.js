@@ -36,14 +36,13 @@ async function serverRunNew(/*inf*/) {
     // ARQUIVO TEMP: ERRO
     newProcess.stderr.on('error', (data) => {
         console.error(`ERRO:\n${data}`);
-        delFileCurrentTemp()
+        // delFileCurrentTemp()
     });
 
-    // ARQUIVO TEMP: ENCERRADO
-    newProcess.on('close', (data) => {
-        console.error(`ENCERRADO [código]:\n${data}`);
+    // ARQUIVO TEMP: x SEGUNDOS
+    setTimeout(() => {
         delFileCurrentTemp()
-    });
+    }, 3000);
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!
 serverRunNew()

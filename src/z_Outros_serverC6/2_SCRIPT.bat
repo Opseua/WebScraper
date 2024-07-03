@@ -32,7 +32,6 @@ rem #####################################################################
 rem APENAS ENCERRAR E NAO CONTINUAR O BAT
 if "%~2"=="FORCE_STOP" ( exit )
 
-exit
 rem exit
 rem exit
 

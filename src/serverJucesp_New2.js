@@ -2,7 +2,7 @@
 
 let e = import.meta.url, ee = e;
 async function serverRunNew(/*inf*/) {
-    let _fs_2 = await import('fs'); const { spawn } = await import('child_process'); let _spawn_2 = spawn
+    let _fs_2 = await import('fs'); const { spawn } = await import('child_process'); let _spawn_2 = spawn;
 
     // ARQUIVO ATUAL/TEMP: PATH
     let fileCurrentTemp = /\/src\/(.+)$/.exec(e)[1]; fileCurrentTemp = fileCurrentTemp.split('_New'); fileCurrentTemp = [fileCurrentTemp[0], fileCurrentTemp[1].replace('.js', '')]
@@ -36,14 +36,13 @@ async function serverRunNew(/*inf*/) {
     // ARQUIVO TEMP: ERRO
     newProcess.stderr.on('error', (data) => {
         console.error(`ERRO:\n${data}`);
-        delFileCurrentTemp()
+        // delFileCurrentTemp()
     });
 
-    // ARQUIVO TEMP: ENCERRADO
-    newProcess.on('close', (data) => {
-        console.error(`ENCERRADO [código]:\n${data}`);
+    // ARQUIVO TEMP: x SEGUNDOS
+    setTimeout(() => {
         delFileCurrentTemp()
-    });
+    }, 3000);
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!
 serverRunNew()
