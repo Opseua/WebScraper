@@ -7,7 +7,7 @@ let e = import.meta.url, ee = e
 async function apiNire(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infLog, retLog
+        let infRegex, retRegex, infLog
         let nire = inf && inf.nire ? inf.nire : '12345678'
         let aut = inf && inf.aut ? inf.aut : 'ASP.NET_SessionId=aaaaaaaaaaaa'
 
@@ -27,7 +27,7 @@ async function apiNire(inf) {
             let errMsg = `$ FALSE: retApi`
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
-            retLog = await log(infLog);
+            await log(infLog);
             return retApi
         } else { retApi = retApi.res }
 
@@ -49,7 +49,7 @@ async function apiNire(inf) {
             let errMsg = `$ NIRE_INVALIDO`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
-            retLog = await log(infLog);
+            await log(infLog);
             ret['msg'] = `NIRE inválido`;
             ret['ret'] = true;
         } else {
@@ -62,7 +62,7 @@ async function apiNire(inf) {
                 let errMsg = `$ ${ret.msg}`
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
-                retLog = await log(infLog);
+                await log(infLog);
             } else {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
 
@@ -75,7 +75,7 @@ async function apiNire(inf) {
                     let errMsg = `$ ${ret.msg}`
                     logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
-                    retLog = await log(infLog);
+                    await log(infLog);
                 } else {
                     let razaoSocial = retRegex.res['1']
 
@@ -88,7 +88,7 @@ async function apiNire(inf) {
                         let errMsg = `$ ${ret.msg}`
                         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                         infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
-                        retLog = await log(infLog);
+                        await log(infLog);
                     } else {
                         let tipo = retRegex.res['1']
 
@@ -107,7 +107,7 @@ async function apiNire(inf) {
                                 let errMsg = `$ ${ret.msg}`
                                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${errMsg}` })
                                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
-                                retLog = await log(infLog);
+                                await log(infLog);
                             } else {
                                 let data = retRegex.res['1']
                                 if (data !== inf.date) {
@@ -130,7 +130,7 @@ async function apiNire(inf) {
 
         let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
-        let retSendData = await sendData(infSendData)
+        await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 };
 

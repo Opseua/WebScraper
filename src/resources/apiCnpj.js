@@ -7,7 +7,7 @@ let e = import.meta.url, ee = e
 async function apiCnpj(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infApi, retApi, infLog, retLog
+        let infApi, retApi, infLog
         let token = inf && inf.token ? inf.token : gO.inf.token
         infApi = {
             'e': e, 'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
@@ -17,7 +17,7 @@ async function apiCnpj(inf) {
             let errMsg = `$ FALSE: retApi`
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
-            retLog = await log(infLog);
+            await log(infLog);
             return retApi
         } else { retApi = JSON.parse(retApi.res.body) }
 
@@ -110,7 +110,7 @@ async function apiCnpj(inf) {
 
         let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
-        let retSendData = await sendData(infSendData)
+        await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 };
 

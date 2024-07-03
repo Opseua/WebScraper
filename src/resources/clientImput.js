@@ -6,7 +6,7 @@ let e = import.meta.url, ee = e;
 async function clientImput(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, retSendData, infLog, err, pageValue, pageResult, retLog, time, mon, day, hou, pageInput, pageImputs, infGoogleSheets, retGoogleSheets, leadStatus
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, time, mon, day, hou, pageInput, pageImputs, leadStatus
 
         let { page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone } = inf
 
@@ -32,10 +32,10 @@ async function clientImput(inf) {
             err = `$ Formulário não apareceu`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
+            await sendData(infSendData)
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
+            await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
@@ -48,9 +48,9 @@ async function clientImput(inf) {
             err = `$ Não achou o ID dos campos`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
+            await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
+            await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
@@ -60,7 +60,7 @@ async function clientImput(inf) {
         // STATUS1 [Indicando...]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-        retSendData = await sendData(infSendData)
+        await sendData(infSendData)
         pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
         await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
@@ -70,10 +70,10 @@ async function clientImput(inf) {
                 err = `$ Não achou o campo de imput [${index}]`
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-                retSendData = await sendData(infSendData)
+                await sendData(infSendData)
                 pageValue = await page.content()
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-                retLog = await log(infLog);
+                await log(infLog);
                 await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg` });
                 browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
             }
@@ -131,7 +131,7 @@ async function clientImput(inf) {
                     fileStatus = 99
                 } else {
                     leadStatus = `ALERTA: status não identificado`
-                    let infFile, retFile
+                    // let infFile, retFile
                     // infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
                     // retFile = await file(infFile);
                     fileStatus = 99
@@ -158,7 +158,7 @@ async function clientImput(inf) {
 
         let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
-        let retSendData = await sendData(infSendData)
+        await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 };
 

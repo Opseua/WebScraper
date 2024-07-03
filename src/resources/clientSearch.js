@@ -7,7 +7,7 @@ let e = import.meta.url, ee = e
 async function clientSearch(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, retSendData, infLog, err, pageValue, pageInput, pageResult, retLog, time, mon, day, hou, leadStatus
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageInput, pageResult, time, mon, day, hou, leadStatus
 
         let { page, browser, leadCnpj } = inf
 
@@ -30,7 +30,7 @@ async function clientSearch(inf) {
         // STATUS1 [Checando se é da base]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
         logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
-        retSendData = await sendData(infSendData)
+        await sendData(infSendData)
         await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
@@ -41,9 +41,9 @@ async function clientSearch(inf) {
             err = `$ Não achou o ID da lupa de pesquisa`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
+            await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
+            await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
@@ -56,10 +56,10 @@ async function clientSearch(inf) {
             err = `$ Não achou o campo de imput da lupa`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
+            await sendData(infSendData)
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
+            await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_3.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
@@ -94,10 +94,10 @@ async function clientSearch(inf) {
             err = `$ Não achou o resultado da consulta`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
-            retSendData = await sendData(infSendData)
+            await sendData(infSendData)
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
-            retLog = await log(infLog);
+            await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_4.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
@@ -121,7 +121,7 @@ async function clientSearch(inf) {
 
         let errMsg = `$ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
-        let retSendData = await sendData(infSendData)
+        await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 };
 
