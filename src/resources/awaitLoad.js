@@ -9,7 +9,7 @@ async function awaitLoad(inf) {
     try {
         let { browser, page, element } = inf
         if (element) { // SELECTOR #jo_encontrados
-            ret['msg'] = `\n\n #### ERRO #### AWAIT LOAD \n INFORMAR O 'element' \n\n`;
+            ret['msg'] = `AWAIT LOAD: ERRO | INFORMAR O 'element'`;
         } else {
             // AGUARDAR ELEMENTO
             await page.waitForSelector(element, {
@@ -20,10 +20,9 @@ async function awaitLoad(inf) {
             ret['ret'] = true;
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

@@ -38,7 +38,7 @@ async function clientSearch(inf) {
         infRegex = { 'e': e, 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue }
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
-            err = `@ Não achou o ID da lupa de pesquisa`
+            err = `% Não achou o ID da lupa de pesquisa`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
@@ -53,7 +53,7 @@ async function clientSearch(inf) {
         // BUSCAR LEAD NA LUPA
         pageInput = await page.$(`input[id="${retRegex}"]`);
         if (!pageInput) {
-            err = `@ Não achou o campo de imput da lupa`
+            err = `% Não achou o campo de imput da lupa`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
@@ -91,7 +91,7 @@ async function clientSearch(inf) {
         });
 
         if (!pageResult) {
-            err = `@ Não achou o resultado da consulta`
+            err = `% Não achou o resultado da consulta`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
@@ -116,10 +116,9 @@ async function clientSearch(inf) {
             'leadStatus': leadStatus
         };
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

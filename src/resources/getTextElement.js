@@ -10,7 +10,7 @@ async function getTextElement(inf) {
         let infRegex, retRegex
         let { browser, page, element, value } = inf
         if (!element) { // SELECTOR #jo_encontrados
-            ret['msg'] = `\n\n #### ERRO #### RESULTS \n INFORMAR O 'element' \n\n`;
+            ret['msg'] = `GET TEXT ELEMENT: ERRO | INFORMAR O 'element'`;
         } else {
             if (element == 'results') {
                 infRegex = { 'e': e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': value.replace(/\n/g, ' ') }
@@ -34,10 +34,9 @@ async function getTextElement(inf) {
             ret['ret'] = true;
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

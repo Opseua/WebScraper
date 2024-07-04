@@ -8,27 +8,26 @@ async function cookiesGetSet(inf) {
     try {
         let { browser, page, action, value } = inf
         if (!action || (!action == 'get' || !action == 'set')) {
-            ret['msg'] = `\n\n #### ERRO #### COOKIES \n INFORMAR O 'action' \n\n`;
+            ret['msg'] = `COOKIE GET SET: ERRO | INFORMAR O 'action'`;
         } else if (action == 'set' && !value) {
-            ret['msg'] = `\n\n #### ERRO #### COOKIES \n INFORMAR O 'value' \n\n`;
+            ret['msg'] = `COOKIE GET SET: ERRO | INFORMAR O 'value'`;
         } else {
             if (action == 'get') { // GET
                 let cookies = await page.cookies();
                 ret['res'] = cookies
-                ret['msg'] = `COOKIES GET SET: OK [${action}]`;
+                ret['msg'] = `COOKIES [GET]: OK [${action}]`;
                 ret['ret'] = true;
             } else if (action == 'set') { // SET
                 let valueCookie = value
                 await page.setCookie(...valueCookie);
-                ret['msg'] = `COOKIES GET SET: OK [${action}]`;
+                ret['msg'] = `COOKIES [SET]: OK [${action}]`;
                 ret['ret'] = true;
             }
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

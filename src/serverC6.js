@@ -208,10 +208,9 @@ async function serverRun(inf) {
             await new Promise(resolve => { setTimeout(resolve, 1000) })
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let err = `@ TRYCATCH Script erro!`
+        let err = `% TRYCATCH Script erro!`
         await sendData({ 'e': e, 'stop': true, 'status1': err })
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 }

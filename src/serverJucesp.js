@@ -53,7 +53,7 @@ async function serverRun(inf) {
             let current = `[${inf.index + 1}/${inf.length}]`
             let ok = false; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${valuesLoop.length}\n${inf.value}` }); let retApiNire = await apiNire({ 'e': e, 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
-                // err = `@ FALSE: retApiNire`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire });
+                // err = `% FALSE: retApiNire`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiNire });
                 // let status = retApiNire.msg ? retApiNire.msg : err; await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_1.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': status })
             } else if (!retApiNire.res) {
                 // err = `${inf.value} ${current} | ${retApiNire.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await sendData({ 'e': e, 'stop': false, 'status2': err }); ok = true
@@ -61,7 +61,7 @@ async function serverRun(inf) {
                 infSendData = { 'e': e, 'stop': false, 'status2': `${inf.value} ${current} | OK` }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status2}` });
                 let infApiCnpj, retApiCnpj; if (!rate.check()) { await new Promise(resolve => { setTimeout(resolve, 10000) }) }; infApiCnpj = { 'e': e, 'cnpj': retApiNire.res[0], }; retApiCnpj = await apiCnpj(infApiCnpj)
                 if (!retApiCnpj.res || !retApiCnpj.res.cnpj) {
-                    // err = `@ FALSE: retApiCnpj`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }); 
+                    // err = `% FALSE: retApiCnpj`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retApiCnpj }); 
                     // await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_2.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err });
                 } else {
                     let time = dateHour().res; retApiCnpj = retApiCnpj.res; let results = [[
@@ -90,7 +90,7 @@ async function serverRun(inf) {
 
         // CHECK PAGE [PAGINA DE PESQUISA]
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'search': `Pesquisa Avançada`, 'step': 'CHECK PAGE [PAGINA DE PESQUISA]', }); if (!retCheckPage.ret) {
-            err = `@ Não encontrou a página de pesquisa`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
+            err = `% Não encontrou a página de pesquisa`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_3.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
         };
 
@@ -170,7 +170,7 @@ async function serverRun(inf) {
 
         // CHECK PAGE [COOKIE]
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [COOKIE]', }); if (!retCheckPage.ret) {
-            err = `@ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
+            err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_4.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err });
             // FORÇAR PARADA DO SCRIPT
             await processForceStop()
@@ -182,7 +182,7 @@ async function serverRun(inf) {
 
         // CHECK PAGE [LISTA DE NIRE's]
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
-            err = `@ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
+            err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
         };
 
@@ -204,7 +204,7 @@ async function serverRun(inf) {
             await Promise.all([page.waitForSelector("#ctl00_cphContent_gdvResultadoBusca_gdvContent_ctl02_lblRazaoSocial", { visible: true }),]);
             // CHECK PAGE [LISTA DE NIRE's]
             value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
-                err = `@ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
+                err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
                 await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_6.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
             };
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
@@ -216,7 +216,7 @@ async function serverRun(inf) {
         for (let i = 0; i < repet1; i++) {
             // CHECK PAGE [LISTA DE NIRE's]
             value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
-                err = `@ [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
+                err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
                 await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_7.jpg` }); await sendData({ 'e': e, 'stop': true, 'status1': err }); return
             };
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [DEMAIS PÁGINAS]
@@ -244,7 +244,7 @@ async function serverRun(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, 'catchGlobal': false });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `@ [serverJucesp] TRYCATCH Script erro!`
+        let errMsg = `% [serverJucesp] TRYCATCH Script erro!`
         await sendData({ 'e': e, 'stop': true, 'status1': errMsg })
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 }

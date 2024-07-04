@@ -9,7 +9,7 @@ async function navigate(inf) {
     try {
         let { browser, page, url } = inf
         if (!url) {
-            ret['msg'] = `\n\n #### ERRO #### URL \n INFORMAR O 'url' \n\n`;
+            ret['msg'] = `NAVIGATE: ERRO | INFORMAR O 'url'`;
         } else {
             // NAVEGAR PARA URL
             await page.goto(url, {
@@ -19,10 +19,9 @@ async function navigate(inf) {
             ret['ret'] = true;
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

@@ -29,7 +29,7 @@ async function clientImput(inf) {
         // ESPERAR OS CAMPOS APARECEREM
         pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000 });
         if (!pageInput) {
-            err = `@ Formulário não apareceu`
+            err = `% Formulário não apareceu`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
@@ -45,7 +45,7 @@ async function clientImput(inf) {
         infRegex = { 'e': e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['5']) {
-            err = `@ Não achou o ID dos campos`
+            err = `% Não achou o ID dos campos`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
@@ -67,7 +67,7 @@ async function clientImput(inf) {
         for (let [index, value] of retRegex.entries()) {
             pageInput = await page.$(`input[id="${value}"]`);
             if (!pageInput) {
-                err = `@ Não achou o campo de imput [${index}]`
+                err = `% Não achou o campo de imput [${index}]`
                 logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
                 infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
                 await sendData(infSendData)
@@ -153,10 +153,9 @@ async function clientImput(inf) {
         };
 
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

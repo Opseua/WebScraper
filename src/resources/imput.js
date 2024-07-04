@@ -9,9 +9,9 @@ async function imput(inf) {
     try {
         let { browser, page, element, value } = inf
         if (!element) {
-            ret['msg'] = `\n\n #### ERRO #### IMPUT \n INFORMAR O 'element' \n\n`;
+            ret['msg'] = `IMPUT: ERRO | INFORMAR O 'element'`;
         } else if (!value) {
-            ret['msg'] = `\n\n #### ERRO #### IMPUT \n INFORMAR O 'value' \n\n`;
+            ret['msg'] = `IMPUT: ERRO | INFORMAR O 'value'`;
         } else {
             // IMPUTAR VALOR
             await page.focus(element)
@@ -20,10 +20,9 @@ async function imput(inf) {
             ret['ret'] = true;
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

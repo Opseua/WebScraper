@@ -9,7 +9,7 @@ async function buttonElement(inf) {
     try {
         let { browser, page, element, button } = inf
         if (!button || !['search', 'first', 'prev', 'next', 'last'].includes(button)) {
-            ret['msg'] = `\n\n #### ERRO #### BUTTON \n INFORMAR O 'action' \n\n`;
+            ret['msg'] = `BUTTON: ERRO | INFORMAR O 'action'`;
         } else {
             if (button == 'search') { // PESQUISAR (XPATH)
                 // button = `//*[@id="ctl00_cphContent_frmBuscaAvancada_btPesquisar"]`
@@ -36,10 +36,9 @@ async function buttonElement(inf) {
             ret['ret'] = true;
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `@ TRYCATCH Script erro!`
+        let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
