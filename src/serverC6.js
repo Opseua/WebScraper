@@ -38,7 +38,7 @@ async function serverRun(inf) {
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
-            err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
+            err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
             // FORÇAR PARADA DO SCRIPT
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });
         }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
@@ -97,7 +97,7 @@ async function serverRun(inf) {
                 } else {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
                     retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
-                        err = `$ Erro ao pegar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
+                        err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
                         // FORÇAR PARADA DO SCRIPT
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' });
                     }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
@@ -190,7 +190,7 @@ async function serverRun(inf) {
                         // MANDAR PARA A PLANILHA O RESULTADO 
                         time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull]]; results = results[0].join(conSpl)
                         retGoogleSheets = await googleSheets({ 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results]] }); if (!retGoogleSheets.ret) {
-                            err = `$ Erro ao enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
+                            err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
                             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_7.jpg` });
                             // FORÇAR PARADA DO SCRIPT
                             await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO' });

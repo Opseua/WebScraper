@@ -7,6 +7,12 @@ let e = import.meta.url, ee = e
 async function sendData(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
+        // # Aguarde...                                →→→ SERÁ REINICIADO [NÃO] | PARADO [?]
+        // # Iniciando script, aguarde                 →→→ SERÁ REINICIADO [NÃO] | PARADO [NÃO]
+        // $ Erro ao pegar-enviar dados para planilha  →→→ SERÁ REINICIADO [NÃO] | PARADO [SIM]
+        // $ Cookie inválido                           →→→ SERÁ REINICIADO [NÃO] | PARADO [SIM]
+        // @ TRYCATCH Script erro!                     →→→ SERÁ REINICIADO [SIM] | PARADO [SIM]
+
         let time = dateHour().res
         let id = inf && inf.id ? inf.id : gO.inf.sheetId ? gO.inf.sheetId : '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'
         let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'RESULTADOS'
