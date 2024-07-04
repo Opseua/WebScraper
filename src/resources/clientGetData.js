@@ -13,7 +13,7 @@ async function clientGetData(inf) {
         // PEGAR O ID DO LINK DA PÁGINA DO LEAD
         pageValue = await page.content(); infRegex = { 'e': e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }; retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
-            err = `$ Não achou o ID do link da página do lead`
+            err = `@ Não achou o ID do link da página do lead`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}__err_5.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
@@ -59,7 +59,7 @@ async function clientGetData(inf) {
         }; // console.log(pageResult ? true : false, leadDate)
 
         if (!pageResult) {
-            err = `$ Não achou a data de abertura`
+            err = `@ Não achou a data de abertura`
             logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData); pageValue = await page.content(); infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
@@ -93,7 +93,7 @@ async function clientGetData(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `$ TRYCATCH Script erro!`
+        let errMsg = `@ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };

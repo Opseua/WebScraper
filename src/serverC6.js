@@ -211,7 +211,7 @@ async function serverRun(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
-        let err = `$ TRYCATCH Script erro!`
+        let err = `@ TRYCATCH Script erro!`
         await sendData({ 'e': e, 'stop': true, 'status1': err })
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
 }

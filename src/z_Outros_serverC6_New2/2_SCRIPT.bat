@@ -34,7 +34,6 @@ if "%~2"=="FORCE_STOP" ( exit )
 
 rem exit
 rem exit
-rem exit
 
 rem TIMESTAMP ATUAL (OBRIGATORIO FICAR APOS O CALL!!!)
 echo WScript.Echo(new Date().getTime()); > !temp!\time.js & for /f "delims=" %%a in ('cscript //nologo !temp!\time.js') do set "timeNow=%%a"
@@ -46,7 +45,7 @@ if "!ret!"=="TRUE" (
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
 	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]} }  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
-	del /f /s /q "!pathRes!" & del /f /s /q "!pathReq!"
+	del /F /Q "!pathRes!" & del /F /Q "!pathReq!"
 )
 
 rem ESTAVA RODANDO [NAO]
@@ -55,7 +54,7 @@ if "!ret!"=="FALSE" (
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
 	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]} }  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
-	del /f /s /q "!pathRes!" & del /f /s /q "!pathReq!"
+	del /F /Q "!pathRes!" & del /F /Q "!pathReq!"
 )
 
 exit

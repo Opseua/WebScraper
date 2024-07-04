@@ -17,7 +17,7 @@ async function checkPage(inf) {
                 ret['ret'] = body.includes(search)
                 ret['msg'] = ret.ret ? `ENCONTRADO [SIM]: '${search}'` : `ENCONTRADO [NÃO]: '${search}'`
                 if (!ret.ret) {
-                    let errMsg = `$ ${ret.msg}`
+                    let errMsg = `@ ${ret.msg}`
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     await log(infLog);
                 }
@@ -26,7 +26,7 @@ async function checkPage(inf) {
                     ret['msg'] = `Cookie inválido`;
                 } else if (step == 'CHECK PAGE [LISTA DE NIREs]' && !(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
-                    let errMsg = `$ ${ret.msg}`
+                    let errMsg = `@ ${ret.msg}`
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     await log(infLog);
                 } else {
@@ -42,7 +42,7 @@ async function checkPage(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, });
         ret['msg'] = retRegexE.res
 
-        let errMsg = `$ TRYCATCH Script erro!`
+        let errMsg = `@ TRYCATCH Script erro!`
         let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
