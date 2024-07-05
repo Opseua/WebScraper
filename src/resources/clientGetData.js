@@ -14,24 +14,24 @@ async function clientGetData(inf) {
         pageValue = await page.content(); infRegex = { 'e': e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue }; retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID do link da página do lead`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; await sendData(infSendData)
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}__err_5.jpg` });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }; leadPageId = retRegex.res['1']
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // STATUS1 [Abrindo dados do cliente]
-        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }; logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
+        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
         await sendData(infSendData); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
         // CLICAR NO LINK DO ID DO LEAD
         let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        await new Promise(resolve => { setTimeout(resolve, 2000) })
         await link.click();
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // E DEFINIR SE É TELA ANTIGA OU NOVA
-        let timeout = 10000; let selectors = [
+        let timeout = 30000; let selectors = [
             '.uiOutputDateTime.forceOutputModStampWithPreview', '.slds-form.slds-form_stacked.slds-grid.slds-page-header__detail-row'
         ]; try { let result = await Promise.race([page.waitForSelector(selectors[0], { timeout }).then(() => 'ANTIGO'), page.waitForSelector(selectors[1], { timeout }).then(() => 'NOVO')]); pageResult = result; }
         catch (catchErr) { pageResult = false; esLintIgnore = catchErr; }
@@ -60,7 +60,7 @@ async function clientGetData(inf) {
 
         if (!pageResult) {
             err = `% Não achou a data de abertura`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData); pageValue = await page.content(); infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog);
             await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }

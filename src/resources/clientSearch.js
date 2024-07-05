@@ -29,7 +29,7 @@ async function clientSearch(inf) {
 
         // STATUS1 [Checando se é da base]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
-        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${infSendData.status1}` });
+        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
         await sendData(infSendData)
         await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
@@ -39,7 +39,7 @@ async function clientSearch(inf) {
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID da lupa de pesquisa`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
@@ -54,7 +54,7 @@ async function clientSearch(inf) {
         pageInput = await page.$(`input[id="${retRegex}"]`);
         if (!pageInput) {
             err = `% Não achou o campo de imput da lupa`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
             pageValue = await page.content()
@@ -92,7 +92,7 @@ async function clientSearch(inf) {
 
         if (!pageResult) {
             err = `% Não achou o resultado da consulta`
-            logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${err}` });
+            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
             pageValue = await page.content()
@@ -102,7 +102,7 @@ async function clientSearch(inf) {
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         leadStatus = await pageResult.jsonValue();
-        logConsole({ 'e': e, 'ee': ee, 'write': false, 'msg': `${leadStatus}` });
+        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${leadStatus}` });
         await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
 
         let fileStatus = leadStatus == 'ENCONTRADO_CONTA' ? 1 : leadStatus == 'ENCONTRADO_EXPIRADO' ? 2 : leadStatus == 'ENCONTRADO_LEAD' ? 3 : leadStatus == 'NADA_ENCONTRADO' ? 4 : 'X'
