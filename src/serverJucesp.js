@@ -14,7 +14,13 @@ async function serverRun(inf) {
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
             await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
-        }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) };
+        }; function notificationLegacy(inf) {
+            let { title, text } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
+                let url = `http://${globalWindow.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
+                    "fun": [{ "securityPass": globalWindow.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': inf.title, 'text': inf.text, 'ntfy': true } }]
+                }); reqOpt[cng ? 'payload' : 'body'] = body; if (cng) { UrlFetchApp.fetch(url, reqOpt); Browser.msgBox(title, text, Browser.Buttons.OK) } else { await fetch(url, reqOpt) } // GOOGLE | Chrome/NodeJS
+            })()
+        };
 
         let retCookiesGetSet, retCheckPage, value, results = [], infSendData, retGetTextElement, browser, page, sheetTab, retGoogleSheets, sheetNire, valuesLoop = [], valuesJucesp = [], aut, date, infButtonElement, retFile
         let lastPage = false, err, conSpl, chromiumHeadless, token; gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); let repet1 = 999999, pg, mode, lin, range = 'A2';

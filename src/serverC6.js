@@ -14,7 +14,13 @@ async function serverRun(inf) {
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
             await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
-        }; async function sendNtfy(inf) { let u = devSend.split('/'); u = `https://ntfy.sh/${u[u.length - 1]}`; await api({ 'e': e, 'method': 'POST', 'url': `${u}`, 'body': inf.titleText }) };
+        }; function notificationLegacy(inf) {
+            let { title, text } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
+                let url = `http://${globalWindow.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
+                    "fun": [{ "securityPass": globalWindow.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': inf.title, 'text': inf.text, 'ntfy': true } }]
+                }); reqOpt[cng ? 'payload' : 'body'] = body; if (cng) { UrlFetchApp.fetch(url, reqOpt); Browser.msgBox(title, text, Browser.Buttons.OK) } else { await fetch(url, reqOpt) } // GOOGLE | Chrome/NodeJS
+            })()
+        };
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
         let statusInf, statusDate, statusDateFull, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
@@ -31,7 +37,8 @@ async function serverRun(inf) {
             _exec('wmic os get TotalVisibleMemorySize', (error, stdout, stderr) => {
                 if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rT = parseInt(stdout.split('\n')[1].trim()); _exec('wmic os get FreePhysicalMemory', (error, stdout, stderr) => {
                     if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rF = parseInt(stdout.split('\n')[1].trim()); let rU = Number(((rT - rF) / rT) * 100).toFixed(0);
-                    let msg = `RAM USADA: ${rU}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (rU > 97) { sendNtfy({ 'titleText': `ALERTA\n${msg}` }) }
+                    let msg = `RAM USADA: ${rU}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` });
+                    if (rU > 97) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
                 });
             });
         }, 1800 * 1000);
@@ -43,7 +50,7 @@ async function serverRun(inf) {
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });
         }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
         catch (catchErr) {
-            sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` });
+            notificationLegacy({ 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
             // FORÇAR PARADA DO SCRIPT
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' }); esLintIgnore = catchErr;
         }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadRandomNames = gO.inf.sheetKepp.randomNames;
@@ -102,7 +109,7 @@ async function serverRun(inf) {
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' });
                     }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
                     catch (catchErr) {
-                        sendNtfy({ 'titleText': `ERRO PARSE DADOS DA CÉLULA A2\n${gO.inf.sheetTab}` })
+                        notificationLegacy({ 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
                         // FORÇAR PARADA DO SCRIPT
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });; esLintIgnore = catchErr;
                     }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
