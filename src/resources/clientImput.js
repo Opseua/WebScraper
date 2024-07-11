@@ -20,7 +20,8 @@ async function clientImput(inf) {
                     // ABRIR PÁGINA DE BUSCA GLOBAL
                     await page.goto(url, { waitUntil: 'networkidle2' });
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
-                    await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+                    try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
+                    catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
                     await new Promise(resolve => { setTimeout(resolve, 2000) })
                 }
             }
@@ -29,14 +30,15 @@ async function clientImput(inf) {
         // ESPERAR OS CAMPOS APARECEREM
         pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000 });
         if (!pageInput) {
-            err = `% Formulário não apareceu`
+            err = `% Não achou o formulário`
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
             infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg` });
+            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, 'fullPage': true }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, 'fullPage': false }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
 
@@ -51,7 +53,8 @@ async function clientImput(inf) {
             await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg` });
+            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, 'fullPage': true }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, 'fullPage': false }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         retRegex = retRegex.res['5']
@@ -62,7 +65,8 @@ async function clientImput(inf) {
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
         await sendData(infSendData)
         pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
-        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+        try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
 
         for (let [index, value] of retRegex.entries()) {
             pageInput = await page.$(`input[id="${value}"]`);
@@ -74,7 +78,8 @@ async function clientImput(inf) {
                 pageValue = await page.content()
                 infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                 await log(infLog);
-                await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg` });
+                try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, 'fullPage': true }); }
+                catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, 'fullPage': false }); }
                 browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
             }
             await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
@@ -85,7 +90,8 @@ async function clientImput(inf) {
 
         // PRINT PARA LOG
         time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_INICIO.jpg` });
+        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_INICIO.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_INICIO.jpg`, 'fullPage': false }); }
 
         // CLICAR NO BOTÃO 'Confirmar'
         await page.click('.slds-button.slds-button_neutral.button.uiButton--default.uiButton--brand.uiButton');
@@ -144,7 +150,8 @@ async function clientImput(inf) {
 
         // PRINT PARA LOG
         time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_FIM_-_${fileStatus}.jpg` });
+        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_FIM_-_${fileStatus}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_FIM_-_${fileStatus}.jpg`, 'fullPage': false }); }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT IMPUT: OK`;

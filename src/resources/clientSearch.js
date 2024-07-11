@@ -21,7 +21,8 @@ async function clientSearch(inf) {
                     // ABRIR PÁGINA DE BUSCA GLOBAL
                     await page.goto(url, { waitUntil: 'networkidle2' });
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
-                    await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+                    try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
+                    catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
                 }
             }
@@ -31,7 +32,8 @@ async function clientSearch(inf) {
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base` }
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
         await sendData(infSendData)
-        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+        try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
 
         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
         pageValue = await page.content()
@@ -44,8 +46,9 @@ async function clientSearch(inf) {
             await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg` });
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
+            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg`, 'fullPage': true }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg`, 'fullPage': false }); }
+            browsr.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         retRegex = retRegex.res['1']
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -60,7 +63,8 @@ async function clientSearch(inf) {
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_3.jpg` });
+            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_3.jpg`, 'fullPage': true }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_3.jpg`, 'fullPage': false }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
@@ -98,17 +102,20 @@ async function clientSearch(inf) {
             pageValue = await page.content()
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_4.jpg` });
+            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_4.jpg`, 'fullPage': true }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_4.jpg`, 'fullPage': false }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         leadStatus = await pageResult.jsonValue();
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${leadStatus}` });
-        await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+        try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
 
         let fileStatus = leadStatus == 'ENCONTRADO_CONTA' ? 1 : leadStatus == 'ENCONTRADO_EXPIRADO' ? 2 : leadStatus == 'ENCONTRADO_LEAD' ? 3 : leadStatus == 'NADA_ENCONTRADO' ? 4 : 'X'
         // PRINT PARA LOG
         time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_LUPA_-_${fileStatus}.jpg` });
+        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_LUPA_-_${fileStatus}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_LUPA_-_${fileStatus}.jpg`, 'fullPage': false }); }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT SEARCH: OK`;

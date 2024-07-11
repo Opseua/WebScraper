@@ -8,7 +8,7 @@ async function checkPage(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
         let infLog
-        let { body, search, step } = inf
+        let { body, search, step, page } = inf
         if (!body) {
             ret['msg'] = `CHECK PAGE: ERRO | INFORMAR O 'body'`;
         } else {
@@ -26,6 +26,8 @@ async function checkPage(inf) {
                     ret['msg'] = `Cookie inválido`;
                 } else if (step == 'CHECK PAGE [LISTA DE NIREs]' && !(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
+                    try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true }); }
+                    catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': false }); }
                     let errMsg = `% ${ret.msg}`
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     await log(infLog);

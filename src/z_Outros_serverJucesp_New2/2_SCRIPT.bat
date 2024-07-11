@@ -1,7 +1,7 @@
 @chcp 65001 & @echo off & setlocal enabledelayedexpansion
 set "letra=%~d0" & set "local=%~dp0"
 set "letra=%letra:~0,1%" & set "local=%local:~0,-1%" & set "arquivo=%~nx0" & set "argString=%*"
-set "usuario=%USERNAME%" & set "argTUDO=%~1 %~2 %~3 %~4 %~5" & set "arg1=%~1" & set "arg2=%~2" & set "arg3=%~3" & set "arg4=%~4"
+set "usuario=%USERNAME%" & set "argTUDO=%~1 %~2 %~3 %~4 %~5" & set "arg1=%~1" & set "arg2=%~2" & set "arg3=%~3" & set "arg4=%~4" & set "arg5=%~5"
 
 rem AVISO PARA USAR O ATALHO COM PARAMENTROS
 if "!arg1!" equ "" !fileMsg! "[!local!\!arquivo!]\n\nNao usar o BAT/BACKGROUND" & exit
@@ -21,7 +21,19 @@ rem MODE →→→ 'CMD' (RESTART [SIM]) / 'LEGACY' (RESTART [NAO]) # PROJECT | 
 for /f "tokens=1,2,3,4,5,6 delims=\" %%a in ("!local!") do ( set "project=%%d" & set "outrosAdd=%%f" ) & set "replace="
 set "outrosAdd=!outrosAdd:z_Outros_=%replace%!" & set "scriptType=ERRO"
 set "mode=CMD" & set "root=!letra!:\ARQUIVOS\PROJETOS" & set "fileScript=!root!\!project!\src\!outrosAdd!.js" & cd\ & !letra!: & cd !root!\!project!
-rem #### ↑↑↑↑↑↑↑↑↑ ########################################################## (NAO SUBIR OS 'if'!!!)
+rem #### ↑↑↑↑↑↑↑↑↑ ##########################################################
+
+rem CHECAR SE ESTA RODANDO
+rem tasklist /fi "ImageName eq node!project!_!outrosAdd!.exe" /fo csv 2>NUL | find /I "node!project!_!outrosAdd!.exe">NUL
+rem if "%ERRORLEVEL%"=="0"  ( set "ret=TRUE" ) else ( set "ret=FALSE" )
+
+rem ESTA RODANDO [NAO]
+rem if "!ret!"=="FALSE" ( if "!arg1!"=="!arg1:OFF=!" ( ) )
+
+rem ESTA RODANDO [SIM]
+rem if "!ret!"=="TRUE" ( )
+
+rem  (NAO SUBIR OS 'if'!!!)
 if "!mode!"=="CMD" ( set "scriptType=processCmdKeep" )
 if "!mode!"=="LEGACY" ( set "scriptType=processCmdKeep" )
 if "!scriptType!" equ "ERRO" !fileMsg! "[!local!\!arquivo!]\n'mode' deve ser\n'CMD', 'LEGACY'" & exit
@@ -43,12 +55,12 @@ rem ESTAVA RODANDO [SIM]
 if "!ret!"=="TRUE" (
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A32","values":[["!timeNow! ^| $ Script parado"]]} }  ]}"
+	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A34","values":[[" "]]} }  ]}"
+	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A34","values":[[" "]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 	del /F /Q "!pathRes!" & del /F /Q "!pathReq!"
 )
@@ -57,22 +69,17 @@ rem ESTAVA RODANDO [NAO]
 if "!ret!"=="FALSE" (
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]} }  ]}"
+	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par": {"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A34","values":[[" "]]} }  ]}"
+	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8","tab":"JUCESP","range":"A34","values":[[" "]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 	del /F /Q "!pathRes!" & del /F /Q "!pathReq!"
 )
 
 exit
 exit
-
-rem LER confBat
-rem set /p linha=<"!local!\zzz_confBat.json"
-rem for /f "tokens=1,2,3,4,5,6,7,8,9,10 delims=_-_-_" %%a in ("!linha!") do ( set "par1=%%a" & set "par2=%%b" & set "par3=%%c" )
-rem msg * "[2_SCRIPT.bat] par1: !par1! - par2: !par2! - par3: !par3!" & exit
 
 

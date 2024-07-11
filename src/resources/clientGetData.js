@@ -15,14 +15,16 @@ async function clientGetData(inf) {
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID do link da página do lead`
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; await sendData(infSendData)
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}__err_5.jpg` });
+            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }; leadPageId = retRegex.res['1']
         await new Promise(resolve => { setTimeout(resolve, 2000) })
 
         // STATUS1 [Abrindo dados do cliente]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
-        await sendData(infSendData); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg` });
+        await sendData(infSendData);
+        try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
 
         // CLICAR NO LINK DO ID DO LEAD
         let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
@@ -62,7 +64,9 @@ async function clientGetData(inf) {
             err = `% Não achou a data de abertura`
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData); pageValue = await page.content(); infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog);
-            await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
+            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': true }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false }); }
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA
@@ -78,7 +82,8 @@ async function clientGetData(inf) {
 
         // PRINT PARA LOG
         time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg` });
+        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': true }); }
+        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': false }); }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT GET DATA: OK`;
