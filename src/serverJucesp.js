@@ -27,8 +27,8 @@ async function serverRun(inf) {
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         let googleSheetsId, retGetPath = await getPath({ 'e': new Error() }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file;
-        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'; gO.inf['shortcut'] = 'z_Outros_serverJucesp'; sheetTab = 'RESULTADOS' }
-        else { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_Outros_serverJucesp_New2'; sheetTab = 'JUCESP' }; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = sheetTab
+        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_Outros_serverJucesp'; sheetTab = 'JUCESP' }
+        gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = sheetTab
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
