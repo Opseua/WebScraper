@@ -98,7 +98,7 @@ async function serverRun(inf) {
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'page': page, 'search': `Pesquisa Avançada`, 'step': 'CHECK PAGE [PAGINA DE PESQUISA]', }); if (!retCheckPage.ret) {
             err = `% Não achou a página de pesquisa`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_3.jpg`, 'fullPage': true }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_3.jpg`, 'fullPage': false }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_3.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
             await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
         };
 
@@ -108,7 +108,7 @@ async function serverRun(inf) {
         // STATUS [INSERINDO DATA DE PESQUISA]
         infSendData = { 'e': e, 'stop': false, 'status1': 'Inserindo data de pesquisa' }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` })
         try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         // IMPUT [DATA INÍCIO]
         await imput({ 'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': `${date.replace(/[^0-9]/g, '')}` });
@@ -181,7 +181,7 @@ async function serverRun(inf) {
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'page': page, 'step': 'CHECK PAGE [COOKIE]', }); if (!retCheckPage.ret) {
             err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_4.jpg`, 'fullPage': true }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_4.jpg`, 'fullPage': false }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_4.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
             await sendData({ 'e': e, 'stop': true, 'status1': err });
             // FORÇAR PARADA DO SCRIPT
             await processForceStop()
@@ -190,13 +190,13 @@ async function serverRun(inf) {
         // STATUS [BUSCANDO NOVOS NIRE's]
         infSendData = { 'e': e, 'stop': false, 'status1': `Buscando novos NIRE's` }; await sendData(infSendData); logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` })
         try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         // CHECK PAGE [LISTA DE NIRE's]
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'page': page, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
             err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
             try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': false }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
             await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
         };
 
@@ -220,7 +220,7 @@ async function serverRun(inf) {
             value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'page': page, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
                 err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
                 try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': true }); }
-                catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false }); }
+                catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
                 await sendData({ 'e': e, 'stop': true, 'status1': err }); return retCheckPage
             };
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
@@ -234,14 +234,14 @@ async function serverRun(inf) {
             value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'page': page, 'step': 'CHECK PAGE [LISTA DE NIREs]', }); if (!retCheckPage.ret) {
                 err = `% [serverJucesp] ${retCheckPage.msg}`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retCheckPage });
                 try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_7.jpg`, 'fullPage': true }); }
-                catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_7.jpg`, 'fullPage': false }); }
+                catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_7.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
                 await sendData({ 'e': e, 'stop': true, 'status1': err }); return
             };
             // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [DEMAIS PÁGINAS]
             retGetTextElement = await getTextElement({ 'e': e, 'value': value, 'element': 'results' }); value = [retGetTextElement.res[0][0], retGetTextElement.res[0][1], retGetTextElement.res[0][2]]
             results = [pg, Number(value[0]), Number(value[1]), Number(value[2]),]; let repet2 = Number(value[1]) - Number(value[0]) + 1; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `MEIO\n${repet2}\n${results}` });
             try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
             // ADICIONAR NO LOOP DA CONSULTA
             let newValues = retGetTextElement.res[1]; for (let i = 0; i < newValues.length; i++) { valuesJucesp.push(newValues[i]); if (!sheetNire.includes(newValues[i])) { valuesLoop.push(newValues[i]) } }

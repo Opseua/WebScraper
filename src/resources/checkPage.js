@@ -27,7 +27,7 @@ async function checkPage(inf) {
                 } else if (step == 'CHECK PAGE [LISTA DE NIREs]' && !(body.includes('Mostrando') && body.includes('Anterior') && body.includes('Próximo'))) {
                     ret['msg'] = `Não achou a lista de NIRE's`;
                     try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true }); }
-                    catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': false }); }
+                    catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
                     let errMsg = `% ${ret.msg}`
                     infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     await log(infLog);

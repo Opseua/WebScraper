@@ -24,7 +24,7 @@ async function clientGetData(inf) {
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
         await sendData(infSendData);
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); }
+        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         // CLICAR NO LINK DO ID DO LEAD
         let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
@@ -65,7 +65,7 @@ async function clientGetData(inf) {
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData); pageValue = await page.content(); infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog);
             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': true }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false }); }
+            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
 
@@ -83,7 +83,7 @@ async function clientGetData(inf) {
         // PRINT PARA LOG
         time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
         try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': false }); }
+        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT GET DATA: OK`;
