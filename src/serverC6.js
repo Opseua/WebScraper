@@ -64,7 +64,7 @@ async function serverRun(inf) {
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
             'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
-            'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
+            'args': ['--no-sandbox', '--disable-extensions', '--disable-setuid-sandbox', '--no-first-run', '--no-zygote',],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
         // COOKIE [SET]
@@ -75,7 +75,7 @@ async function serverRun(inf) {
             await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' }); await new Promise(resolve => { setTimeout(resolve, 1000) });
             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-        }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 2000) })
+        }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
@@ -196,7 +196,7 @@ async function serverRun(inf) {
                         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` }); await sendData(infSendData)
                         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
                         catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-                        await new Promise(resolve => { setTimeout(resolve, 1000) })
+                        await new Promise(resolve => { setTimeout(resolve, 500) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
                         time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull]]; results = results[0].join(conSpl)

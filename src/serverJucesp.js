@@ -92,7 +92,7 @@ async function serverRun(inf) {
         }; loopFun();
 
         // NAVIGATE [ABRINDO JUCESP]
-        await navigate({ 'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }); await new Promise(resolve => { setTimeout(resolve, 2000) })
+        await navigate({ 'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // CHECK PAGE [PAGINA DE PESQUISA]
         value = await page.content(); retCheckPage = await checkPage({ 'e': e, 'body': value, 'page': page, 'search': `Pesquisa Avançada`, 'step': 'CHECK PAGE [PAGINA DE PESQUISA]', }); if (!retCheckPage.ret) {

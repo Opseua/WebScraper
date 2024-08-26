@@ -7,7 +7,7 @@ let e = import.meta.url, ee = e
 async function clientSearch(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageInput, pageResult, time, mon, day, hou, leadStatus
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageInput, pageResult, leadStatus
 
         let { page, browser, leadCnpj } = inf
 
@@ -110,12 +110,6 @@ async function clientSearch(inf) {
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${leadStatus}` });
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
         catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-
-        let fileStatus = leadStatus == 'ENCONTRADO_CONTA' ? 1 : leadStatus == 'ENCONTRADO_EXPIRADO' ? 2 : leadStatus == 'ENCONTRADO_LEAD' ? 3 : leadStatus == 'NADA_ENCONTRADO' ? 4 : 'X'
-        // PRINT PARA LOG
-        time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_LUPA_-_${fileStatus}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_LUPA_-_${fileStatus}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT SEARCH: OK`;

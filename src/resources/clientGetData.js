@@ -6,7 +6,7 @@ let e = import.meta.url, ee = e;
 async function clientGetData(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, time, mon, day, hou, leadPageId, leadDate = [], dataC6
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6
 
         let { page, browser, leadCnpj } = inf
 
@@ -16,9 +16,9 @@ async function clientGetData(inf) {
             err = `% Não achou o ID do link da página do lead`
             logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }; await sendData(infSendData)
             infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true });
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000) }); process.exit();
         }; leadPageId = retRegex.res['1']
-        await new Promise(resolve => { setTimeout(resolve, 2000) })
+        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // STATUS1 [Abrindo dados do cliente]
         infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente` }; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
@@ -28,9 +28,9 @@ async function clientGetData(inf) {
 
         // CLICAR NO LINK DO ID DO LEAD
         let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
-        await new Promise(resolve => { setTimeout(resolve, 2000) })
+        await new Promise(resolve => { setTimeout(resolve, 1000) })
         await link.click();
-        await new Promise(resolve => { setTimeout(resolve, 2000) })
+        await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // E DEFINIR SE É TELA ANTIGA OU NOVA
         let timeout = 30000; let selectors = [
@@ -79,11 +79,6 @@ async function clientGetData(inf) {
         dataC6 = Math.floor(dataC6.getTime() / 1000);
         // DIFERENÇA MAIR QUE 5 DIAS 'true' DO CONTRÁRIO 'false' | + DE 5 DIAS → JÁ POSSUI CONTA | - DE 5 DIAS → ABERTO SF
         dataC6 = (Number(dateHour().res.tim) - dataC6) > ((5 * 86400) + 86400) ? true : false
-
-        // PRINT PARA LOG
-        time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_DADOS_-_${dataC6 ? 1 : 0}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT GET DATA: OK`;

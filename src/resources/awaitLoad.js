@@ -15,7 +15,7 @@ async function awaitLoad(inf) {
             await page.waitForSelector(element, {
                 visible: true,
             });
-            await new Promise(resolve => { setTimeout(resolve, 1000) })
+            await new Promise(resolve => { setTimeout(resolve, 500) })
             ret['msg'] = `AWAIT ELEMENT: OK`;
             ret['ret'] = true;
         }

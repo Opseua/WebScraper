@@ -6,7 +6,7 @@ let e = import.meta.url, ee = e;
 async function clientImput(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, time, mon, day, hou, pageInput, pageImputs, leadStatus
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, pageInput, pageImputs, leadStatus
 
         let { page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone } = inf
 
@@ -22,7 +22,7 @@ async function clientImput(inf) {
                     await new Promise(resolve => { setTimeout(resolve, 1000) })
                     try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
                     catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-                    await new Promise(resolve => { setTimeout(resolve, 2000) })
+                    await new Promise(resolve => { setTimeout(resolve, 1000) })
                 }
             }
         }
@@ -88,14 +88,9 @@ async function clientImput(inf) {
             await new Promise(resolve => { setTimeout(resolve, 400) });
         }
 
-        // PRINT PARA LOG
-        time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_INICIO.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_INICIO.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-
         // CLICAR NO BOTÃO 'Confirmar'
         await page.click('.slds-button.slds-button_neutral.button.uiButton--default.uiButton--brand.uiButton');
-        await new Promise(resolve => { setTimeout(resolve, 1000) })
+        await new Promise(resolve => { setTimeout(resolve, 500) })
 
         // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
         pageResult = await Promise.race([
@@ -103,55 +98,34 @@ async function clientImput(inf) {
             page.waitForNavigation({ timeout: 10000 }).then(() => true),
         ]).catch(() => 'NADA_ACONTECEU');
 
-        time = dateHour().res
         pageValue = await page.content()
-        let fileStatus = 'X'
         if (!pageResult) {
             if (pageValue.includes(`Já existe um lead cadastrado com o CNPJ informado`)) {
                 leadStatus = `Já existe um lead cadastrado com o CNPJ informado`
-                fileStatus = 1
             } else if (pageValue.includes(`Já existe um cliente cadastrado com o CNPJ informado`)) {
                 leadStatus = `Já existe um cliente cadastrado com o CNPJ informado`
-                fileStatus = 2
             } else if (pageValue.includes(`Já existe um lead e um cliente cadastrado com o CNPJ informado`)) {
                 leadStatus = `Já existe um lead e um cliente cadastrado com o CNPJ informado`
-                fileStatus = 3
             } else if (pageValue.includes(`Lead expirou`)) {
                 leadStatus = `Lead expirou`
-                fileStatus = 4
             } else if (pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
                 leadStatus = `Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`
-                fileStatus = 5
             } else {
                 if (pageValue.includes(`CNPJ informado é inválido`)) {
                     leadStatus = `ALERTA: CNPJ inválido`
-                    fileStatus = 99
                 } else if (pageValue.includes(`O formato correto para o telefone`)) {
                     leadStatus = `ALERTA: telefone inválido`
-                    fileStatus = 99
                 } else if (pageValue.includes(`endereço de email inválido`)) {
                     leadStatus = `ALERTA: email inválido`
-                    fileStatus = 99
                 } else if (pageValue.includes(`Os seguintes campos obrigatórios devem ser preenchidos`)) {
                     leadStatus = `ALERTA: campo não preenchido`
-                    fileStatus = 99
                 } else {
                     leadStatus = `ALERTA: status não identificado`
-                    // let infFile, retFile
-                    // infFile = { 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/C6_${time.hou}.${time.min}.${time.sec}_${leadCnpj}.txt`, 'rewrite': false, 'text': pageValue }
-                    // retFile = await file(infFile);
-                    fileStatus = 99
                 }
             }
         } else {
             leadStatus = `INDICAÇÃO OK`
-            fileStatus = 0
         }
-
-        // PRINT PARA LOG
-        time = dateHour().res; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`
-        try { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_FIM_-_${fileStatus}.jpg`, 'fullPage': true }); }
-        catch (catchErr) { await page.screenshot({ path: `log/Registros/${mon}/${day}/${hou}_C6_${leadCnpj}_INDICANDO_FIM_-_${fileStatus}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT IMPUT: OK`;
