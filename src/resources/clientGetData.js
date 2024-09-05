@@ -6,7 +6,7 @@ let e = import.meta.url, ee = e;
 async function clientGetData(inf) {
     let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6, nameMaster
 
         let { page, browser, leadCnpj } = inf
 
@@ -51,12 +51,17 @@ async function clientGetData(inf) {
                     let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
                 }, { timeout });
                 // PEGAR O VALOR
-                leadDate = await page.evaluate(() => {
+                let leadDateAndMaster = await page.evaluate(() => {
                     let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element ? element.textContent.trim() : null;
                 });
+
                 // EXTRAIR DATA
-                infRegex = { 'e': e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDate }
+                infRegex = { 'e': e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDateAndMaster }
                 retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; leadDate = [`${pageResult} 00:00`] }
+
+                // EXTRAIR MASTER
+                infRegex = { 'e': e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster }
+                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; nameMaster = pageResult }
             }
         }; // console.log(pageResult ? true : false, leadDate)
 
@@ -87,6 +92,7 @@ async function clientGetData(inf) {
             'dataDayMonYeaFull': leadDate[0],
             'dataRes': dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF',
             'dataBoolean': dataC6,
+            'nameMaster': nameMaster,
         };
 
     } catch (catchErr) {

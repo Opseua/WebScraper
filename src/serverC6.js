@@ -23,8 +23,8 @@ async function serverRun(inf) {
         };
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
-        let statusInf, statusDate, statusDateFull, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
-        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
+        let statusInf, statusDate, statusDateFull, nameMaster, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
+        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
@@ -142,7 +142,7 @@ async function serverRun(inf) {
                         else { retClientSearch = retClientSearch.res.leadStatus }; leadStatus = retClientSearch
 
                         // ZERAR VARIÁVEIS
-                        statusInf = 'STATUS NÃO DEFINIDO 1'; statusDate = ''; statusDateFull = ''
+                        statusInf = 'STATUS NÃO DEFINIDO 1'; statusDate = ''; statusDateFull = ''; nameMaster = '';
 
                         if (leadStatus == 'ENCONTRADO_CONTA' || leadStatus == 'ENCONTRADO_LEAD' || leadStatus == 'ENCONTRADO_EXPIRADO') {
                             // LEAD DA BASE [SIM] ******************************************************************
@@ -150,11 +150,13 @@ async function serverRun(inf) {
                             retClientGetData = await clientGetData({ 'page': page, 'browser': browser, 'leadCnpj': leadCnpj })
                             if (!retClientGetData.ret) { logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ERRO CLIENT GET DATA` }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit(); }
                             else { retClientGetData = retClientGetData.res }; dataRes = retClientGetData.dataRes; dataDayMonYea = retClientGetData.dataDayMonYea; dataDayMonYeaFull = retClientGetData.dataDayMonYeaFull;
-                            dataBoolean = retClientGetData.dataBoolean; statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull
+                            dataBoolean = retClientGetData.dataBoolean; statusInf = leadStatus == 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull;
+                            if (gO.inf.sheetTab == 'NOME_MASTER') { nameMaster = retClientGetData.nameMaster }
                         }
 
-                        if (gO.inf.sheetTab == 'SOMENTE_CONSULTAR') {
+                        if (gO.inf.sheetTab == 'SOMENTE_CONSULTAR' || gO.inf.sheetTab == 'NOME_MASTER') {
                             statusInf = statusInf.includes(`STATUS NÃO DEFINIDO`) ? 'NADA ENCONTRADO' : leadStatus == 'ENCONTRADO_EXPIRADO' ? 'FORA DO PRAZO' : statusInf
+                            if (gO.inf.sheetTab == 'NOME_MASTER') { statusDateFull = statusDateFull || 'xx/xx/xxxx 00:00'; nameMaster = nameMaster || 'NÃO ENCONTRADO' }
                         } else if (leadStatus == 'NADA_ENCONTRADO' || leadStatus == 'ENCONTRADO_EXPIRADO') {
                             // CLIENTE: INDICAR → LEAD DA BASE [NÃO] | EXPIRADO
                             retClientImput = await clientImput({
@@ -199,7 +201,7 @@ async function serverRun(inf) {
                         await new Promise(resolve => { setTimeout(resolve, 500) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
-                        time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull]]; results = results[0].join(conSpl)
+                        time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull, nameMaster]]; results = results[0].join(conSpl)
                         retGoogleSheets = await googleSheets({ 'e': e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results]] }); if (!retGoogleSheets.ret) {
                             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
                             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_7.jpg`, 'fullPage': true }); }
