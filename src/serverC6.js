@@ -24,7 +24,7 @@ async function serverRun(inf) {
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
         let statusInf, statusDate, statusDateFull, nameMaster, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
-        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
+        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
@@ -154,7 +154,7 @@ async function serverRun(inf) {
                             if (gO.inf.sheetTab == 'NOME_MASTER') { nameMaster = retClientGetData.nameMaster }
                         }
 
-                        if (gO.inf.sheetTab == 'SOMENTE_CONSULTAR' || gO.inf.sheetTab == 'NOME_MASTER') {
+                        if (['SOMENTE_CONSULTAR', 'NOME_MASTER', 'RECHECAGEM',].includes(gO.inf.sheetTab)) {
                             statusInf = statusInf.includes(`STATUS NÃO DEFINIDO`) ? 'NADA ENCONTRADO' : leadStatus == 'ENCONTRADO_EXPIRADO' ? 'FORA DO PRAZO' : statusInf
                             if (gO.inf.sheetTab == 'NOME_MASTER') { statusDateFull = statusDateFull || 'xx/xx/xxxx 00:00'; nameMaster = nameMaster || 'NÃO ENCONTRADO' }
                         } else if (leadStatus == 'NADA_ENCONTRADO' || leadStatus == 'ENCONTRADO_EXPIRADO') {
