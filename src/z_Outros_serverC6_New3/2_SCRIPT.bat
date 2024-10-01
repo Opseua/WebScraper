@@ -36,7 +36,7 @@ rem if "!ret!"=="TRUE" ( )
 rem  (NAO SUBIR OS 'if'!!!)
 if "!mode!"=="CMD" ( set "scriptType=processCmdKeep" ) else ( if "!mode!"=="LEGACY" ( set "scriptType=processCmdKeep" ) )
 if "!scriptType!" equ "ERRO" !fileMsg! "[!local!\!arquivo!]\n\n'mode' deve ser\n'CMD', 'LEGACY'" & exit
-endlocal & call "%fileChrome_Extension%\src\scripts\BAT\%scriptType%.bat" "%arg1%_WINTP4" "%project%@%outrosAdd%" "%fileScript%" "%mode%" "%programExe%" "%ret%" & setlocal enabledelayedexpansion
+endlocal & call "%fileChrome_Extension%\src\scripts\BAT\%scriptType%.bat" "%arg1%_WINTP5" "%project%@%outrosAdd%" "%fileScript%" "%mode%" "%programExe%" "%ret%" & setlocal enabledelayedexpansion
 set "ret=%ret2%"
 rem #####################################################################
 
@@ -54,7 +54,7 @@ rem ESTAVA RODANDO [SIM]
 if "!ret!"=="TRUE" (
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}  ]}"
+	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 	del /F /Q "!pathRes!" & del /F /Q "!pathReq!"
 )
@@ -63,7 +63,7 @@ rem ESTAVA RODANDO [NAO]
 if "!ret!"=="FALSE" (
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
-	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}  ]}"
+	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES.txt" & set "pathReq=!local!\z_BODY_REQ.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
 	del /F /Q "!pathRes!" & del /F /Q "!pathReq!"
 )

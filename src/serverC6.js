@@ -24,22 +24,26 @@ async function serverRun(inf) {
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
         let statusInf, statusDate, statusDateFull, nameMaster, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
         gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
-        tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let lin, range = 'A2';
+        tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         let googleSheetsId, retGetPath = await getPath({ 'e': new Error() }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file
-        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; gO.inf['shortcut'] = 'z_Outros_serverC6'; }
-        else { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_Outros_serverC6_New2'; }; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]
+        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; } else if (retGetPath.includes('_New2_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; }
+        else if (retGetPath.includes('_New3_TEMP.js')) { googleSheetsId = '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY'; }; let shortcut = `z_Outros_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`;
+        gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]
 
         // CONSUMO DE MÉMORIA RAM (A CADA x MINUTOS)
         setInterval(() => {
-            _exec('wmic os get TotalVisibleMemorySize', (error, stdout, stderr) => {
-                if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rT = parseInt(stdout.split('\n')[1].trim()); _exec('wmic os get FreePhysicalMemory', (error, stdout, stderr) => {
-                    if (error || stderr) { console.error(`DEU ERRO RAM`); return; }; let rF = parseInt(stdout.split('\n')[1].trim()); let rU = Number(((rT - rF) / rT) * 100).toFixed(0);
-                    let msg = `RAM USADA: ${rU}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (rU > 97) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
+            _exec('wmic cpu get loadpercentage', (err, res, errm) => { // USO: CPU
+                if (err || errm) { console.log(`ERRO: CPU`); return; }; res = res.replace(/[^0-9]/g, '');
+                let msg = `USO CPU: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 70) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
+            }); _exec('wmic os get TotalVisibleMemorySize', (err, res, errm) => { // USO: RAM
+                if (err || errm) { console.log(`ERRO: RAM`); return; }; let rT = parseInt(res.replace(/[^0-9]/g, '')); _exec('wmic os get FreePhysicalMemory', (err, res, errm) => {
+                    if (err || errm) { console.log(`ERRO: RAM`); return; }; let rF = parseInt(res.replace(/[^0-9]/g, '')); res = Number(((rT - rF) / rT) * 100).toFixed(0);
+                    let msg = `USO RAM: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
                 });
             });
-        }, 30 * 60000);
+        }, 15 * 60000);
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
