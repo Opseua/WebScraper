@@ -59,7 +59,7 @@ async function serverRun(inf) {
         chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
         // '0' → APARECE | '1' → OCULTO
-        if (chromiumHeadless == '0') { chromiumHeadless = false } else if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
+        if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
 
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { 'e': e, 'stop': false, 'status1': '# Iniciando script, aguarde' }; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` }); await sendData(infSendData);
@@ -67,7 +67,11 @@ async function serverRun(inf) {
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
             'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
-            'args': ['--no-sandbox', '--disable-extensions', '--disable-setuid-sandbox', '--no-first-run', '--no-zygote',],
+            'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',
+                '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-software-rasterizer', '--disable-webrtc', '--disable-print-preview',
+                '--disable-infobars', '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--disable-webgl', '--disable-remote-fonts',
+                '--dns-prefetch-disable', '--renderer-process-limit=1', '--disable-download-notification', '--disable-download-resumption', '--disable-touch-drag-drop',
+            ], 'ignoreDefaultArgs': ['--disable-extensions'],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
         // COOKIE [SET]
