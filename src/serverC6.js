@@ -6,6 +6,9 @@ async function serverRun(inf) {
     try {
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]` })
 
+        // IMPORTAR BIBLIOTECA [NODEJS]
+        if (typeof _puppeteer === 'undefined') { await functionImportLibrary({ 'lib': '_puppeteer' }); };
+
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
         await file({ 'e': e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }); let secAwaitNewCheck = 60, startupTab = Math.floor(Date.now() / 1000);
@@ -33,10 +36,13 @@ async function serverRun(inf) {
         gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]
 
         // CONSUMO DE MÉMORIA RAM (A CADA x MINUTOS)
-        setInterval(() => {
+        setInterval(async () => {
+            // IMPORTAR BIBLIOTECA [NODEJS]
+            if (typeof _exec === 'undefined') { await functionImportLibrary({ 'lib': '_exec' }); };
+
             _exec('wmic cpu get loadpercentage', (err, res, errm) => { // USO: CPU
                 if (err || errm) { console.log(`ERRO: CPU`); return; }; res = res.replace(/[^0-9]/g, '');
-                let msg = `USO CPU: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 70) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
+                let msg = `USO CPU: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
             }); _exec('wmic os get TotalVisibleMemorySize', (err, res, errm) => { // USO: RAM
                 if (err || errm) { console.log(`ERRO: RAM`); return; }; let rT = parseInt(res.replace(/[^0-9]/g, '')); _exec('wmic os get FreePhysicalMemory', (err, res, errm) => {
                     if (err || errm) { console.log(`ERRO: RAM`); return; }; let rF = parseInt(res.replace(/[^0-9]/g, '')); res = Number(((rT - rF) / rT) * 100).toFixed(0);
