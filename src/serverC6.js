@@ -16,12 +16,6 @@ async function serverRun(inf) {
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
             await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
-        }; function notificationLegacy(inf) {
-            let { title, text } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
-                let url = `http://${globalWindow.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
-                    "fun": [{ "securityPass": globalWindow.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': inf.title, 'text': inf.text, 'ntfy': true } }]
-                }); reqOpt[cng ? 'payload' : 'body'] = body; if (cng) { UrlFetchApp.fetch(url, reqOpt); Browser.msgBox(title, text, Browser.Buttons.OK) } else { await fetch(url, reqOpt) } // GOOGLE | Chrome/NodeJS
-            })()
         };
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
@@ -38,15 +32,13 @@ async function serverRun(inf) {
         // CONSUMO DE MÉMORIA RAM (A CADA x MINUTOS)
         setInterval(async () => {
             // IMPORTAR BIBLIOTECA [NODEJS]
-            if (typeof _exec === 'undefined') { await functionImportLibrary({ 'lib': '_exec' }); };
-
-            _exec('wmic cpu get loadpercentage', (err, res, errm) => { // USO: CPU
+            if (typeof _exec === 'undefined') { await functionImportLibrary({ 'lib': '_exec' }); }; _exec('wmic cpu get loadpercentage', async (err, res, errm) => { // USO: CPU
                 if (err || errm) { console.log(`ERRO: CPU`); return; }; res = res.replace(/[^0-9]/g, '');
-                let msg = `USO CPU: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
-            }); _exec('wmic os get TotalVisibleMemorySize', (err, res, errm) => { // USO: RAM
-                if (err || errm) { console.log(`ERRO: RAM`); return; }; let rT = parseInt(res.replace(/[^0-9]/g, '')); _exec('wmic os get FreePhysicalMemory', (err, res, errm) => {
+                let msg = `USO CPU: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { await notification({ 'e': e, 'legacy': true, 'title': `ALERTA`, 'text': `${msg}` }) }
+            }); _exec('wmic os get TotalVisibleMemorySize', async (err, res, errm) => { // USO: RAM
+                if (err || errm) { console.log(`ERRO: RAM`); return; }; let rT = parseInt(res.replace(/[^0-9]/g, '')); _exec('wmic os get FreePhysicalMemory', async (err, res, errm) => {
                     if (err || errm) { console.log(`ERRO: RAM`); return; }; let rF = parseInt(res.replace(/[^0-9]/g, '')); res = Number(((rT - rF) / rT) * 100).toFixed(0);
-                    let msg = `USO RAM: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { notificationLegacy({ 'title': `ALERTA`, 'text': `${msg}` }) }
+                    let msg = `USO RAM: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { await notification({ 'e': e, 'legacy': true, 'title': `ALERTA`, 'text': `${msg}` }) }
                 });
             });
         }, 15 * 60000);
@@ -54,13 +46,11 @@ async function serverRun(inf) {
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
-            // FORÇAR PARADA DO SCRIPT
-            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });
+            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });  // FORÇAR PARADA DO SCRIPT
         }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
         catch (catchErr) {
-            notificationLegacy({ 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
-            // FORÇAR PARADA DO SCRIPT
-            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' }); esLintIgnore = catchErr;
+            await notification({ 'e': e, 'legacy': true, 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
+            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' }); esLintIgnore = catchErr; // FORÇAR PARADA DO SCRIPT
         }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadRandomNames = gO.inf.sheetKepp.randomNames;
         chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
@@ -93,11 +83,9 @@ async function serverRun(inf) {
         // CHECAR SE O COOKIE EXPIROU
         pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
             err = `$ Cookie inválido!`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await sendData({ 'e': e, 'stop': false, 'status1': `${err}` })
-            await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue });
-            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': true }); }
+            await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }); try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': true }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-            // FORÇAR PARADA DO SCRIPT
-            await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' });
+            await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' }); // FORÇAR PARADA DO SCRIPT
         }
 
         // **************************************************************************************************************
@@ -107,8 +95,7 @@ async function serverRun(inf) {
                 // STATUS1 [Fora do horário permitido]
                 infSendData = { 'e': e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
                 logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` }); await sendData(infSendData)
-                // FORÇAR PARADA DO SCRIPT
-                await processForceStop({ 'origin': 'serverC6 STATUS1 [Fora do horário permitido]' });
+                await processForceStop({ 'origin': 'serverC6 STATUS1 [Fora do horário permitido]' }); // FORÇAR PARADA DO SCRIPT
             } else {
                 // DEFINIR ABA ATUAL
                 tabsInf['index'] = tabsInf.index < (tabsInf.name.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.name[tabsInf.index];
@@ -120,13 +107,11 @@ async function serverRun(inf) {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
                     retGoogleSheets = await googleSheets({ 'e': e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
                         err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` }); await log({ 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
-                        // FORÇAR PARADA DO SCRIPT
-                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' });
+                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' }); // FORÇAR PARADA DO SCRIPT
                     }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
                     catch (catchErr) {
-                        notificationLegacy({ 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
-                        // FORÇAR PARADA DO SCRIPT
-                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });; esLintIgnore = catchErr;
+                        await notification({ 'e': e, 'legacy': true, 'title': `ERRO PARSE DADOS DA CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
+                        await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' });; esLintIgnore = catchErr; // FORÇAR PARADA DO SCRIPT
                     }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
 
@@ -207,11 +192,10 @@ async function serverRun(inf) {
                         }
 
                         // STATUS1 [STATUS DA CONSULTA]
-                        statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` }
+                        statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { 'e': e, 'stop': false, 'status1': `${statusText}` };
                         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` }); await sendData(infSendData)
                         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
-                        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-                        await new Promise(resolve => { setTimeout(resolve, 500) })
+                        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }; await new Promise(resolve => { setTimeout(resolve, 500) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
                         time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull, nameMaster]]; results = results[0].join(conSpl)
