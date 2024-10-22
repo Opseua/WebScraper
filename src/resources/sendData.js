@@ -14,8 +14,8 @@ async function sendData(inf) {
         // @ TRYCATCH Script erro!                     →→→ SERÁ REINICIADO [SIM] | PARADO [SIM]
 
         let time = dateHour().res
-        let id = inf && inf.id ? inf.id : gO.inf.sheetId ? gO.inf.sheetId : '1h0cjCceBBbX6IlDYl7DfRa7_i1__SNC_0RUaHLho7d8'
-        let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'RESULTADOS'
+        let id = inf && inf.id ? inf.id : gO.inf.sheetId ? gO.inf.sheetId : '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'
+        let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'INDICAR_MANUAL'
         let range = inf && inf.range ? inf.range : 'A32'
 
         let { status1, status2, results } = inf

@@ -15,24 +15,27 @@ await getPath({ 'e': new Error(), 'devChildren': devChildren })
 // console.log('devSend:', globalWindow.devSend); console.log('devGet:', globalWindow.devGet); console.log('conf:', globalWindow.conf);
 // console.log('root:', globalWindow.root); console.log('functions:', globalWindow.functions); console.log('project:', globalWindow.project);
 
+// PEGAR O NOME DO ARQUIVO(SEM EXTENSÃO)
+function funFile(inf) { return inf.match(/([^\\/]+)(?=\.[^\\.]+$)/)[0]; }
+
 // IMPORTAR FUNÇÕES DINAMICAMENTE QUANDO NECESSÁRIO 
-let qtd = 0; async function functionImport(infOk) { let { name, path, inf } = infOk; qtd++; if (qtd > 30) { console.log('IMP...', name) }; await import(`${path}`); return await gloWin[name](inf) }
+let qtd1 = 0; async function funImport(infOk) { let { path, inf } = infOk; qtd1++; let name = funFile(path); if (qtd1 > 30) { console.log('IMPORTANDO...', name) }; await import(`${path}`); return await gloWin[name](inf); }
 
 // FUNÇÃO GENÉRICA (QUANDO O ENGINE ESTIVER ERRADO) | ENCAMINHAR PARA DEVICE
-async function functionGeneric(infOk) { let { name, inf, retInf } = infOk; let retDevAndFun = await devFun({ 'e': import.meta.url, 'enc': true, 'data': { 'name': name, 'par': inf, 'retInf': retInf, } }); return retDevAndFun }
+async function funGeneric(infOk) { let { path, inf } = infOk; let name = funFile(path); let retDevAndFun = await devFun({ 'e': import.meta.url, 'enc': true, 'data': { 'name': name, 'par': inf, } }); return retDevAndFun; }
 
 // FUNÇÕES DESSE PROJETO
-gloWin['apiCnpj'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'apiCnpj', 'path': './apiCnpj.js', 'inf': inf }); };
-gloWin['apiNire'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'apiNire', 'path': './apiNire.js', 'inf': inf }); };
-gloWin['awaitLoad'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'awaitLoad', 'path': './awaitLoad.js', 'inf': inf }); };
-gloWin['buttonElement'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'buttonElement', 'path': './buttonElement.js', 'inf': inf }); };
-gloWin['checkPage'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'checkPage', 'path': './checkPage.js', 'inf': inf }); };
-gloWin['clientGetData'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'clientGetData', 'path': './clientGetData.js', 'inf': inf }); };
-gloWin['clientImput'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'clientImput', 'path': './clientImput.js', 'inf': inf }); };
-gloWin['clientSearch'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'clientSearch', 'path': './clientSearch.js', 'inf': inf }); };
-gloWin['cookiesGetSet'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'cookiesGetSet', 'path': './cookiesGetSet.js', 'inf': inf }); };
-gloWin['getTextElement'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'getTextElement', 'path': './getTextElement.js', 'inf': inf }); };
-gloWin['imput'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'imput', 'path': './imput.js', 'inf': inf }); };
-gloWin['navigate'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'navigate', 'path': './navigate.js', 'inf': inf }); };
-gloWin['sendData'] = (inf) => { let fun = (!eng) ? functionImport : functionGeneric; return fun({ 'name': 'sendData', 'path': './sendData.js', 'inf': inf }); };
+gloWin['apiCnpj'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './apiCnpj.js', 'inf': inf }); };
+gloWin['apiNire'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './apiNire.js', 'inf': inf }); };
+gloWin['awaitLoad'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './awaitLoad.js', 'inf': inf }); };
+gloWin['buttonElement'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './buttonElement.js', 'inf': inf }); };
+gloWin['checkPage'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './checkPage.js', 'inf': inf }); };
+gloWin['clientGetData'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './clientGetData.js', 'inf': inf }); };
+gloWin['clientImput'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './clientImput.js', 'inf': inf }); };
+gloWin['clientSearch'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './clientSearch.js', 'inf': inf }); };
+gloWin['cookiesGetSet'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './cookiesGetSet.js', 'inf': inf }); };
+gloWin['getTextElement'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './getTextElement.js', 'inf': inf }); };
+gloWin['imput'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './imput.js', 'inf': inf }); };
+gloWin['navigate'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './navigate.js', 'inf': inf }); };
+gloWin['sendData'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './sendData.js', 'inf': inf }); };
 

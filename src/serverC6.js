@@ -7,7 +7,7 @@ async function serverRun(inf) {
         logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]` })
 
         // IMPORTAR BIBLIOTECA [NODEJS]
-        if (typeof _puppeteer === 'undefined') { await functionImportLibrary({ 'lib': '_puppeteer' }); };
+        if (typeof _puppeteer === 'undefined') { await funLibrary({ 'lib': '_puppeteer' }); };
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
@@ -32,7 +32,7 @@ async function serverRun(inf) {
         // CONSUMO DE MÉMORIA RAM (A CADA x MINUTOS)
         setInterval(async () => {
             // IMPORTAR BIBLIOTECA [NODEJS]
-            if (typeof _exec === 'undefined') { await functionImportLibrary({ 'lib': '_exec' }); }; _exec('wmic cpu get loadpercentage', async (err, res, errm) => { // USO: CPU
+            if (typeof _exec === 'undefined') { await funLibrary({ 'lib': '_exec' }); }; _exec('wmic cpu get loadpercentage', async (err, res, errm) => { // USO: CPU
                 if (err || errm) { console.log(`ERRO: CPU`); return; }; res = res.replace(/[^0-9]/g, '');
                 let msg = `USO CPU: ${res}%`; logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { await notification({ 'e': e, 'legacy': true, 'title': `ALERTA`, 'text': `${msg}` }) }
             }); _exec('wmic os get TotalVisibleMemorySize', async (err, res, errm) => { // USO: RAM
