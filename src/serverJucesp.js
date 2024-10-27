@@ -148,7 +148,7 @@ async function serverRun(inf) {
                             await page.click('input[name="ctl00$cphContent$gdvResultadoBusca$btEntrar"]'); ret['msg'] = 'CAPTHCA OK: CAPTCHA ENVIADO'; ret['ret'] = true
                         }
                     }
-                } catch (catchErr) { ret['msg'] = 'ERRO: AO CAPTURAR/INSERIR CAPTCHA'; esLintIgnore = catchErr; }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
+                } catch (catchErr) { ret['msg'] = 'ERRO: AO CAPTURAR/INSERIR CAPTCHA'; esLintIgnore = catchErr; }; return { ...({ 'ret': ret.ret }), ...(ret.msg && { 'msg': ret.msg }), ...(ret.res && { 'res': ret.res }), };
             }
 
             // CHECAR SE O CAPTCHA APARECEU
@@ -265,7 +265,7 @@ async function serverRun(inf) {
 
         let errMsg = `% [serverJucesp] TRYCATCH Script erro!`
         await sendData({ 'e': e, 'stop': true, 'status1': errMsg })
-    }; return { ...({ ret: ret.ret }), ...(ret.msg && { msg: ret.msg }), ...(ret.res && { res: ret.res }), };
+    }; return { ...({ 'ret': ret.ret }), ...(ret.msg && { 'msg': ret.msg }), ...(ret.res && { 'res': ret.res }), };
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!
 serverRun()
