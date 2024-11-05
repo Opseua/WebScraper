@@ -1,5 +1,5 @@
 // let infApiCnpj, retApiCnpj // 'logFun': true,
-// infApiCnpj = {'e': e, 'cnpj': '52957711000152' }
+// infApiCnpj = {e, 'cnpj': '52957711000152' }
 // retApiCnpj = await apiCnpj(infApiCnpj)
 // console.log(retApiCnpj)
 
@@ -10,13 +10,13 @@ async function apiCnpj(inf) {
         let infApi, retApi, infLog
         let token = inf && inf.token ? inf.token : gO.inf.token
         infApi = {
-            'e': e, 'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
+            e, 'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
             'headers': { 'Authorization': token }
         };
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
             let errMsg = `% FALSE: retApi`
-            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
+            logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+            infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
             await log(infLog);
             return retApi
         } else { retApi = JSON.parse(retApi.res.body) }
@@ -108,7 +108,7 @@ async function apiCnpj(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 

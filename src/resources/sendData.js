@@ -1,5 +1,5 @@
 // let infSendData, retSendData // 'logFun': true,
-// infSendData = { 'e': e, 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
+// infSendData = { e, 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
 // retSendData = await sendData(infSendData)
 // console.log(retSendData)
 
@@ -27,14 +27,14 @@ async function sendData(inf) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status1 ? gO.inf.sheetKepp.range.status1 : 'A32'
                 let sheetData = typeof status1 === 'object' ? JSON.parse(status1) : status1
                 let infGoogleSheets = {
-                    'e': e, 'action': 'send',
+                    e, 'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': range,
                     'values': [[`${time.tim} | ${sheetData}`]]
                 }
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
+                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
             }
 
             // [STATUS2]
@@ -42,28 +42,28 @@ async function sendData(inf) {
                 range = gO.inf.sheetKepp && gO.inf.sheetKepp.range && gO.inf.sheetKepp.range.status2 ? gO.inf.sheetKepp.range.status2 : 'A34'
                 let sheetData = typeof status2 === 'object' ? JSON.parse(status2) : status2
                 let infGoogleSheets = {
-                    'e': e, 'action': 'send',
+                    e, 'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': range,
                     'values': [[`${time.tim} | ${sheetData}`]]
                 }
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
+                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
             }
 
             // [RESULTS]
             if (results) {
                 let sheetData = typeof results === 'object' ? JSON.parse(results) : results
                 let infGoogleSheets = {
-                    'e': e, 'action': 'send',
+                    e, 'action': 'send',
                     'id': id,
                     'tab': tab,
                     'range': 'D**',
                     'values': [[`${sheetData}`]]
                 }
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
+                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS` }); return retGoogleSheets } else { retGoogleSheets = retGoogleSheets.msg }
             }
         }
         ret['msg'] = 'SEND DATA: OK'
@@ -72,7 +72,7 @@ async function sendData(inf) {
         // STOP
         if (inf.stop) {
             gO.inf['stop'] = true
-            await commandLine({ 'e': e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+            await commandLine({ e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }
     } catch (catchErr) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;

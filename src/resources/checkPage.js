@@ -1,5 +1,5 @@
 // let infCheckPage, retCheckPage // 'logFun': true,
-// infCheckPage = {'e': e, 'body': body }
+// infCheckPage = {e, 'body': body }
 // retCheckPage = await checkPage(infCheckPage)
 // console.log(retCheckPage)
 
@@ -18,7 +18,7 @@ async function checkPage(inf) {
                 ret['msg'] = ret.ret ? `ENCONTRADO [SIM]: '${search}'` : `ENCONTRADO [NÃO]: '${search}'`
                 if (!ret.ret) {
                     let errMsg = `% ${ret.msg}`
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
+                    infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     await log(infLog);
                 }
             } else {
@@ -29,7 +29,7 @@ async function checkPage(inf) {
                     try { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true }); }
                     catch (catchErr) { await page.screenshot({ path: `log/screenshot_Jucesp_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
                     let errMsg = `% ${ret.msg}`
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
+                    infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': body }
                     await log(infLog);
                 } else {
                     ret['msg'] = `NIRE's ENCONTRADOS`;
@@ -44,7 +44,7 @@ async function checkPage(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 

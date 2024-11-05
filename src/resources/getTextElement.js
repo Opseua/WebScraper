@@ -1,5 +1,5 @@
 // let infGetTextElement, retGetTextElement // 'logFun': true,
-// infGetTextElement = {'e': e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
+// infGetTextElement = {e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_lblDescricao' }
 // retGetTextElement = await getTextElement(infGetTextElement)
 // console.log(retGetTextElement)
 
@@ -13,10 +13,10 @@ async function getTextElement(inf) {
             ret['msg'] = `GET TEXT ELEMENT: ERRO | INFORMAR O 'element'`;
         } else {
             if (element == 'results') {
-                infRegex = { 'e': e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': value.replace(/\n/g, ' ') }
+                infRegex = { e, 'pattern': `$lbtSelecionar','')">(.*?)</a>`, 'text': value.replace(/\n/g, ' ') }
                 retRegex = regex(infRegex); retRegex = String(retRegex.res['5']);
                 let nire = retRegex.split(',')
-                infRegex = { 'e': e, 'pattern': `pgrGridView_lblResults">Mostrando (.*?)</div><span id="`, 'text': value.replace(/\n/g, ' ') }
+                infRegex = { e, 'pattern': `pgrGridView_lblResults">Mostrando (.*?)</div><span id="`, 'text': value.replace(/\n/g, ' ') }
                 retRegex = regex(infRegex); retRegex = String(retRegex.res['5'])
                 retRegex = retRegex.replace('</span> de <span id="ctl00_cphContent_gdvResultadoBusca_pgrGridView_lblResultCount"', '')
                 retRegex = retRegex.split('</span>')
@@ -37,7 +37,7 @@ async function getTextElement(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 

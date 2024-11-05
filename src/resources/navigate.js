@@ -1,5 +1,5 @@
 // let infNavigate, retNavigate // 'logFun': true,
-// infNavigate = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
+// infNavigate = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retNavigate = await navigate(infNavigate)
 // console.log(retNavigate)
 
@@ -22,7 +22,7 @@ async function navigate(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 

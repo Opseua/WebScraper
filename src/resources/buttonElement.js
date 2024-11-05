@@ -1,5 +1,5 @@
 // let infButtonElement, retButtonElement // 'logFun': true,
-// infButtonElement = { 'e': e,'browser': browser, 'page': page, 'button': 'search' }
+// infButtonElement = { e,'browser': browser, 'page': page, 'button': 'search' }
 // retButtonElement = await buttonElement(infButton)
 // console.log(retButtonElement)
 
@@ -39,7 +39,7 @@ async function buttonElement(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 

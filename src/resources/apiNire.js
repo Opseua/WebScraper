@@ -1,5 +1,5 @@
 // let infApiNire, retApiNire // 'logFun': true,
-// infApiNire = {'e': e, 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
+// infApiNire = {e, 'nire': '35132685930', 'aut': 'ASP.NET_SessionId=wivpxhlq3b45tgtb12dcgk4t' }
 // retApiNire = await apiNire(infApiNire)
 // console.log(retApiNire)
 
@@ -20,13 +20,13 @@ async function apiNire(inf) {
 
         // API
         let infApi = {
-            'e': e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
+            e, 'method': 'GET', 'url': `https://www.jucesponline.sp.gov.br/Pre_Visualiza.aspx?nire=${nire}&idproduto=`,
             'headers': { 'Cookie': aut }
         };
         let retApi = await api(infApi); if (!retApi.ret) {
             let errMsg = `% FALSE: retApi`
-            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
+            logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+            infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi }
             await log(infLog);
             return retApi
         } else { retApi = retApi.res }
@@ -47,47 +47,47 @@ async function apiNire(inf) {
         if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj') && !texto.includes('mas houve um problema em nosso servidor')) {
             // ### ENCONTROU: NÃO
             let errMsg = `% NIRE_INVALIDO`
-            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
+            logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+            infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
             await log(infLog);
             ret['msg'] = `NIRE inválido`;
             ret['ret'] = true;
         } else {
             // ### ENCONTROU: SIM | PEGAR O CNPJ DO NIRE
-            infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
+            infRegex = { e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblCnpj\\">(.*?)<', 'text': texto }
             retRegex = regex(infRegex);
             if (!retRegex.ret || !retRegex.res['1']) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
                 ret['ret'] = true;
                 let errMsg = `% ${ret.msg}`
-                logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-                infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
+                logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+                infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                 await log(infLog);
             } else {
                 let cnpj = retRegex.res['1'].replace(/[^0-9]/g, '')
 
                 // PEGAR A RAZÃO SOCIAL
-                infRegex = { 'e': e, 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
+                infRegex = { e, 'pattern': 'titulo-azul16-01\\">(.*?)<', 'text': texto }
                 retRegex = regex(infRegex);
                 if (!retRegex.ret || !retRegex.res['1']) {
                     ret['msg'] = `Razão Social do CNPJ não encontrada`;
                     ret['ret'] = true;
                     let errMsg = `% ${ret.msg}`
-                    logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-                    infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
+                    logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+                    infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                     await log(infLog);
                 } else {
                     let razaoSocial = retRegex.res['1']
 
                     // PEGAR TIPO DE EMPRESA DO CNPJ
-                    infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
+                    infRegex = { e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblDetalhes\\">(.*?)<', 'text': texto }
                     retRegex = regex(infRegex);
                     if (!retRegex.ret || !retRegex.res['1']) {
                         ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
                         ret['ret'] = true;
                         let errMsg = `% ${ret.msg}`
-                        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-                        infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
+                        logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+                        infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                         await log(infLog);
                     } else {
                         let tipo = retRegex.res['1']
@@ -99,14 +99,14 @@ async function apiNire(inf) {
                             ret['ret'] = true;
                         } else {
                             // PEGAR DATA DE EMPRESA DO CNPJ
-                            infRegex = { 'e': e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
+                            infRegex = { e, 'pattern': 'ctl00_cphContent_frmPreVisualiza_lblAtividade\\">(.*?)<', 'text': texto }
                             retRegex = regex(infRegex);
                             if (!retRegex.ret || !retRegex.res['1']) {
                                 ret['msg'] = `Data do CNPJ não encontrada`;
                                 ret['ret'] = true;
                                 let errMsg = `% ${ret.msg}`
-                                logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${errMsg}` })
-                                infLog = { 'e': e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
+                                logConsole({ e, ee, 'write': true, 'msg': `${errMsg}` })
+                                infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto }
                                 await log(infLog);
                             } else {
                                 let data = retRegex.res['1']
@@ -128,7 +128,7 @@ async function apiNire(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 

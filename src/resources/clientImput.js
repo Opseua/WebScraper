@@ -1,5 +1,5 @@
 // let infClientImput, retClientImput
-// infClientImput = {'e': e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
+// infClientImput = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retClientImput = await clientImput(infClientImput); console.log(retClientImput)
 
 let e = import.meta.url, ee = e;
@@ -31,11 +31,11 @@ async function clientImput(inf) {
         pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000 });
         if (!pageInput) {
             err = `% Não achou o formulário`
-            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
-            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+            logConsole({ e, ee, 'write': true, 'msg': `${err}` });
+            infSendData = { e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
             pageValue = await page.content()
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, 'fullPage': true }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
@@ -44,14 +44,14 @@ async function clientImput(inf) {
 
         // REGEX PARA PEGAR O ID DOS CAMPOS
         pageValue = await page.content()
-        infRegex = { 'e': e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
+        infRegex = { e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue }
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['5']) {
             err = `% Não achou o ID dos campos`
-            logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
-            infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+            logConsole({ e, ee, 'write': true, 'msg': `${err}` });
+            infSendData = { e, 'stop': false, 'status1': `${err}` }
             await sendData(infSendData)
-            infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
             await log(infLog);
             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, 'fullPage': true }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
@@ -61,8 +61,8 @@ async function clientImput(inf) {
         // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // STATUS1 [Indicando...]
-        infSendData = { 'e': e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
-        logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${infSendData.status1}` });
+        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...` }
+        logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}` });
         await sendData(infSendData)
         pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj]
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
@@ -72,11 +72,11 @@ async function clientImput(inf) {
             pageInput = await page.$(`input[id="${value}"]`);
             if (!pageInput) {
                 err = `% Não achou o campo de imput [${index}]`
-                logConsole({ 'e': e, 'ee': ee, 'write': true, 'msg': `${err}` });
-                infSendData = { 'e': e, 'stop': false, 'status1': `${err}` }
+                logConsole({ e, ee, 'write': true, 'msg': `${err}` });
+                infSendData = { e, 'stop': false, 'status1': `${err}` }
                 await sendData(infSendData)
                 pageValue = await page.content()
-                infLog = { 'e': e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
+                infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }
                 await log(infLog);
                 try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, 'fullPage': true }); }
                 catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
@@ -137,7 +137,7 @@ async function clientImput(inf) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
 
         let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { 'e': e, 'stop': true, 'status1': errMsg }
+        let infSendData = { e, 'stop': true, 'status1': errMsg }
         await sendData(infSendData)
     };
 
