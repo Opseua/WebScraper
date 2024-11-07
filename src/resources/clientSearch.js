@@ -117,7 +117,7 @@ async function clientSearch(inf) {
             'leadStatus': leadStatus
         };
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
 
         let errMsg = `% TRYCATCH Script erro!`
         let infSendData = { e, 'stop': true, 'status1': errMsg }

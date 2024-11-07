@@ -75,7 +75,7 @@ async function sendData(inf) {
             await commandLine({ e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res;
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
         process.exit();
     };
 
