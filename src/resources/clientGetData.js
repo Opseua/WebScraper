@@ -57,11 +57,11 @@ async function clientGetData(inf) {
 
                 // EXTRAIR DATA
                 infRegex = { e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDateAndMaster }
-                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; leadDate = [`${pageResult} 00:00`] }
+                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = '01/01/2001' } else { pageResult = retRegex.res['1']; }; leadDate = [`${pageResult} 00:00`]
 
                 // EXTRAIR MASTER
                 infRegex = { e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster }
-                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = false } else { pageResult = retRegex.res['1']; nameMaster = pageResult }
+                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = 'ERRO' } else { pageResult = retRegex.res['1']; }; nameMaster = pageResult
             }
         }; // console.log(pageResult ? true : false, leadDate)
 
