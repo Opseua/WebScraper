@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e
 async function sendData(inf) {
-    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         // # Aguarde...                                →→→ SERÁ REINICIADO [NÃO] | PARADO [?]
         // # Iniciando script, aguarde                 →→→ SERÁ REINICIADO [NÃO] | PARADO [NÃO]
@@ -72,7 +72,7 @@ async function sendData(inf) {
         // STOP
         if (inf.stop) {
             gO.inf['stop'] = true
-            await commandLine({ e, 'command': `!letter!:/ARQUIVOS/PROJETOS/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         }
     } catch (catchErr) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];

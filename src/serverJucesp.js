@@ -2,9 +2,9 @@ function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m =
 await import('./resources/@export.js'); let e = import.meta.url, ee = e;
 
 async function serverRun(inf) {
-    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        logConsole({ e, ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]` })
+        logConsole({ e, ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]`, });
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
@@ -12,11 +12,11 @@ async function serverRun(inf) {
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
-            await commandLine({ e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
         }; function notificationLegacy(inf) {
             let { title, text } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
                 let url = `http://${globalWindow.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
-                    "fun": [{ "securityPass": globalWindow.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': './src/scripts/media/notification_3.png', 'title': title, 'text': text, 'ntfy': true } }]
+                    "fun": [{ "securityPass": globalWindow.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': 'notification_3.png', 'title': title, 'text': text, 'ntfy': true } }]
                 }); reqOpt[cng ? 'payload' : 'body'] = body; if (cng) { UrlFetchApp.fetch(url, reqOpt); } else { await fetch(url, reqOpt) } // GOOGLE | Chrome/NodeJS
             })()
         };
@@ -25,7 +25,7 @@ async function serverRun(inf) {
         let lastPage = false, err, conSpl, chromiumHeadless, token; gO.inf['stop'] = false; let rate = rateLimiter({ 'max': 3, 'sec': 40 }); let repet1 = 999999, pg, mode, lin, range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
-        let googleSheetsId, retGetPath = await getPath({ 'e': new Error() }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file;
+        let googleSheetsId, retGetPath = await getPath({ 'e': new Error(), }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file;
         if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_Outros_serverJucesp'; sheetTab = 'JUCESP' }
         gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = sheetTab
 
@@ -127,7 +127,7 @@ async function serverRun(inf) {
         if (retGetPath.includes('_TEMP.js')) {
             // ********************************************************************************************************************************************************************************************
             await new Promise(resolve => { setTimeout(resolve, 2000) }); let retCaptcha; async function captcha(inf) { // NÃO REMOVER O TEMPO DE ESPERA!!!
-                let ret = { 'ret': false };
+                let ret = { 'ret': false, };
                 try {
                     let { page, action, text } = inf; let formBuscaAvancada = await page.$('#formBuscaAvancada'); if (!formBuscaAvancada) { ret['msg'] = 'ERRO: CAPTCHA NÃO ENCONTRADO' } else {
                         if (action == 'get') {

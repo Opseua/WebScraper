@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e
 async function apiCnpj(inf) {
-    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let infApi, retApi, infLog
         let token = inf && inf.token ? inf.token : gO.inf.token

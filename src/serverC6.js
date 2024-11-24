@@ -2,9 +2,9 @@ function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m =
 await import('./resources/@export.js'); let e = import.meta.url, ee = e;
 
 async function serverRun(inf) {
-    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        logConsole({ e, ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]` })
+        logConsole({ e, ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]`, });
 
         // IMPORTAR BIBLIOTECA [NODEJS]
         if (typeof _puppeteer === 'undefined') { await funLibrary({ 'lib': '_puppeteer' }); };
@@ -15,7 +15,7 @@ async function serverRun(inf) {
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
-            await commandLine({ e, 'command': `!letter!:/ARQUIVOS/PROJETOS/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         };
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
@@ -24,7 +24,7 @@ async function serverRun(inf) {
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
-        let googleSheetsId, retGetPath = await getPath({ 'e': new Error() }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file
+        let googleSheetsId, retGetPath = await getPath({ 'e': new Error(), }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file
         if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; } else if (retGetPath.includes('_New2_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; }
         else if (retGetPath.includes('_New3_TEMP.js')) { googleSheetsId = '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY'; }; let shortcut = `z_Outros_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`;
         gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]

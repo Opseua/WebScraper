@@ -4,7 +4,7 @@
 
 let e = import.meta.url, ee = e;
 async function clientGetData(inf) {
-    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6, nameMaster
 

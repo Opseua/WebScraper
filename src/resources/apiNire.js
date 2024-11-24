@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e
 async function apiNire(inf) {
-    let ret = { 'ret': false }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex, infLog
         let nire = inf && inf.nire ? inf.nire : '12345678'
