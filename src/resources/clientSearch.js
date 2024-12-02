@@ -48,7 +48,7 @@ async function clientSearch(inf) {
             await log(infLog);
             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg`, 'fullPage': true }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_2.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-            browsr.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit();
         }
         retRegex = retRegex.res['1']
         await new Promise(resolve => { setTimeout(resolve, 1000) })
@@ -80,13 +80,10 @@ async function clientSearch(inf) {
             if (conteudo.includes('NOME DA CONTA')) {
                 return 'ENCONTRADO_CONTA';
             } else if (conteudo.includes('Expirado') && !conteudo.includes('Aguardando abertura Conta Corrente')) {
-                fileStatus = 2
                 return 'ENCONTRADO_EXPIRADO';
             } else if (conteudo.includes('NOME COMPLETO')) {
-                fileStatus = 3
                 return 'ENCONTRADO_LEAD';
             } else if (conteudo.includes('Nenhum resultado para')) {
-                fileStatus = 4
                 return 'NADA_ENCONTRADO';
             }
             return false;

@@ -15,7 +15,7 @@ async function serverRun(inf) {
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
-            await commandLine({ e, 'command': `${fileProjetos}/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         };
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
@@ -62,7 +62,7 @@ async function serverRun(inf) {
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
-            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
+            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
             'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',
                 '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-software-rasterizer', '--disable-webrtc', '--disable-print-preview',
                 '--disable-infobars', '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--disable-webgl', '--disable-remote-fonts',

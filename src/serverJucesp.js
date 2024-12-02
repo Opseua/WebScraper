@@ -12,11 +12,11 @@ async function serverRun(inf) {
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
-            await commandLine({ e, 'command': `${fileProjetos}/${globalWindow.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
         }; function notificationLegacy(inf) {
             let { title, text } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
-                let url = `http://${globalWindow.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
-                    "fun": [{ "securityPass": globalWindow.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': 'notification_3.png', 'title': title, 'text': text, 'ntfy': true } }]
+                let url = `http://${gW.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
+                    "fun": [{ "securityPass": gW.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': 'notification_3.png', 'title': title, 'text': text, 'ntfy': true } }]
                 }); reqOpt[cng ? 'payload' : 'body'] = body; if (cng) { UrlFetchApp.fetch(url, reqOpt); } else { await fetch(url, reqOpt) } // GOOGLE | Chrome/NodeJS
             })()
         };
@@ -49,7 +49,7 @@ async function serverRun(inf) {
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
-            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${globalWindow.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
+            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
             'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
