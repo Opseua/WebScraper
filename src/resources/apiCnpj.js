@@ -4,11 +4,12 @@
 // console.log(retApiCnpj)
 
 let e = import.meta.url, ee = e
-async function apiCnpj(inf) {
+async function apiCnpj(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
+        let { token = gO.inf.token, } = inf;
         let infApi, retApi, infLog
-        let token = inf && inf.token ? inf.token : gO.inf.token
+
         infApi = {
             e, 'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`,
             'headers': { 'Authorization': token }

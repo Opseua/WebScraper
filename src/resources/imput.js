@@ -4,7 +4,7 @@
 // console.log(retImput)
 
 let e = import.meta.url, ee = e
-async function imput(inf) {
+async function imput(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let { browser, page, element, value } = inf

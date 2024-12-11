@@ -1,7 +1,7 @@
 function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m = a % 1000; let f = m.toString().padStart(3, '0'); return `${s}.${f}` }; let startup = new Date();
 await import('./resources/@export.js'); let e = import.meta.url, ee = e;
 
-async function serverRun(inf) {
+async function serverRun(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         logConsole({ e, ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]`, });
@@ -11,23 +11,28 @@ async function serverRun(inf) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' }); let secAwaitNewCheck = 60, startupTab = Math.floor(Date.now() / 1000);
+        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'x' });
+        let secAwaitNewCheck = 60, startupTab = Math.floor(Date.now() / 1000);
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
+            await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue });
             await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         };
 
         let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
-        let statusInf, statusDate, statusDateFull, nameMaster, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false
-        gO.inf['stop'] = false; let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
+        let statusInf, statusDate, statusDateFull, nameMaster, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false; gO.inf['stop'] = false;
+        let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let range = 'A2';
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         let googleSheetsId, retGetPath = await getPath({ 'e': new Error(), }); if (!retGetPath.ret) { return retGetPath }; retGetPath = retGetPath.res.file
-        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; } else if (retGetPath.includes('_New2_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; }
-        else if (retGetPath.includes('_New3_TEMP.js')) { googleSheetsId = '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY'; }; let shortcut = `z_Outros_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`;
-        gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0]
+        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'; }
+        else if (retGetPath.includes('_New2_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; }
+        else if (retGetPath.includes('_New3_TEMP.js')) { googleSheetsId = '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY'; }
+        else if (retGetPath.includes('_New4_TEMP.js')) { googleSheetsId = '1uzlbsL9wqMs9gfMt1XHDEmh1k6MEdPA7JuQ8IzBA1pQ'; }
+        else if (retGetPath.includes('_New5_TEMP.js')) { googleSheetsId = '1SHr0tEam3biPOb4p9_iXbGIJCoMkkAgRquDCHLEZYrM'; }
+        let shortcut = `z_Outros_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`; gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0];
 
         // CONSUMO DE MÉMORIA RAM (A CADA x MINUTOS)
         setInterval(async () => {
@@ -64,9 +69,9 @@ async function serverRun(inf) {
         browser = await _puppeteer.launch({ // false | 'new'
             'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964 },
             'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',
-                '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-software-rasterizer', '--disable-webrtc', '--disable-print-preview',
-                '--disable-infobars', '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--disable-webgl', '--disable-remote-fonts',
-                '--dns-prefetch-disable', '--renderer-process-limit=1', '--disable-download-notification', '--disable-download-resumption', '--disable-touch-drag-drop',
+                '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-software-rasterizer', '--disable-webrtc',
+                '--disable-print-preview', '--disable-infobars', '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--disable-webgl',
+                '--disable-remote-fonts', '--dns-prefetch-disable', '--renderer-process-limit=1', '--disable-download-notification', '--disable-download-resumption', '--disable-touch-drag-drop',
             ], 'ignoreDefaultArgs': ['--disable-extensions'],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
@@ -81,12 +86,14 @@ async function serverRun(inf) {
         }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // CHECAR SE O COOKIE EXPIROU
+        //async function cookieCheck() {
         pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
             err = `$ Cookie inválido!`; logConsole({ e, ee, 'write': true, 'msg': `${err}` }); await sendData({ e, 'stop': false, 'status1': `${err}` })
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }); try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': true }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
             await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' }); // FORÇAR PARADA DO SCRIPT
         }
+        // }
 
         // **************************************************************************************************************
 
@@ -128,7 +135,8 @@ async function serverRun(inf) {
                             leadInf = value.split(conSpl); leadLinha = leadInf[0].replace(/^\s+/g, '').replace('LINHA_', ''); leadStatus = leadInf[1].replace(/^\s+/g, '')
                             leadCnpj = leadInf[2].replace(/^\s+/g, ''); leadTelefone = `55${leadInf[3].replace(/^\s+/g, '')}`
                             leadAdministrador = leadInf[4].length > 4 && leadInf[4].includes(' ') ? leadInf[4] : leadInf[6].length > 4 ? leadInf[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]
-                            leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'; leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###'); if (leadAdministrador.length < 2) {
+                            leadEmail = leadInf[5].length > 4 ? leadInf[5] : 'semEmail@gmail.com'; leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###');
+                            if (leadAdministrador.length < 2) {
                                 leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###')
                             }; leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = leadInf[7];
                             coldList = gO.inf.sheetTab == 'LISTA_FRIA' || leadOrigem.includes('JSF') || leadOrigem.includes('JUCESP') ? true : false; leadTelefone = coldList ? '887766' : leadTelefone
@@ -164,7 +172,7 @@ async function serverRun(inf) {
                             else { retClientImput = retClientImput.res }; imputRes = retClientImput.imputRes
 
                             // STATUS DE ACORDO COM O ERRO VERMELHO
-                            if (imputRes == 'Já existe um lead cadastrado com o CNPJ informado') {
+                            if (imputRes == 'Já existe um lead cadastrado com o CNPJ informado' || imputRes == 'Lead pertence a outro escritorio') {
                                 if (leadStatus == 'ENCONTRADO_EXPIRADO') { statusInf = 'FORA DO PRAZO' } else { statusInf = 'INDICAÇÃO OUTRO ECE' }
                             } else if (imputRes == 'Já existe um cliente cadastrado com o CNPJ informado') {
                                 if (leadStatus == 'ENCONTRADO_EXPIRADO') { statusInf = 'FORA DO PRAZO' }
@@ -195,7 +203,7 @@ async function serverRun(inf) {
                         statusText = `${leadCnpj} | ${statusInf} ${statusDate}`; infSendData = { e, 'stop': false, 'status1': `${statusText}` };
                         logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}` }); await sendData(infSendData)
                         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true }); }
-                        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }; await new Promise(resolve => { setTimeout(resolve, 500) })
+                        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr }; await new Promise(resolve => { setTimeout(resolve, 500) })
 
                         // MANDAR PARA A PLANILHA O RESULTADO 
                         time = dateHour().res; results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull, nameMaster]]; results = results[0].join(conSpl)

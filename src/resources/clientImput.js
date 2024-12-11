@@ -3,7 +3,7 @@
 // retClientImput = await clientImput(infClientImput); console.log(retClientImput)
 
 let e = import.meta.url, ee = e;
-async function clientImput(inf) {
+async function clientImput(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, pageInput, pageImputs, leadStatus
@@ -110,6 +110,8 @@ async function clientImput(inf) {
                 leadStatus = `Lead expirou`
             } else if (pageValue.includes(`Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`)) {
                 leadStatus = `Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`
+            } else if (pageValue.includes(`Lead pertence a outro escritorio`)) {
+                leadStatus = `Lead pertence a outro escritorio`
             } else {
                 if (pageValue.includes(`CNPJ informado é inválido`)) {
                     leadStatus = `ALERTA: CNPJ inválido`

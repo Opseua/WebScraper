@@ -4,7 +4,7 @@
 // console.log(retButtonElement)
 
 let e = import.meta.url, ee = e
-async function buttonElement(inf) {
+async function buttonElement(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let { browser, page, element, button } = inf

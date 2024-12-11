@@ -1,19 +1,19 @@
 function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m = a % 1000; let f = m.toString().padStart(3, '0'); return `${s}.${f}` }; let startup = new Date();
 await import('./resources/@export.js'); let e = import.meta.url, ee = e;
 
-async function serverRun(inf) {
+async function serverRun(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         logConsole({ e, ee, 'write': true, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]`, });
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'aaaaaa' });
+        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'x' });
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
             await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 3000) }); process.exit();
-        }; function notificationLegacy(inf) {
+        }; function notificationLegacy(inf = {}) {
             let { title, text } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
                 let url = `http://${gW.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
                     "fun": [{ "securityPass": gW.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': 'notification_3.png', 'title': title, 'text': text, 'ntfy': true } }]
@@ -54,7 +54,7 @@ async function serverRun(inf) {
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
         // LOOP API | // RESULTS
-        async function loopFunRun(inf) {
+        async function loopFunRun(inf = {}) {
             let current = `[${inf.index + 1}/${inf.length}]`
             let ok = false; logConsole({ e, ee, 'write': true, 'msg': `${valuesLoop.length}\n${inf.value}` }); let retApiNire = await apiNire({ e, 'date': date, 'nire': inf.value, 'aut': aut })
             if (!retApiNire.ret) {
@@ -126,7 +126,7 @@ async function serverRun(inf) {
         // ########### NOVO MODELO DE CAPTCHA
         if (retGetPath.includes('_TEMP.js')) {
             // ********************************************************************************************************************************************************************************************
-            await new Promise(resolve => { setTimeout(resolve, 2000) }); let retCaptcha; async function captcha(inf) { // NÃO REMOVER O TEMPO DE ESPERA!!!
+            await new Promise(resolve => { setTimeout(resolve, 2000) }); let retCaptcha; async function captcha(inf = {}) { // NÃO REMOVER O TEMPO DE ESPERA!!!
                 let ret = { 'ret': false, };
                 try {
                     let { page, action, text } = inf; let formBuscaAvancada = await page.$('#formBuscaAvancada'); if (!formBuscaAvancada) { ret['msg'] = 'ERRO: CAPTCHA NÃO ENCONTRADO' } else {

@@ -4,9 +4,10 @@
 // console.log(retSendData)
 
 let e = import.meta.url, ee = e
-async function sendData(inf) {
+async function sendData(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
+        let { status1, status2, results, id = gO.inf.sheetId, tab = gO.inf.sheetTab, range = 'A32', } = inf;
         // # Aguarde...                                →→→ SERÁ REINICIADO [NÃO] | PARADO [?]
         // # Iniciando script, aguarde                 →→→ SERÁ REINICIADO [NÃO] | PARADO [NÃO]
         // $ Erro ao pegar-enviar dados para planilha  →→→ SERÁ REINICIADO [NÃO] | PARADO [SIM]
@@ -14,11 +15,6 @@ async function sendData(inf) {
         // @ TRYCATCH Script erro!                     →→→ SERÁ REINICIADO [SIM] | PARADO [SIM]
 
         let time = dateHour().res
-        let id = inf && inf.id ? inf.id : gO.inf.sheetId ? gO.inf.sheetId : '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc'
-        let tab = inf && inf.tab ? inf.tab : gO.inf.sheetTab ? gO.inf.sheetTab : 'INDICAR_MANUAL'
-        let range = inf && inf.range ? inf.range : 'A32'
-
-        let { status1, status2, results } = inf
 
         // ENVIAR DADOS DA PLANILHA
         if (status1 || status2 || results) {

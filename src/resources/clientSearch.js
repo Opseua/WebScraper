@@ -4,7 +4,7 @@
 // console.log(retClientSearch)
 
 let e = import.meta.url, ee = e
-async function clientSearch(inf) {
+async function clientSearch(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
         let infRegex, retRegex, infSendData, infLog, err, pageValue, pageInput, pageResult, leadStatus

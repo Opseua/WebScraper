@@ -4,12 +4,11 @@
 // console.log(retApiNire)
 
 let e = import.meta.url, ee = e
-async function apiNire(inf) {
+async function apiNire(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
+        let { nire = '12345678', aut = 'ASP.NET_SessionId=aaaaaaaaaaaa', date, } = inf;
         let infRegex, retRegex, infLog
-        let nire = inf && inf.nire ? inf.nire : '12345678'
-        let aut = inf && inf.aut ? inf.aut : 'ASP.NET_SessionId=aaaaaaaaaaaa'
 
         for (let [index, value] of aut.entries()) {
             if (value.name == 'ASP.NET_SessionId') {
@@ -110,7 +109,7 @@ async function apiNire(inf) {
                                 await log(infLog);
                             } else {
                                 let data = retRegex.res['1']
-                                if (data !== inf.date) {
+                                if (data !== date) {
                                     ret['msg'] = `DATA ERRADA ${data}`;
                                     ret['ret'] = true;
                                 } else {
