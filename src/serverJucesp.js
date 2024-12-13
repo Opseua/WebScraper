@@ -102,7 +102,7 @@ async function serverRun(inf = {}) {
         };
 
         // COOKIE [SET]
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}/${time.mon}/2023` }; await cookiesGetSet({ e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut })
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) { date = `${time.day}/${time.mon}/2023` }; await cookiesGetSet({ e, 'page': page, 'action': 'set', 'value': aut })
 
         // STATUS [INSERINDO DATA DE PESQUISA]
         infSendData = { e, 'stop': false, 'status1': 'Inserindo data de pesquisa' }; await sendData(infSendData); logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}` })
@@ -170,7 +170,7 @@ async function serverRun(inf = {}) {
                 // RECARREGAR A PÁGINA | AGUARDAR TERMINAR DE CARREGAR
                 await page.reload({ waitUntil: 'networkidle2' }); await awaitLoad({ e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaSimples_hTitulo' })
                 // PEGAR O COOKIE E SALVAR NA PLANILHA
-                retCookiesGetSet = await cookiesGetSet({ e, 'browser': browser, 'page': page, 'action': 'get', }); logConsole({ e, ee, 'write': true, 'msg': 'Salvando cookie na planilha e reiniciando' });
+                retCookiesGetSet = await cookiesGetSet({ e, 'page': page, 'action': 'get', }); logConsole({ e, ee, 'write': true, 'msg': 'Salvando cookie na planilha e reiniciando' });
                 await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A36`, 'values': [[JSON.stringify(retCookiesGetSet.res),]] });
                 await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A85`, 'values': [['',]] }); // LIMPAR O TEXTO DA COMUNICAÇÃO ANTIGO
                 browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000) }); process.exit(); // FORÇAR A PARADA PARA REINICIAR SOZINHO (PARA APAGAR O 'CaptchaImage' DO BODY)
@@ -262,11 +262,9 @@ async function serverRun(inf = {}) {
 
         logConsole({ e, ee, 'write': true, 'msg': `FIM - QTD [${valuesJucesp.length}]` });
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, 'catchGlobal': false });
-        ret['msg'] = retRegexE.res
+        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, 'catchGlobal': false }); ret['msg'] = retRegexE.res;
 
-        let errMsg = `% [serverJucesp] TRYCATCH Script erro!`
-        await sendData({ e, 'stop': true, 'status1': errMsg })
+        let errMsg = `% [serverJucesp] TRYCATCH Script erro!`; await sendData({ e, 'stop': true, 'status1': errMsg })
     };
 
     return { ...({ 'ret': ret.ret }), ...(ret.msg && { 'msg': ret.msg }), ...(ret.res && { 'res': ret.res }), };

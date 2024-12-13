@@ -11,16 +11,16 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'x' });
-        let secAwaitNewCheck = 60, startupTab = Math.floor(Date.now() / 1000);
+        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'x' }); function nowFun() { return Math.floor(Date.now() / 1000) };
+        let secAwaitNewCheck = 60, startupTab = nowFun(), startupTabCookie = startupTab;
 
         // FORÇAR PARADA DO SCRIPT | NTFY
-        async function processForceStop() {
-            await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue });
+        async function processForceStop(inf = {}) {
+            await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}` });
             await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP` }); await new Promise(resolve => { setTimeout(resolve, 7000) }); process.exit();
         };
 
-        let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea
+        let results, infSendData, retGoogleSheets, aut, coldList, err, conSpl, leads, col, statusText, browser, page, pageValue, leadRandomNames, retClientGetData, retClientImput, dataDayMonYea, autRange;
         let statusInf, statusDate, statusDateFull, nameMaster, json, chromiumHeadless, scriptHour, retClientSearch, dataDayMonYeaFull, dataRes, dataBoolean, imputRes, whileStop = false; gO.inf['stop'] = false;
         let tabsInf = { 'index': -1, 'name': ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',] }; tabsInf['leadsQtd'] = tabsInf.name.map(() => 1);
         tabsInf['lastCheck'] = tabsInf.name.map(() => 0); let range = 'A2';
@@ -34,30 +34,16 @@ async function serverRun(inf = {}) {
         else if (retGetPath.includes('_New5_TEMP.js')) { googleSheetsId = '1SHr0tEam3biPOb4p9_iXbGIJCoMkkAgRquDCHLEZYrM'; }
         let shortcut = `z_Outros_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`; gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0];
 
-        // CONSUMO DE MÉMORIA RAM (A CADA x MINUTOS)
-        setInterval(async () => {
-            // IMPORTAR BIBLIOTECA [NODEJS]
-            if (typeof _exec === 'undefined') { await funLibrary({ 'lib': '_exec' }); }; _exec('wmic cpu get loadpercentage', async (err, res, errm) => { // USO: CPU
-                if (err || errm) { console.log(`ERRO: CPU`); return; }; res = res.replace(/[^0-9]/g, '');
-                let msg = `USO CPU: ${res}%`; logConsole({ e, ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { await notification({ e, 'legacy': true, 'title': `ALERTA`, 'text': `${msg}` }) }
-            }); _exec('wmic os get TotalVisibleMemorySize', async (err, res, errm) => { // USO: RAM
-                if (err || errm) { console.log(`ERRO: RAM`); return; }; let rT = parseInt(res.replace(/[^0-9]/g, '')); _exec('wmic os get FreePhysicalMemory', async (err, res, errm) => {
-                    if (err || errm) { console.log(`ERRO: RAM`); return; }; let rF = parseInt(res.replace(/[^0-9]/g, '')); res = Number(((rT - rF) / rT) * 100).toFixed(0);
-                    let msg = `USO RAM: ${res}%`; logConsole({ e, ee, 'write': true, 'msg': `${msg}` }); if (res > 89) { await notification({ e, 'legacy': true, 'title': `ALERTA`, 'text': `${msg}` }) }
-                });
-            });
-        }, 15 * 60000);
-
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'write': true, 'msg': `${err}` }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
-            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' });  // FORÇAR PARADA DO SCRIPT
+            await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]' }); // FORÇAR PARADA DO SCRIPT
         }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
         catch (catchErr) {
-            await notification({ e, 'legacy': true, 'title': `ERRO PARSE CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
+            await notification({ e, 'legacy': true, 'ntfy': true, 'title': `ERRO PARSE CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [2]' }); esLintIgnore = catchErr; // FORÇAR PARADA DO SCRIPT
         }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; leadRandomNames = gO.inf.sheetKepp.randomNames;
-        chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
+        chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|'); autRange = gO.inf.sheetKepp.range.autC6;
 
         // '0' → APARECE | '1' → OCULTO
         if (chromiumHeadless == '1') { chromiumHeadless = 'new' } else { chromiumHeadless = false }
@@ -76,7 +62,7 @@ async function serverRun(inf = {}) {
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
         // COOKIE [SET]
-        await cookiesGetSet({ e, 'browser': browser, 'page': page, 'action': 'set', 'value': aut })
+        await cookiesGetSet({ e, 'page': page, 'action': 'set', 'value': aut });
 
         // ABRIR PÁGINA DE BUSCA GLOBAL
         async function openHome() {
@@ -85,20 +71,30 @@ async function serverRun(inf = {}) {
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
         }; await openHome(); await new Promise(resolve => { setTimeout(resolve, 1000) })
 
-        // CHECAR SE O COOKIE EXPIROU
-        //async function cookieCheck() {
-        pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
-            err = `$ Cookie inválido!`; logConsole({ e, ee, 'write': true, 'msg': `${err}` }); await sendData({ e, 'stop': false, 'status1': `${err}` })
-            await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }); try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': true }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-            await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' }); // FORÇAR PARADA DO SCRIPT
-        }
-        // }
+        // COOKIE: CHECAR E SALVAR
+        async function cookieCheckSave() {
+            logConsole({ e, ee, 'write': true, 'msg': `COOKIE: CHECANDO E SALVANDO` }); pageValue = await page.content(); if (pageValue.includes('Esqueci minha senha')) {
+                // CHECAR SE O COOKIE EXPIROU
+                err = `$ Cookie inválido!`; logConsole({ e, ee, 'write': true, 'msg': `${err}` }); await sendData({ e, 'stop': false, 'status1': `${err}` })
+                await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue }); try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': true }); }
+                catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_1.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
+                await processForceStop({ 'origin': 'serverC6 CHECAR SE O COOKIE EXPIROU' }); // FORÇAR PARADA DO SCRIPT
+            } else {
+                // COOKIE: PEGAR E ENVIAR PARA A PLANILHA
+                let cGS = await cookiesGetSet({ e, 'page': page, 'action': 'get', }); if (!cGS.ret || cGS.res.length === 0) { await processForceStop({ 'origin': 'serverC6 PEGAR O COOKIE' }); } // FORÇAR PARADA DO SCRIPT
+                cGS = JSON.stringify(cGS.res); retGoogleSheets = await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': 'INDICAR_MANUAL', 'range': autRange, 'values': [[cGS]] }); if (!retGoogleSheets.ret) {
+                    err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'write': true, 'msg': `${err}` }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
+                    await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO' }); // FORÇAR PARADA DO SCRIPT
+                }
+            }
+        } cookieCheckSave(); // await NÃO!!! (PARA ACELERAR NA INICIALIZAÇÃO)
 
         // **************************************************************************************************************
 
-        while (!whileStop) {  // SEG <> DOM | [??:00] <> [??:00]
-            time = dateHour().res; if (!(['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1])))) {
+        while (!whileStop) {
+            let now = nowFun(); time = dateHour().res;
+            if (!(['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'].includes(time.dayNam) && (Number(time.hou) > Number(scriptHour[0]) - 1 && Number(time.hou) < Number(scriptHour[1])))) {
+                // SEG <> DOM | [??:00] <> [??:00]
                 // STATUS1 [Fora do horário permitido]
                 infSendData = { e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)` }
                 logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}` }); await sendData(infSendData)
@@ -107,7 +103,7 @@ async function serverRun(inf = {}) {
                 // DEFINIR ABA ATUAL
                 tabsInf['index'] = tabsInf.index < (tabsInf.name.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.name[tabsInf.index];
 
-                if ((tabsInf.lastCheck[tabsInf.index]) > Math.floor(Date.now() / 1000)) {
+                if ((tabsInf.lastCheck[tabsInf.index]) > now) {
                     // IGNORAR CHECAGEM
                     logConsole({ e, ee, 'write': true, 'msg': `IGNORADA | ${gO.inf.sheetTab}` })
                 } else {
@@ -117,7 +113,7 @@ async function serverRun(inf = {}) {
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]' }); // FORÇAR PARADA DO SCRIPT
                     }; try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json) }
                     catch (catchErr) {
-                        await notification({ e, 'legacy': true, 'title': `ERRO PARSE CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
+                        await notification({ e, 'legacy': true, 'ntfy': true, 'title': `ERRO PARSE CÉLULA A2`, 'text': `${gO.inf.sheetTab}` })
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [4]' }); esLintIgnore = catchErr; // FORÇAR PARADA DO SCRIPT
                     }; aut = gO.inf.sheetKepp.autC6; col = gO.inf.sheetKepp.colC6; conSpl = gO.inf.sheetKepp.conSpl; tabsInf['leadsQtd'][tabsInf.index] = Number(gO.inf.sheetKepp.leadsQtd)
                     leadRandomNames = gO.inf.sheetKepp.randomNames; chromiumHeadless = gO.inf.sheetKepp.chromiumHeadless; scriptHour = gO.inf.sheetKepp.scriptHourWebScraper.split('|')
@@ -126,7 +122,7 @@ async function serverRun(inf = {}) {
 
                     if (tabsInf.leadsQtd[tabsInf.index] == 0) {
                         // STATUS1 [Nada pendente, esperando 2 minutos...] (NOVA CHACAGEM EM x SEGUNDOS)
-                        tabsInf.lastCheck[tabsInf.index] = Math.floor(Date.now() / 1000) + secAwaitNewCheck; await sendData({ e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` })
+                        tabsInf.lastCheck[tabsInf.index] = now + secAwaitNewCheck; await sendData({ e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...` })
                     } else {
                         leads = gO.inf.sheetKepp.leads.split(`#${conSpl}#`);
 
@@ -211,26 +207,28 @@ async function serverRun(inf = {}) {
                             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'write': true, 'msg': `${err}` }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets });
                             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_7.jpg`, 'fullPage': true }); }
                             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_7.jpg`, 'fullPage': false }); esLintIgnore = catchErr; }
-                            // FORÇAR PARADA DO SCRIPT
-                            await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO' });
+                            await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO' }); // FORÇAR PARADA DO SCRIPT
                         }
                     }
                 }
 
-                // F5 | COOKIE KEEP (CASO NENHUMA ABA TENHA LEADS PENDENTES)
-                let leadsQtdAll = tabsInf.leadsQtd.reduce((acc, curr) => acc + curr, 0); if (leadsQtdAll == 0 && (startupTab + 900) < Math.floor(Date.now() / 1000)) {
-                    startupTab = Math.floor(Date.now() / 1000); logConsole({ e, ee, 'write': true, 'msg': `ATUALIZANDO PÁGINA [KEEP COOKIE]` });
-                    await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' }); await new Promise(resolve => { setTimeout(resolve, 30000) })
+                // COOKIE {x MIN}: KEEP [F5] (CASO NENHUMA ABA TENHA LEADS PENDENTES)
+                if ((startupTab + (10 * 60)) < now && tabsInf.leadsQtd.reduce((a, c) => a + c, 0) === 0) {
+                    startupTab = now; logConsole({ e, ee, 'write': true, 'msg': `ATUALIZANDO PÁGINA [KEEP COOKIE]` });
+                    await page.goto(`https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente`, { waitUntil: 'networkidle2' }); await new Promise(resolve => { setTimeout(resolve, 30000) });
                 };
+
+                // COOKIE {x MIN}: CHECAR SE EXPIROU E REGISTRAR NA PLANILHA
+                if ((startupTabCookie + (5 * 60)) < now) { startupTabCookie = now; await cookieCheckSave(); };
+
             }
 
-            await new Promise(resolve => { setTimeout(resolve, 1000) })
+            await new Promise(resolve => { setTimeout(resolve, 1000) });
         }
     } catch (catchErr) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
 
-        let err = `% TRYCATCH Script erro!`
-        await sendData({ e, 'stop': true, 'status1': err })
+        let err = `% TRYCATCH Script erro!`; await sendData({ e, 'stop': true, 'status1': err });
     };
 
     return { ...({ 'ret': ret.ret }), ...(ret.msg && { 'msg': ret.msg }), ...(ret.res && { 'res': ret.res }), };
