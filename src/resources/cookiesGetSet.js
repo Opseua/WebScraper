@@ -2,28 +2,28 @@
 // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 // console.log(retCookiesGetSet)
 
-let e = import.meta.url, ee = e
+let e = import.meta.url, ee = e;
 async function cookiesGetSet(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        let { page, action, value } = inf
-        if (!action || (!action == 'get' || !action == 'set')) {
+        let { page, action, value, } = inf;
+        if (!action || (!action === 'get' || !action === 'set')) {
             ret['msg'] = `COOKIE GET SET: ERRO | INFORMAR O 'action'`;
-        } else if (action == 'set' && !value) {
+        } else if (action === 'set' && !value) {
             ret['msg'] = `COOKIE GET SET: ERRO | INFORMAR O 'value'`;
         } else {
-            if (action == 'set') {
+            if (action === 'set') {
                 // SET
-                let valueCookie = value
+                let valueCookie = value;
                 await page.setCookie(...valueCookie);
                 ret['msg'] = `COOKIES [SET]: OK [${action}]`;
-            } else if (action == 'get') {
+            } else if (action === 'get') {
                 // GET
                 let cookies = await page.cookies();
 
                 // FILTRAR COOKIES
                 let filterCookies = (cookies, filters = {}) => {
-                    let { includes, excludes } = filters;
+                    let { includes, excludes, } = filters;
                     return cookies.map(cookie => {
                         // [INCLUIR] APENAS ESSAS CHAVES
                         if (includes && Array.isArray(includes)) {
@@ -47,7 +47,7 @@ async function cookiesGetSet(inf = {}) {
                 let cookieFilters = { 'includesAAA': ['nomeA', 'nomeB', 'nomeC',], 'excludes': ['sameSite', 'nomeB', 'nomeC',], };
                 cookies = filterCookies(cookies, cookieFilters);
 
-                ret['res'] = cookies
+                ret['res'] = cookies;
                 ret['msg'] = `COOKIES [GET]: OK [${action}]`;
             }
 
@@ -57,13 +57,13 @@ async function cookiesGetSet(inf = {}) {
     } catch (catchErr) {
         let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
 
-        let errMsg = `% TRYCATCH Script erro!`
-        let infSendData = { e, 'stop': true, 'status1': errMsg }
-        await sendData(infSendData)
+        let errMsg = `% TRYCATCH Script erro!`;
+        let infSendData = { e, 'stop': true, 'status1': errMsg, };
+        await sendData(infSendData);
     };
 
-    return { ...({ 'ret': ret.ret }), ...(ret.msg && { 'msg': ret.msg }), ...(ret.res && { 'res': ret.res }), };
+    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
 };
 
 // CHROME | NODEJS
-(eng ? window : global)['cookiesGetSet'] = cookiesGetSet
+(eng ? window : global)['cookiesGetSet'] = cookiesGetSet;
