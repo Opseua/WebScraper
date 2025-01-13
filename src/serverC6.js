@@ -11,7 +11,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'x', }); function nowFun() { return Math.floor(Date.now() / 1000); };
+        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'text': 'x', }); function nowFun() { return Math.floor(Date.now() / 1000); };
         let secAwaitNewCheck = 60, startupTab = nowFun(), startupTabCookie = startupTab;
 
         // FORÇAR PARADA DO SCRIPT | NTFY
@@ -32,7 +32,7 @@ async function serverRun(inf = {}) {
         else if (retGetPath.includes('_New3_TEMP.js')) { googleSheetsId = '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY'; }
         else if (retGetPath.includes('_New4_TEMP.js')) { googleSheetsId = '1uzlbsL9wqMs9gfMt1XHDEmh1k6MEdPA7JuQ8IzBA1pQ'; }
         else if (retGetPath.includes('_New5_TEMP.js')) { googleSheetsId = '1SHr0tEam3biPOb4p9_iXbGIJCoMkkAgRquDCHLEZYrM'; }
-        let shortcut = `z_Outros_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`; gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0];
+        let shortcut = `z_OUTROS_${retGetPath.split('/').pop().replace(/_TEMP|\.js/g, '')}`; gO.inf['shortcut'] = shortcut; gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = tabsInf.name[0];
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': range, }); if (!retGoogleSheets.ret) {
@@ -53,7 +53,7 @@ async function serverRun(inf = {}) {
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
-            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964, },
+            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_OUTROS_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964, },
             'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',
                 '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-software-rasterizer', '--disable-webrtc',
                 '--disable-print-preview', '--disable-infobars', '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--disable-webgl',

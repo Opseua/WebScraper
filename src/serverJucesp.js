@@ -8,7 +8,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'rewrite': false, 'text': 'x', });
+        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'text': 'x', });
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
@@ -27,7 +27,7 @@ async function serverRun(inf = {}) {
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         let googleSheetsId, retGetPath = await getPath({ 'e': new Error(), }); if (!retGetPath.ret) { return retGetPath; }; retGetPath = retGetPath.res.file;
-        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_Outros_serverJucesp'; sheetTab = 'JUCESP'; }
+        if (!retGetPath.includes('_TEMP.js')) { googleSheetsId = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; gO.inf['shortcut'] = 'z_OUTROS_serverJucesp'; sheetTab = 'JUCESP'; }
         gO.inf['sheetId'] = googleSheetsId; gO.inf['sheetTab'] = sheetTab;
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
@@ -50,7 +50,7 @@ async function serverRun(inf = {}) {
 
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
-            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_Outros_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964, },
+            'userDataDir': `./log/Registros/${mon}/${day}/${hou}_node${gW.project}_${gO.inf['shortcut'].replace('z_OUTROS_', '')}`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964, },
             'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
@@ -77,7 +77,7 @@ async function serverRun(inf = {}) {
                         retApiCnpj.cnpj, retApiCnpj.telefone1, retApiCnpj.telefone2, retApiCnpj.gestor1 === 'null' ? retApiCnpj.razaoSocial : retApiCnpj.gestor1, retApiCnpj.email1, retApiCnpj.razaoSocial,
                     ],]; results = results[0].join(conSpl); await sendData({ e, 'stop': false, 'results': results, }); ok = true;
                 }
-            }; if (ok) { sheetNire.push(inf.value); await file({ e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'rewrite': false, 'text': JSON.stringify(sheetNire, null, 2), }); };
+            }; if (ok) { sheetNire.push(inf.value); await file({ e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'text': JSON.stringify(sheetNire, null, 2), }); };
             await new Promise(resolve => { setTimeout(resolve, 1000); }); // DELAY PARA EVITAR ACABAR A ARRAY
         }; async function loopFun() {
             let indice = 0; while (!gO.inf.stop) {
@@ -130,24 +130,22 @@ async function serverRun(inf = {}) {
             await new Promise(resolve => { setTimeout(resolve, 2000); }); let retCaptcha; async function captcha(inf = {}) { // NÃO REMOVER O TEMPO DE ESPERA!!!
                 let ret = { 'ret': false, };
                 try {
-                    let { page, action, text, } = inf; let formBuscaAvancada = await page.$('#formBuscaAvancada'); if (!formBuscaAvancada) { ret['msg'] = 'ERRO: CAPTCHA NÃO ENCONTRADO'; } else {
-                        if (action === 'get') {
-                            // CAPTCHA: RETORNAR URL
-                            let captchaUrl = await formBuscaAvancada.$('img[src^="CaptchaImage.aspx"]'); captchaUrl = await captchaUrl.evaluate(img => img.src);
-                            ret['res'] = captchaUrl; ret['msg'] = 'CAPTHCA OK: URL RETORNADO'; ret['ret'] = true;
-                            // MANDAR PARA A PLANILHA
-                            await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A85`, 'values': [[JSON.stringify(ret),],], });
-                            // STATUS [PRESSIONAR O BOTAO E INSERIR O CAPTCHA]
-                            infSendData = { e, 'stop': false, 'status1': 'Pressione o botão e insira o captcha', }; logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, }); await sendData(infSendData);
-                        } else if (action === 'send') {
-                            // CAPTCHA: INSERIR TEXTO
-                            infSendData = { e, 'stop': false, 'status1': `Inserindo captcha '${text}'`, }; logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, }); await sendData(infSendData);
-                            await page.focus('input[name="ctl00$cphContent$gdvResultadoBusca$CaptchaControl1"]'); page.keyboard.type(text); ret['msg'] = 'CAPTHCA OK: TEXTO INSERIDO'; ret['ret'] = true;
-                        } else if (action === 'continue') {
-                            // CAPTCHA: PROSSEGUIR
-                            logConsole({ e, ee, 'write': true, 'msg': `Apertando botão CONTINUAR`, });
-                            await page.click('input[name="ctl00$cphContent$gdvResultadoBusca$btEntrar"]'); ret['msg'] = 'CAPTHCA OK: CAPTCHA ENVIADO'; ret['ret'] = true;
-                        }
+                    let { page, action, text, } = inf; let formBuscaAvancada = await page.$('#formBuscaAvancada'); if (!formBuscaAvancada) { ret['msg'] = 'ERRO: CAPTCHA NÃO ENCONTRADO'; } else if (action === 'get') {
+                        // CAPTCHA: RETORNAR URL
+                        let captchaUrl = await formBuscaAvancada.$('img[src^="CaptchaImage.aspx"]'); captchaUrl = await captchaUrl.evaluate(img => img.src);
+                        ret['res'] = captchaUrl; ret['msg'] = 'CAPTHCA OK: URL RETORNADO'; ret['ret'] = true;
+                        // MANDAR PARA A PLANILHA
+                        await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A85`, 'values': [[JSON.stringify(ret),],], });
+                        // STATUS [PRESSIONAR O BOTAO E INSERIR O CAPTCHA]
+                        infSendData = { e, 'stop': false, 'status1': 'Pressione o botão e insira o captcha', }; logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, }); await sendData(infSendData);
+                    } else if (action === 'send') {
+                        // CAPTCHA: INSERIR TEXTO
+                        infSendData = { e, 'stop': false, 'status1': `Inserindo captcha '${text}'`, }; logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, }); await sendData(infSendData);
+                        await page.focus('input[name="ctl00$cphContent$gdvResultadoBusca$CaptchaControl1"]'); page.keyboard.type(text); ret['msg'] = 'CAPTHCA OK: TEXTO INSERIDO'; ret['ret'] = true;
+                    } else if (action === 'continue') {
+                        // CAPTCHA: PROSSEGUIR
+                        logConsole({ e, ee, 'write': true, 'msg': `Apertando botão CONTINUAR`, });
+                        await page.click('input[name="ctl00$cphContent$gdvResultadoBusca$btEntrar"]'); ret['msg'] = 'CAPTHCA OK: CAPTCHA ENVIADO'; ret['ret'] = true;
                     }
                 } catch (catchErr) { ret['msg'] = 'ERRO: AO CAPTURAR/INSERIR CAPTCHA'; esLintIgnore = catchErr; };
 
@@ -203,7 +201,7 @@ async function serverRun(inf = {}) {
         };
 
         // ARQUIVO DE NIRE's JÁ CONSULTADOS: ESCREVER QUEBRA DE LINHA → LER O ARQUIVO
-        retFile = await file({ e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'rewrite': true, 'text': '\n', });
+        retFile = await file({ e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'add': true, 'text': '\n', });
         retFile = await file({ e, 'action': 'read', 'functionLocal': false, 'path': './log/NIREs.txt', }); try { sheetNire = JSON.parse(retFile.res); } catch (catchErr) { sheetNire = []; esLintIgnore = catchErr; }
 
         // ###################################################################################

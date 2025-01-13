@@ -38,3 +38,4 @@ gloWin['imput'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return f
 gloWin['navigate'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './navigate.js', 'inf': inf, }); };
 gloWin['sendData'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './sendData.js', 'inf': inf, }); };
 
+
