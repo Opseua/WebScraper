@@ -80,3 +80,5 @@ async function sendData(inf = {}) {
 
 // CHROME | NODEJS
 (eng ? window : global)['sendData'] = sendData;
+
+

@@ -46,3 +46,5 @@ async function getTextElement(inf = {}) {
 
 // CHROME | NODEJS
 (eng ? window : global)['getTextElement'] = getTextElement;
+
+

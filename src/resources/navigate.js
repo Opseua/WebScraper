@@ -31,3 +31,5 @@ async function navigate(inf = {}) {
 
 // CHROME | NODEJS
 (eng ? window : global)['navigate'] = navigate;
+
+

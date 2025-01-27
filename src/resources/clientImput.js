@@ -114,18 +114,16 @@ async function clientImput(inf = {}) {
                 leadStatus = `Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo`;
             } else if (pageValue.includes(`Lead pertence a outro escritorio`)) {
                 leadStatus = `Lead pertence a outro escritorio`;
+            } else if (pageValue.includes(`CNPJ informado é inválido`)) {
+                leadStatus = `ALERTA: CNPJ inválido`;
+            } else if (pageValue.includes(`O formato correto para o telefone`)) {
+                leadStatus = `ALERTA: telefone inválido`;
+            } else if (pageValue.includes(`endereço de email inválido`)) {
+                leadStatus = `ALERTA: email inválido`;
+            } else if (pageValue.includes(`Os seguintes campos obrigatórios devem ser preenchidos`)) {
+                leadStatus = `ALERTA: campo não preenchido`;
             } else {
-                if (pageValue.includes(`CNPJ informado é inválido`)) {
-                    leadStatus = `ALERTA: CNPJ inválido`;
-                } else if (pageValue.includes(`O formato correto para o telefone`)) {
-                    leadStatus = `ALERTA: telefone inválido`;
-                } else if (pageValue.includes(`endereço de email inválido`)) {
-                    leadStatus = `ALERTA: email inválido`;
-                } else if (pageValue.includes(`Os seguintes campos obrigatórios devem ser preenchidos`)) {
-                    leadStatus = `ALERTA: campo não preenchido`;
-                } else {
-                    leadStatus = `ALERTA: status não identificado`;
-                }
+                leadStatus = `ALERTA: status não identificado`;
             }
         } else {
             leadStatus = `INDICAÇÃO OK`;
@@ -150,3 +148,5 @@ async function clientImput(inf = {}) {
 
 // CHROME | NODEJS
 (eng ? window : global)['clientImput'] = clientImput;
+
+
