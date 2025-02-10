@@ -11,7 +11,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'text': 'x', }); function nowFun() { return Math.floor(Date.now() / 1000); };
+        await file({ e, 'action': 'write', 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'text': 'x', }); function nowFun() { return Math.floor(Date.now() / 1000); };
         let secAwaitNewCheck = 60, startupTab = nowFun(), startupTabCookie = startupTab;
 
         // FORÇAR PARADA DO SCRIPT | NTFY

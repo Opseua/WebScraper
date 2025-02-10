@@ -8,7 +8,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
-        await file({ e, 'action': 'write', 'functionLocal': false, 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'text': 'x', });
+        await file({ e, 'action': 'write', 'path': `log/Registros/${mon}/${day}/#_Z_#.txt`, 'text': 'x', });
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
@@ -77,7 +77,7 @@ async function serverRun(inf = {}) {
                         retApiCnpj.cnpj, retApiCnpj.telefone1, retApiCnpj.telefone2, retApiCnpj.gestor1 === 'null' ? retApiCnpj.razaoSocial : retApiCnpj.gestor1, retApiCnpj.email1, retApiCnpj.razaoSocial,
                     ],]; results = results[0].join(conSpl); await sendData({ e, 'stop': false, 'results': results, }); ok = true;
                 }
-            }; if (ok) { sheetNire.push(inf.value); await file({ e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'text': JSON.stringify(sheetNire, null, 2), }); };
+            }; if (ok) { sheetNire.push(inf.value); await file({ e, 'action': 'write', 'path': './log/NIREs.txt', 'text': JSON.stringify(sheetNire, null, 2), }); };
             await new Promise(resolve => { setTimeout(resolve, 1000); }); // DELAY PARA EVITAR ACABAR A ARRAY
         }; async function loopFun() {
             let indice = 0; while (!gO.inf.stop) {
@@ -201,8 +201,8 @@ async function serverRun(inf = {}) {
         };
 
         // ARQUIVO DE NIRE's JÁ CONSULTADOS: ESCREVER QUEBRA DE LINHA → LER O ARQUIVO
-        retFile = await file({ e, 'action': 'write', 'functionLocal': false, 'path': './log/NIREs.txt', 'add': true, 'text': '\n', });
-        retFile = await file({ e, 'action': 'read', 'functionLocal': false, 'path': './log/NIREs.txt', }); try { sheetNire = JSON.parse(retFile.res); } catch (catchErr) { sheetNire = []; esLintIgnore = catchErr; }
+        retFile = await file({ e, 'action': 'write', 'path': './log/NIREs.txt', 'add': true, 'text': '\n', });
+        retFile = await file({ e, 'action': 'read', 'path': './log/NIREs.txt', }); try { sheetNire = JSON.parse(retFile.res); } catch (catchErr) { sheetNire = []; esLintIgnore = catchErr; }
 
         // ###################################################################################
         // GET TEXT ELEMENT [QUANTIDADE DE RESULTADOS] [PRIMEIRA PÁGINA]
