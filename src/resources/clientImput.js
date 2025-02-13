@@ -33,7 +33,7 @@ async function clientImput(inf = {}) {
         pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000, });
         if (!pageInput) {
             err = `% Não achou o formulário`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, });
+            logConsole({ e, ee, 'msg': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             pageValue = await page.content();
@@ -50,7 +50,7 @@ async function clientImput(inf = {}) {
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['5']) {
             err = `% Não achou o ID dos campos`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, });
+            logConsole({ e, ee, 'msg': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
@@ -64,7 +64,7 @@ async function clientImput(inf = {}) {
 
         // STATUS1 [Indicando...]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...`, };
-        logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, });
+        logConsole({ e, ee, 'msg': `${infSendData.status1}`, });
         await sendData(infSendData);
         pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj,];
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
@@ -74,7 +74,7 @@ async function clientImput(inf = {}) {
             pageInput = await page.$(`input[id="${value}"]`);
             if (!pageInput) {
                 err = `% Não achou o campo de imput [${index}]`;
-                logConsole({ e, ee, 'write': true, 'msg': `${err}`, });
+                logConsole({ e, ee, 'msg': `${err}`, });
                 infSendData = { e, 'stop': false, 'status1': `${err}`, };
                 await sendData(infSendData);
                 pageValue = await page.content();

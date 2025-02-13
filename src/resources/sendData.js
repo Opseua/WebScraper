@@ -11,7 +11,7 @@ async function sendData(inf = {}) {
         // # Aguarde...                                →→→ SERÁ REINICIADO [NÃO] | PARADO [?]
         // # Iniciando script, aguarde                 →→→ SERÁ REINICIADO [NÃO] | PARADO [NÃO]
         // $ Erro ao pegar-enviar dados para planilha  →→→ SERÁ REINICIADO [NÃO] | PARADO [SIM]
-        // $ Cookie inválido                           →→→ SERÁ REINICIADO [NÃO] | PARADO [SIM]
+        // $ Cookie inválido!                          →→→ SERÁ REINICIADO [NÃO] | PARADO [SIM]
         // @ TRYCATCH Script erro!                     →→→ SERÁ REINICIADO [SIM] | PARADO [SIM]
 
         let time = dateHour().res;
@@ -30,7 +30,7 @@ async function sendData(inf = {}) {
                     'values': [[`${time.tim} | ${sheetData}`,],],
                 };
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS`, }); return retGoogleSheets; } else { retGoogleSheets = retGoogleSheets.msg; }
+                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'msg': `ERRO GOOGLE SHEETS`, }); return retGoogleSheets; } else { retGoogleSheets = retGoogleSheets.msg; }
             }
 
             // [STATUS2]
@@ -45,7 +45,7 @@ async function sendData(inf = {}) {
                     'values': [[`${time.tim} | ${sheetData}`,],],
                 };
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS`, }); return retGoogleSheets; } else { retGoogleSheets = retGoogleSheets.msg; }
+                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'msg': `ERRO GOOGLE SHEETS`, }); return retGoogleSheets; } else { retGoogleSheets = retGoogleSheets.msg; }
             }
 
             // [RESULTS]
@@ -59,7 +59,7 @@ async function sendData(inf = {}) {
                     'values': [[`${sheetData}`,],],
                 };
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
-                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'write': true, 'msg': `ERRO GOOGLE SHEETS`, }); return retGoogleSheets; } else { retGoogleSheets = retGoogleSheets.msg; }
+                if (!retGoogleSheets.ret) { logConsole({ e, ee, 'msg': `ERRO GOOGLE SHEETS`, }); return retGoogleSheets; } else { retGoogleSheets = retGoogleSheets.msg; }
             }
         }
         ret['msg'] = 'SEND DATA: OK';

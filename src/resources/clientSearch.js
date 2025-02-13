@@ -30,7 +30,7 @@ async function clientSearch(inf = {}) {
 
         // STATUS1 [Checando se é da base]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base`, };
-        logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, });
+        logConsole({ e, ee, 'msg': `${infSendData.status1}`, });
         await sendData(infSendData);
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
         catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
@@ -41,7 +41,7 @@ async function clientSearch(inf = {}) {
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID da lupa de pesquisa`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, });
+            logConsole({ e, ee, 'msg': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
@@ -57,7 +57,7 @@ async function clientSearch(inf = {}) {
         pageInput = await page.$(`input[id="${retRegex}"]`);
         if (!pageInput) {
             err = `% Não achou o campo de imput da lupa`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, });
+            logConsole({ e, ee, 'msg': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             pageValue = await page.content();
@@ -93,7 +93,7 @@ async function clientSearch(inf = {}) {
 
         if (!pageResult) {
             err = `% Não achou o resultado da consulta`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, });
+            logConsole({ e, ee, 'msg': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             pageValue = await page.content();
@@ -104,7 +104,7 @@ async function clientSearch(inf = {}) {
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
         }
         leadStatus = await pageResult.jsonValue();
-        logConsole({ e, ee, 'write': true, 'msg': `${leadStatus}`, });
+        logConsole({ e, ee, 'msg': `${leadStatus}`, });
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
         catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
 

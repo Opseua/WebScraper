@@ -1,7 +1,7 @@
 // await import('./resources/@export.js'); // NÃO HABILITAR!!!
 
 let e = import.meta.url, ee = e;
-async function serverRunNew(/*inf*/) {
+async function serverRunNew() {
     let _fs_2 = await import('fs'); const { spawn } = await import('child_process'); let _spawn_2 = spawn;
 
     // ARQUIVO ATUAL/TEMP: PATH
@@ -46,3 +46,5 @@ async function serverRunNew(/*inf*/) {
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!
 serverRunNew()
+
+

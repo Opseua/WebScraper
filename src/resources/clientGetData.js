@@ -16,14 +16,14 @@ async function clientGetData(inf = {}) {
         pageValue = await page.content(); infRegex = { e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue, }; retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID do link da página do lead`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, }; await sendData(infSendData);
+            logConsole({ e, ee, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, }; await sendData(infSendData);
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true, });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000); }); process.exit();
         }; leadPageId = retRegex.res['1'];
         await new Promise(resolve => { setTimeout(resolve, 1000); });
 
         // STATUS1 [Abrindo dados do cliente]
-        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente`, }; logConsole({ e, ee, 'write': true, 'msg': `${infSendData.status1}`, });
+        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente`, }; logConsole({ e, ee, 'msg': `${infSendData.status1}`, });
         await sendData(infSendData);
         try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
         catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
@@ -69,7 +69,7 @@ async function clientGetData(inf = {}) {
 
         if (!pageResult) {
             err = `% Não achou a data de abertura`;
-            logConsole({ e, ee, 'write': true, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
+            logConsole({ e, ee, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
             try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': true, }); }
             catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
