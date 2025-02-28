@@ -77,44 +77,41 @@ async function apiCnpj(inf = {}) {
         let endEstado = !retApi.address.state ? 'null' : retApi.address.state;
         let endCep = !retApi.address.zip ? 'null' : retApi.address.zip;
         let endereco = {
-            'endLogradouro': endLogradouro,
-            'endNome': endNome,
-            'endNumero': endNumero,
-            'endBairro': endBairro,
-            'endMunicipio': endMunicipio,
-            'endEstado': endEstado,
-            'endCep': endCep,
+            endLogradouro,
+            endNome,
+            endNumero,
+            endBairro,
+            endMunicipio,
+            endEstado,
+            endCep,
         };
 
         // RES
         let res = {
-            'criacao': criacao,
+            criacao,
             'cnpj': retApi.taxId,
-            'razaoSocial': razaoSocial,
-            'telefones': telefones,
-            'telefone1': telefone1,
-            'telefone2': telefone2,
-            'email': email,
-            'email1': email1,
-            'email2': email2,
-            'gestor': gestor,
-            'gestor1': gestor1,
-            'gestor2': gestor2,
-            'endereco': endereco,
+            razaoSocial,
+            telefones,
+            telefone1,
+            telefone2,
+            email,
+            email1,
+            email2,
+            gestor,
+            gestor1,
+            gestor2,
+            endereco,
         };
         ret['res'] = res;
         ret['msg'] = 'API CNPJ: OK';
         ret['ret'] = true;
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
-
-        let errMsg = `% TRYCATCH Script erro!`;
-        let infSendData = { e, 'stop': true, 'status1': errMsg, };
-        await sendData(infSendData);
-    };
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
+        let errMsg = `% TRYCATCH Script erro!`; let infSendData = { e, 'stop': true, 'status1': errMsg, }; await sendData(infSendData);
+    }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
-};
+}
 
 // CHROME | NODEJS
 (eng ? window : global)['apiCnpj'] = apiCnpj;

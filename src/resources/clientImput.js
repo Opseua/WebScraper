@@ -17,14 +17,12 @@ async function clientImput(inf = {}) {
         // CHECAR SE É A PÁGINA DE INDICAÇÃO, SE NÃO FOR ABRIR ELA
         if (!currentURL.includes(url)) {
             while (qtd < 3) {
-                await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; }; qtd++;
+                await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++;
                 if (qtd > 2) {
                     // ABRIR PÁGINA DE BUSCA GLOBAL
-                    await page.goto(url, { waitUntil: 'networkidle2', });
-                    await new Promise(resolve => { setTimeout(resolve, 1000); });
-                    try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
-                    catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
-                    await new Promise(resolve => { setTimeout(resolve, 1000); });
+                    await page.goto(url, { waitUntil: 'networkidle2', }); await new Promise(resolve => { setTimeout(resolve, 500); });
+                    try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: true, }); }
+                    catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: false, }); } await new Promise(resolve => { setTimeout(resolve, 500); });
                 }
             }
         }
@@ -39,8 +37,8 @@ async function clientImput(inf = {}) {
             pageValue = await page.content();
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
             await log(infLog);
-            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, 'fullPage': true, }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
+            try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, fullPage: true, }); }
+            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, fullPage: false, }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
         }
 
@@ -55,20 +53,19 @@ async function clientImput(inf = {}) {
             await sendData(infSendData);
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
             await log(infLog);
-            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, 'fullPage': true, }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
+            try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, fullPage: true, }); }
+            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, fullPage: false, }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
         }
         retRegex = retRegex.res['5'];
-        // await new Promise(resolve => { setTimeout(resolve, 1000) })
 
         // STATUS1 [Indicando...]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...`, };
         logConsole({ e, ee, 'msg': `${infSendData.status1}`, });
         await sendData(infSendData);
         pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj,];
-        try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
-        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
+        try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: true, }); }
+        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: false, }); }
 
         for (let [index, value,] of retRegex.entries()) {
             pageInput = await page.$(`input[id="${value}"]`);
@@ -80,8 +77,8 @@ async function clientImput(inf = {}) {
                 pageValue = await page.content();
                 infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
                 await log(infLog);
-                try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, 'fullPage': true, }); }
-                catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
+                try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, fullPage: true, }); }
+                catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, fullPage: false, }); }
                 browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
             }
             await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
@@ -136,15 +133,12 @@ async function clientImput(inf = {}) {
         };
 
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
-
-        let errMsg = `% TRYCATCH Script erro!`;
-        let infSendData = { e, 'stop': true, 'status1': errMsg, };
-        await sendData(infSendData);
-    };
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
+        let errMsg = `% TRYCATCH Script erro!`; let infSendData = { e, 'stop': true, 'status1': errMsg, }; await sendData(infSendData);
+    }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
-};
+}
 
 // CHROME | NODEJS
 (eng ? window : global)['clientImput'] = clientImput;

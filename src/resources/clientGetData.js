@@ -17,28 +17,27 @@ async function clientGetData(inf = {}) {
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID do link da página do lead`;
             logConsole({ e, ee, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, }; await sendData(infSendData);
-            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog); await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_5.jpg`, 'fullPage': true, });
+            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog); await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_5.jpg`, fullPage: true, });
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000); }); process.exit();
-        }; leadPageId = retRegex.res['1'];
-        await new Promise(resolve => { setTimeout(resolve, 1000); });
+        } leadPageId = retRegex.res['1'];
 
         // STATUS1 [Abrindo dados do cliente]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente`, }; logConsole({ e, ee, 'msg': `${infSendData.status1}`, });
         await sendData(infSendData);
-        try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': true, }); }
-        catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
+        try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: true, }); }
+        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: false, }); }
 
         // CLICAR NO LINK DO ID DO LEAD
         let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
-        await new Promise(resolve => { setTimeout(resolve, 1000); });
+        await new Promise(resolve => { setTimeout(resolve, 400); });
         await link.click();
-        await new Promise(resolve => { setTimeout(resolve, 1000); });
+        await new Promise(resolve => { setTimeout(resolve, 400); });
 
         // E DEFINIR SE É TELA ANTIGA OU NOVA
         let timeout = 30000; let selectors = [
             '.uiOutputDateTime.forceOutputModStampWithPreview', '.slds-form.slds-form_stacked.slds-grid.slds-page-header__detail-row',
         ]; try { let result = await Promise.race([page.waitForSelector(selectors[0], { timeout, }).then(() => 'ANTIGO'), page.waitForSelector(selectors[1], { timeout, }).then(() => 'NOVO'),]); pageResult = result; }
-        catch (catchErr) { pageResult = false; esLintIgnore = catchErr; }
+        catch (catchErr) { pageResult = false; }
 
         // DATA FOI ENCONTRADA
         if (pageResult) {
@@ -59,20 +58,20 @@ async function clientGetData(inf = {}) {
 
                 // EXTRAIR DATA
                 infRegex = { e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDateAndMaster, };
-                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = '01/01/2001'; } else { pageResult = retRegex.res['1']; }; leadDate = [`${pageResult} 00:00`,];
+                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = '01/01/2001'; } else { pageResult = retRegex.res['1']; } leadDate = [`${pageResult} 00:00`,];
 
                 // EXTRAIR MASTER
                 infRegex = { e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster, };
-                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = 'ERRO'; } else { pageResult = retRegex.res['1']; }; nameMaster = pageResult;
+                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = 'ERRO'; } else { pageResult = retRegex.res['1']; } nameMaster = pageResult;
             }
-        }; // console.log(!!pageResult, leadDate)
+        } // console.log(!!pageResult, leadDate)
 
         if (!pageResult) {
             err = `% Não achou a data de abertura`;
             logConsole({ e, ee, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
-            try { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': true, }); }
-            catch (catchErr) { await page.screenshot({ path: `log/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, 'fullPage': false, }); esLintIgnore = catchErr; }
+            try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, fullPage: true, }); }
+            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, fullPage: false, }); }
             browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
         }
 
@@ -94,19 +93,16 @@ async function clientGetData(inf = {}) {
             'dataDayMonYeaFull': leadDate[0],
             'dataRes': dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF',
             'dataBoolean': dataC6,
-            'nameMaster': nameMaster,
+            nameMaster,
         };
 
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
-
-        let errMsg = `% TRYCATCH Script erro!`;
-        let infSendData = { e, 'stop': true, 'status1': errMsg, };
-        await sendData(infSendData);
-    };
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
+        let errMsg = `% TRYCATCH Script erro!`; let infSendData = { e, 'stop': true, 'status1': errMsg, }; await sendData(infSendData);
+    }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
-};
+}
 
 // CHROME | NODEJS
 (eng ? window : global)['clientGetData'] = clientGetData;

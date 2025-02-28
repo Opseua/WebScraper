@@ -6,20 +6,27 @@ let e = import.meta.url, ee = e;
 async function cookiesGetSet(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        let { page, action, value, } = inf;
+        let { page, action, value, ignoreAutUpdate = false, } = inf;
         if (!action || (!action === 'get' || !action === 'set')) {
             ret['msg'] = `COOKIE GET SET: ERRO | INFORMAR O 'action'`;
         } else if (action === 'set' && !value) {
             ret['msg'] = `COOKIE GET SET: ERRO | INFORMAR O 'value'`;
         } else {
             if (action === 'set') {
-                // SET
+                // *** SET
                 let valueCookie = value;
+
+                // REMOVER CHAVE COM TIMESTAMP DO COOKIE
+                valueCookie = valueCookie.filter(v => !v.hasOwnProperty('autUpdate'));
+
                 await page.setCookie(...valueCookie);
                 ret['msg'] = `COOKIES [SET]: OK [${action}]`;
             } else if (action === 'get') {
-                // GET
+                // *** GET
                 let cookies = await page.cookies();
+
+                // ADICIONAR CHAVE COM TIMESTAMP DO COOKIE
+                if (!ignoreAutUpdate) { cookies.unshift({ 'autUpdate': `${Math.floor(new Date().getTime() / 1000)}`, }); }
 
                 // FILTRAR COOKIES
                 let filterCookies = (cookies, filters = {}) => {
@@ -28,7 +35,7 @@ async function cookiesGetSet(inf = {}) {
                         // [INCLUIR] APENAS ESSAS CHAVES
                         if (includes && Array.isArray(includes)) {
                             cookie = includes.reduce((acc, key) => {
-                                if (key in cookie) acc[key] = cookie[key];
+                                if (key in cookie) { acc[key] = cookie[key]; }
                                 return acc;
                             }, {});
                         }
@@ -36,7 +43,7 @@ async function cookiesGetSet(inf = {}) {
                         // [EXLCUIR] APENAS ESSAS CHAVES
                         if (excludes && Array.isArray(excludes)) {
                             excludes.forEach(key => {
-                                if (key in cookie) delete cookie[key];
+                                if (key in cookie) { delete cookie[key]; }
                             });
                         }
 
@@ -55,15 +62,12 @@ async function cookiesGetSet(inf = {}) {
 
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
-
-        let errMsg = `% TRYCATCH Script erro!`;
-        let infSendData = { e, 'stop': true, 'status1': errMsg, };
-        await sendData(infSendData);
-    };
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
+        let errMsg = `% TRYCATCH Script erro!`; let infSendData = { e, 'stop': true, 'status1': errMsg, }; await sendData(infSendData);
+    }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
-};
+}
 
 // CHROME | NODEJS
 (eng ? window : global)['cookiesGetSet'] = cookiesGetSet;

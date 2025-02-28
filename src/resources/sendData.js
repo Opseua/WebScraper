@@ -24,9 +24,9 @@ async function sendData(inf = {}) {
                 let sheetData = typeof status1 === 'object' ? JSON.parse(status1) : status1;
                 let infGoogleSheets = {
                     e, 'action': 'send',
-                    'id': id,
-                    'tab': tab,
-                    'range': range,
+                    id,
+                    tab,
+                    range,
                     'values': [[`${time.tim} | ${sheetData}`,],],
                 };
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
@@ -39,9 +39,9 @@ async function sendData(inf = {}) {
                 let sheetData = typeof status2 === 'object' ? JSON.parse(status2) : status2;
                 let infGoogleSheets = {
                     e, 'action': 'send',
-                    'id': id,
-                    'tab': tab,
-                    'range': range,
+                    id,
+                    tab,
+                    range,
                     'values': [[`${time.tim} | ${sheetData}`,],],
                 };
                 let retGoogleSheets = await googleSheets(infGoogleSheets);
@@ -53,8 +53,8 @@ async function sendData(inf = {}) {
                 let sheetData = typeof results === 'object' ? JSON.parse(results) : results;
                 let infGoogleSheets = {
                     e, 'action': 'send',
-                    'id': id,
-                    'tab': tab,
+                    id,
+                    tab,
                     'range': 'D**',
                     'values': [[`${sheetData}`,],],
                 };
@@ -71,12 +71,12 @@ async function sendData(inf = {}) {
             await commandLine({ e, 'command': `${fileProjetos}/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 7000); }); process.exit();
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ 'inf': inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
         process.exit();
-    };
+    }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
-};
+}
 
 // CHROME | NODEJS
 (eng ? window : global)['sendData'] = sendData;
