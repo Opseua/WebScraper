@@ -28,6 +28,6 @@ async function imput(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['imput'] = imput;
+globalThis['imput'] = imput;
 
 

@@ -1,13 +1,12 @@
-function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m = a % 1000; let f = m.toString().padStart(3, '0'); return `${s}.${f}`; } let startup = new Date();
-await import('./resources/@export.js'); let e = import.meta.url, ee = e;
+let startup = new Date(); await import('./resources/@export.js'); let e = import.meta.url, ee = e; let libs = false;
 
 async function serverRun(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]`, });
-
         // IMPORTAR BIBLIOTECA [NODEJS]
-        if (typeof _puppeteer === 'undefined') { await funLibrary({ 'lib': '_puppeteer', }); }
+        if (!libs) { await importLibs(['_puppeteer',]); libs = true; }
+
+        logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;

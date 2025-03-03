@@ -47,6 +47,6 @@ async function checkPage(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['checkPage'] = checkPage;
+globalThis['checkPage'] = checkPage;
 
 

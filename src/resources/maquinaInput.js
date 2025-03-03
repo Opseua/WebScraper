@@ -111,6 +111,6 @@ async function maquinaInput(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['maquinaInput'] = maquinaInput;
+globalThis['maquinaInput'] = maquinaInput;
 
 

@@ -141,6 +141,6 @@ async function clientImput(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['clientImput'] = clientImput;
+globalThis['clientImput'] = clientImput;
 
 

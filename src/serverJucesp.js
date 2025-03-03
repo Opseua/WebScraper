@@ -1,10 +1,9 @@
-function startupFun(b, c) { let a = c - b; let s = Math.floor(a / 1000); let m = a % 1000; let f = m.toString().padStart(3, '0'); return `${s}.${f}`; } let startup = new Date();
-await import('./resources/@export.js'); let e = import.meta.url, ee = e;
+let startup = new Date(); await import('./resources/@export.js'); let e = import.meta.url, ee = e;
 
 async function serverRun(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupFun(startup, new Date())}]`, });
+        logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
@@ -13,12 +12,6 @@ async function serverRun(inf = {}) {
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
             await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 3000); }); process.exit();
-        } function notificationLegacy(inf = {}) {
-            let { title, text, } = inf; let cng = typeof UrlFetchApp !== 'undefined'; (async () => {
-                let url = `http://${gW.devSend}`; let reqOpt = { 'method': 'POST', }; let body = JSON.stringify({
-                    'fun': [{ 'securityPass': gW.securityPass, 'name': 'notification', 'par': { 'duration': 5, 'icon': 'notification_3.png', title, text, }, },],
-                }); reqOpt[cng ? 'payload' : 'body'] = body; if (cng) { UrlFetchApp.fetch(url, reqOpt); } else { await fetch(url, reqOpt); } // GOOGLE | Chrome/NodeJS
-            })();
         }
 
         let retCookiesGetSet, retCheckPage, value, results = [], infSendData, retGetTextElement, browser, page, sheetTab, retGoogleSheets, sheetNire, valuesLoop = [];

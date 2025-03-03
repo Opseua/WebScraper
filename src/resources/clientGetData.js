@@ -105,6 +105,6 @@ async function clientGetData(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['clientGetData'] = clientGetData;
+globalThis['clientGetData'] = clientGetData;
 
 

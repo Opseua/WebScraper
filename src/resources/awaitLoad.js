@@ -28,6 +28,6 @@ async function awaitLoad(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['awaitLoad'] = awaitLoad;
+globalThis['awaitLoad'] = awaitLoad;
 
 

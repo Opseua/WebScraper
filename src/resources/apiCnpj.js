@@ -114,6 +114,6 @@ async function apiCnpj(inf = {}) {
 }
 
 // CHROME | NODEJS
-(eng ? window : global)['apiCnpj'] = apiCnpj;
+globalThis['apiCnpj'] = apiCnpj;
 
 
