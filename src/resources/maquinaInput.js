@@ -13,7 +13,7 @@ async function maquinaInput(inf = {}) {
         async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'msg': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
             let path = `${pathScreenshot}_err_${inf.screenshot || 'x'}.jpg`; await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); try { await page.screenshot({ path, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path, fullPage: false, }); } browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
+            catch (catchErr) { await page.screenshot({ path, fullPage: false, }); } browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
         } async function elementAction(inf = {}) {
             let { nameSearch = '', action = '', showConsoles = false, showAllEle = false, search = '', ignoreIsCovered = false, input, keys = false, max = 10000, } = inf;
             let ret = { 'ret': false, 'msg': '', }; let res = await new Promise((resolve) => {

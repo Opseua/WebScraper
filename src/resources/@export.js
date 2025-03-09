@@ -15,29 +15,20 @@ await getPath({ 'e': new Error(), devChildren, });
 // console.log(`devMaster: ${gW.devMaster}\ndevSlave: ${gW.devSlave}\ndevChildren: ${gW.devChildren}`); console.log(`devSend:\n${gW.devSend}`);
 // console.log(`devGet:\n${gW.devGet[0]}\n${gW.devGet[1]}`); console.log('conf:', gW.conf); console.log('root:', gW.root); console.log('functions:', gW.functions); console.log('project:', gW.project);
 
-// PEGAR O NOME DO ARQUIVO(SEM EXTENSÃO)
-function funFile(txt) { return txt.match(/([^\\/]+)(?=\.[^\\.]+$)/)[0]; }
-
-// IMPORTAR FUNÇÕES DINAMICAMENTE QUANDO NECESSÁRIO 
-let qtd1 = 0; async function funImport(infOk) { let { path, inf, } = infOk; qtd1++; let name = funFile(path); if (qtd1 > 30) { console.log('IMPORTANDO...', name); } await import(`${path}`); return await globalThis[name](inf); }
-
-// FUNÇÃO GENÉRICA (QUANDO O ENGINE ESTIVER ERRADO) | ENCAMINHAR PARA DEVICE
-async function funGeneric(infOk) { let { path, inf, } = infOk; let name = funFile(path); let retDevAndFun = await devFun({ 'e': import.meta.url, 'enc': true, 'data': { name, 'par': inf, }, }); return retDevAndFun; }
-
-// FUNÇÕES DESSE PROJETO
-globalThis['apiCnpj'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './apiCnpj.js', inf, }); };
-globalThis['apiNire'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './apiNire.js', inf, }); };
-globalThis['awaitLoad'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './awaitLoad.js', inf, }); };
-globalThis['buttonElement'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './buttonElement.js', inf, }); };
-globalThis['checkPage'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './checkPage.js', inf, }); };
-globalThis['clientGetData'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './clientGetData.js', inf, }); };
-globalThis['clientImput'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './clientImput.js', inf, }); };
-globalThis['clientSearch'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './clientSearch.js', inf, }); };
-globalThis['cookiesGetSet'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './cookiesGetSet.js', inf, }); };
-globalThis['getTextElement'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './getTextElement.js', inf, }); };
-globalThis['imput'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './imput.js', inf, }); };
-globalThis['maquinaInput'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './maquinaInput.js', inf, }); };
-globalThis['navigate'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './navigate.js', inf, }); };
-globalThis['sendData'] = (inf) => { let fun = (!eng) ? funImport : funGeneric; return fun({ 'path': './sendData.js', inf, }); };
+/* FUNÇÕES DESSE PROJETO */ let project = gW.project;
+globalThis['apiCnpj'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/apiCnpj.js`, inf, project, }); };
+globalThis['apiNire'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/apiNire.js`, inf, project, }); };
+globalThis['awaitLoad'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/awaitLoad.js`, inf, project, }); };
+globalThis['buttonElement'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/buttonElement.js`, inf, project, }); };
+globalThis['checkPage'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/checkPage.js`, inf, project, }); };
+globalThis['clientGetData'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/clientGetData.js`, inf, project, }); };
+globalThis['clientImput'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/clientImput.js`, inf, project, }); };
+globalThis['clientSearch'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/clientSearch.js`, inf, project, }); };
+globalThis['cookiesGetSet'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/cookiesGetSet.js`, inf, project, }); };
+globalThis['getTextElement'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/getTextElement.js`, inf, project, }); };
+globalThis['imput'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/imput.js`, inf, project, }); };
+globalThis['maquinaInput'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/maquinaInput.js`, inf, project, }); };
+globalThis['navigate'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/navigate.js`, inf, project, }); };
+globalThis['sendData'] = (inf) => { return importFun({ 'importOk': (!eng), 'path': `./src/resources/sendData.js`, inf, project, }); };
 
 

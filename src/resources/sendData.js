@@ -67,12 +67,10 @@ async function sendData(inf = {}) {
 
         // STOP
         if (inf.stop) {
-            gO.inf['stop'] = true;
-            await commandLine({ e, 'command': `${fileProjetos}/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 7000); }); process.exit();
+            gO.inf['stop'] = true; await commandLine({ e, 'command': `${fileProjetos}/WebScraper/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 7000); }); crashCode();
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
-        process.exit();
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res']; crashCode();
     }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };

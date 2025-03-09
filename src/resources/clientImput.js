@@ -39,7 +39,7 @@ async function clientImput(inf = {}) {
             await log(infLog);
             try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, fullPage: true, }); }
             catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_erro_8.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
         }
 
         // REGEX PARA PEGAR O ID DOS CAMPOS
@@ -55,7 +55,7 @@ async function clientImput(inf = {}) {
             await log(infLog);
             try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, fullPage: true, }); }
             catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_9.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
         }
         retRegex = retRegex.res['5'];
 
@@ -79,7 +79,7 @@ async function clientImput(inf = {}) {
                 await log(infLog);
                 try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, fullPage: true, }); }
                 catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_10.jpg`, fullPage: false, }); }
-                browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
+                browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
             }
             await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
             await new Promise(resolve => setTimeout(resolve, 250));

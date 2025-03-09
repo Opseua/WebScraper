@@ -1,10 +1,9 @@
-let startup = new Date(); await import('./resources/@export.js'); let e = import.meta.url, ee = e; let libs = false;
+let startup = new Date(); await import('./resources/@export.js'); let e = import.meta.url, ee = e; let libs = ['puppeteer',];
 
 async function serverRun(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        // IMPORTAR BIBLIOTECA [NODEJS]
-        if (!libs) { await importLibs(['_puppeteer',]); libs = true; }
+        /* IMPORTAR BIBLIOTECA [NODEJS] */  if (libs.length > 0) { libs = await importLibs(libs, [{ 'm': 'puppeteer', 'l': ['puppeteer',], 'p': true, },]); }
 
         logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
 
@@ -16,7 +15,7 @@ async function serverRun(inf = {}) {
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
         async function processForceStop(inf = {}) {
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}`, });
-            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 7000); }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 7000); }); crashCode();
         } async function errA2(inf = '') {
             let title = `ERRO PARSE CÉLULA A2`; let text = `[${inf}] ${gO.inf.sheetTab}\n${gW.project}\n${gO.inf.shortcut}`; await notification({ e, 'legacy': true, title, text, });
             await processForceStop({ 'origin': `${title} ${text}`, });
@@ -42,8 +41,7 @@ async function serverRun(inf = {}) {
         } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
         catch (catchErr) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } // '0' → APARECE | '1' → OCULTO
         let { tabsWork, autC6: aut, conSpl, randomNames: leadRandomNames, scriptHourWebScraper: scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
-        tabsWork = false;
-        if (!tabsWork) { tabsWork = ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',]; } // REMOVER ISSO DEPOIS
+        tabsWork = false; if (!tabsWork) { tabsWork = ['INDICAR_MANUAL', 'SOMENTE_CONSULTAR', 'LISTA_FRIA', 'INDICAR_AUTOMATICO', 'NOME_MASTER', 'RECHECAGEM',]; } // REMOVER ISSO DEPOIS
         tabsInf.names = [...new Set([...tabsInf.names, ...tabsWork,]),].filter(v => v !== '' && v !== null); chromiumHeadless = chromiumHeadless === '1' ? 'new' : false; scriptHour = scriptHour.split('|');
 
         // STATUS1 [Iniciando script, aguarde]
@@ -130,13 +128,13 @@ async function serverRun(inf = {}) {
 
                         // CLIENTE: BUSCAR NA LUPA
                         retClientSearch = await clientSearch({ page, browser, leadCnpj, }); if (!retClientSearch.ret) {
-                            logConsole({ e, ee, 'msg': `ERRO CLIENT SEACH`, }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
+                            logConsole({ e, ee, 'msg': `ERRO CLIENT SEACH`, }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
                         } else { retClientSearch = retClientSearch.res.leadStatus; } leadStatus = retClientSearch;
 
                         if (leadStatus === 'ENCONTRADO_CONTA' || leadStatus === 'ENCONTRADO_LEAD' || leadStatus === 'ENCONTRADO_EXPIRADO') {
                             // LEAD DA BASE [SIM] ******************************************************************
                             retCliGetDat = await clientGetData({ page, browser, leadCnpj, }); // CLIENTE: PEGAR DADOS DO CONTA/LEAD
-                            if (!retCliGetDat.ret) { logConsole({ e, ee, 'msg': `ERRO CLIENT GET DATA`, }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit(); }
+                            if (!retCliGetDat.ret) { logConsole({ e, ee, 'msg': `ERRO CLIENT GET DATA`, }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode(); }
                             else { retCliGetDat = retCliGetDat.res; } dataDayMonYea = retCliGetDat.dataDayMonYea; dataDayMonYeaFull = retCliGetDat.dataDayMonYeaFull; dataBoolean = retCliGetDat.dataBoolean;
                             statusInf = leadStatus === 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : retCliGetDat.dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull;
                             if (gO.inf.sheetTab === 'NOME_MASTER') { nameMaster = retCliGetDat.nameMaster; }
@@ -146,11 +144,11 @@ async function serverRun(inf = {}) {
                             if (!(leadStatus === 'ENCONTRADO_CONTA' && ['MAQUINA_MANUAL',].includes(gO.inf.sheetTab))) {
                                 statusInf = statusInf.includes(`STATUS NÃO DEFINIDO`) ? 'NADA ENCONTRADO' : leadStatus === 'ENCONTRADO_EXPIRADO' ? 'FORA DO PRAZO' : statusInf;
                                 if (gO.inf.sheetTab === 'NOME_MASTER') { statusDateFull = statusDateFull || 'xx/xx/xxxx 00:00'; nameMaster = nameMaster || 'NÃO ENCONTRADO'; }
-                            } else { await maquinaInput({ page, browser, leadCnpj, leadLimites, leadTaxas, leadModelo, leadCep, leadNumero, leadComplemento, leadReferencia, }); }
+                            } // else { await maquinaInput({ page, browser, leadCnpj, leadLimites, leadTaxas, leadModelo, leadCep, leadNumero, leadComplemento, leadReferencia, }); }
                         } else if (leadStatus === 'NADA_ENCONTRADO' || leadStatus === 'ENCONTRADO_EXPIRADO') {
                             // CLIENTE: INDICAR → LEAD DA BASE [NÃO] | EXPIRADO
                             retClientImput = await clientImput({ page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, 'leadTelefone': coldList ? leadTelefone.replace('55219', '219') : leadTelefone, });
-                            if (!retClientImput.ret) { logConsole({ e, ee, 'msg': `ERRO CLIENT IMPUT`, }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit(); }
+                            if (!retClientImput.ret) { logConsole({ e, ee, 'msg': `ERRO CLIENT IMPUT`, }); browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode(); }
                             else { retClientImput = retClientImput.res; } let imputRes = retClientImput.imputRes;
 
                             // STATUS DE ACORDO COM O ERRO VERMELHO

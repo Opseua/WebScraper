@@ -18,7 +18,7 @@ async function clientGetData(inf = {}) {
             err = `% Não achou o ID do link da página do lead`;
             logConsole({ e, ee, 'msg': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, }; await sendData(infSendData);
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog); await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_5.jpg`, fullPage: true, });
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000); }); process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 1000); }); crashCode();
         } leadPageId = retRegex.res['1'];
 
         // STATUS1 [Abrindo dados do cliente]
@@ -72,7 +72,7 @@ async function clientGetData(inf = {}) {
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
             try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, fullPage: true, }); }
             catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_6.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit();
+            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA

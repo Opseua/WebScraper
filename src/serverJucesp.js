@@ -11,7 +11,7 @@ async function serverRun(inf = {}) {
 
         // FORÇAR PARADA DO SCRIPT | NTFY
         async function processForceStop() {
-            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 3000); }); process.exit();
+            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(resolve => { setTimeout(resolve, 3000); }); crashCode();
         }
 
         let retCookiesGetSet, retCheckPage, value, results = [], infSendData, retGetTextElement, browser, page, sheetTab, retGoogleSheets, sheetNire, valuesLoop = [];
@@ -165,7 +165,7 @@ async function serverRun(inf = {}) {
                 retCookiesGetSet = await cookiesGetSet({ e, page, 'action': 'get', }); logConsole({ e, ee, 'msg': 'Salvando cookie na planilha e reiniciando', });
                 await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A36`, 'values': [[JSON.stringify(retCookiesGetSet.res),],], });
                 await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `A85`, 'values': [['',],], }); // LIMPAR O TEXTO DA COMUNICAÇÃO ANTIGO
-                browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); process.exit(); // FORÇAR A PARADA PARA REINICIAR SOZINHO (PARA APAGAR O 'CaptchaImage' DO BODY)
+                browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();// FORÇAR A PARADA PARA REINICIAR SOZINHO (PARA APAGAR O 'CaptchaImage' DO BODY)
             } // await new Promise(resolve => { setTimeout(resolve, 1000000) })
         }
         // ********************************************************************************************************************************************************************************************
