@@ -1,11 +1,11 @@
-let startup = new Date(); await import('./resources/@export.js'); let e = import.meta.url, ee = e; let libs = ['puppeteer',];
+let startup = new Date(); await import('./resources/@export.js'); let e = import.meta.url, ee = e; let libs = { 'puppeteer': {}, };
 
 async function serverRun(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        /* IMPORTAR BIBLIOTECA [NODEJS] */  if (libs.length > 0) { libs = await importLibs(libs, [{ 'm': 'puppeteer', 'l': ['puppeteer',], 'p': true, },]); }
-
         logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
+
+        /* IMPORTAR BIBLIOTECA [NODEJS] */ if (libs['puppeteer']) { libs['puppeteer']['puppeteer'] = 1; libs['puppeteer']['pro'] = true; libs = await importLibs(libs, 'serverRun [WebScraper {C6}]'); }
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;
