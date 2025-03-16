@@ -5,7 +5,7 @@ async function serverRun(inf = {}) {
     try {
         logConsole({ e, ee, 'msg': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
 
-        /* IMPORTAR BIBLIOTECA [NODEJS] */ if (libs['puppeteer']) { libs['puppeteer']['puppeteer'] = 1; libs['puppeteer']['pro'] = true; libs = await importLibs(libs, 'serverRun [WebScraper {C6}]'); }
+        /* IMPORTAR BIBLIOTECA [NODEJS] */ if (libs['puppeteer']) { libs['puppeteer'] = { 'puppeteer': 1, 'pro': true, }; libs = await importLibs(libs, 'serverRun [WebScraper {C6}]'); }
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon, day, hou; mon = `MES_${time.mon}_${time.monNam}`; day = `DIA_${time.day}`; hou = `${time.hou}.${time.min}.${time.sec}.${time.mil}`;

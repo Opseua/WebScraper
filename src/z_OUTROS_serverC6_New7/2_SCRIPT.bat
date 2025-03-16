@@ -26,7 +26,7 @@ rem ESTA RODANDO [SIM]
 rem if "!ret!" == "TRUE" ( )
 
 rem MANTER O '"%ret%"' E 'argString' NO FINAL SEMPRE!!! | 'KEEP' (RESTART [SIM]) / 'LEGACY' (RESTART [NAO])
-endlocal & call "%fileChrome_Extension%\src\scripts\BAT\process.bat" "%arg1%_WINTP9" "%project%" "%outrosAdd%" "KEEP" "%programExe%" "%ret%" "%arg2%" & setlocal enabledelayedexpansion
+endlocal & call "%fileChrome_Extension%\src\scripts\BAT\process.bat" "%arg1%_WINTP9_" "%project%" "%outrosAdd%" "KEEP" "%programExe%" "%ret%" "%arg2%" & setlocal enabledelayedexpansion
 set "ret=%ret2%" & set "argString=%*"
 rem #####################################################################
 
@@ -38,6 +38,7 @@ echo WScript.Echo(new Date().getTime()); > !temp!\time.js & for /f "delims=" %%a
 
 rem ESTAVA RODANDO [SIM]
 if "!ret!" == "TRUE" (
+	ping -n 3 -w 1000 127.0.0.1 > nul
 	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
 	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1xXWJhBEOCePSEsgrZnGPamTTiU2pqTxlJtTEE4pxMxI","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}  ]}"
