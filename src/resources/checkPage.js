@@ -36,7 +36,7 @@ async function checkPage(inf = {}) {
             }
         }
 
-        // await new Promise(resolve => { setTimeout(resolve, 100000) });
+        // await new Promise(r=> { setTimeout(r, 100000) });
 
     } catch (catchErr) {
         let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];

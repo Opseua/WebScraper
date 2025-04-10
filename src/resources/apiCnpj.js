@@ -13,7 +13,7 @@ async function apiCnpj(inf = {}) {
         infApi = { e, 'method': 'GET', 'url': `https://api.cnpja.com/office/${inf.cnpj.replace(/[^0-9]/g, '')}`, 'headers': { 'Authorization': token, }, 'object': true, };
         retApi = await api(infApi); if (!retApi.ret || !retApi.res.body.includes('updated')) {
             let errMsg = `% FALSE: retApi`;
-            logConsole({ e, ee, 'msg': `${errMsg}`, }); infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi, }; await log(infLog); return retApi;
+            logConsole({ e, ee, 'txt': `${errMsg}`, }); infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi, }; await log(infLog); return retApi;
         } else { retApi = retApi.res.body; }
 
         // CRIAÇÃO

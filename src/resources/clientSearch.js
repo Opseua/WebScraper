@@ -19,18 +19,18 @@ async function clientSearch(inf = {}) {
                 await page.goBack(); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++; if (qtd > 2) {
                     // ABRIR PÁGINA DE BUSCA GLOBAL
                     await page.goto(url, { waitUntil: 'networkidle2', });
-                    try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: true, }); }
-                    catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: false, }); }
+                    try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: true, }); }
+                    catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: false, }); }
                 }
             }
         }
 
         // STATUS1 [Checando se é da base]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base`, };
-        logConsole({ e, ee, 'msg': `${infSendData.status1}`, });
+        logConsole({ e, ee, 'txt': `${infSendData.status1}`, });
         await sendData(infSendData);
-        try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: true, }); }
-        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: false, }); }
+        try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: true, }); }
+        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: false, }); }
 
         // REGEX PARA PEGAR O ID DA LUPA DE PESQUISA
         pageValue = await page.content();
@@ -38,14 +38,14 @@ async function clientSearch(inf = {}) {
         retRegex = regex(infRegex);
         if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID da lupa de pesquisa`;
-            logConsole({ e, ee, 'msg': `${err}`, });
+            logConsole({ e, ee, 'txt': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
             await log(infLog);
-            try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_2.jpg`, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_2.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
+            try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_2.jpg`, fullPage: true, }); }
+            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_2.jpg`, fullPage: false, }); }
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
         }
         retRegex = retRegex.res['1'];
 
@@ -53,15 +53,15 @@ async function clientSearch(inf = {}) {
         pageInput = await page.$(`input[id="${retRegex}"]`);
         if (!pageInput) {
             err = `% Não achou o campo de imput da lupa`;
-            logConsole({ e, ee, 'msg': `${err}`, });
+            logConsole({ e, ee, 'txt': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             pageValue = await page.content();
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
             await log(infLog);
-            try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_3.jpg`, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_3.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
+            try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_3.jpg`, fullPage: true, }); }
+            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_3.jpg`, fullPage: false, }); }
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
         }
         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = ''));
         await new Promise(resolve => setTimeout(resolve, 400));
@@ -88,20 +88,20 @@ async function clientSearch(inf = {}) {
 
         if (!pageResult) {
             err = `% Não achou o resultado da consulta`;
-            logConsole({ e, ee, 'msg': `${err}`, });
+            logConsole({ e, ee, 'txt': `${err}`, });
             infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData);
             pageValue = await page.content();
             infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
             await log(infLog);
-            try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_4.jpg`, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}_err_4.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(resolve => { setTimeout(resolve, 2000); }); crashCode();
+            try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_4.jpg`, fullPage: true, }); }
+            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_4.jpg`, fullPage: false, }); }
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
         }
         leadStatus = await pageResult.jsonValue();
-        logConsole({ e, ee, 'msg': `${leadStatus}`, });
-        try { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: true, }); }
-        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_C6_${gO.inf.shortcut}.jpg`, fullPage: false, }); }
+        logConsole({ e, ee, 'txt': `${leadStatus}`, });
+        try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: true, }); }
+        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: false, }); }
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT SEARCH: OK`;

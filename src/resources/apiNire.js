@@ -24,7 +24,7 @@ async function apiNire(inf = {}) {
         };
         let retApi = await api(infApi); if (!retApi.ret) {
             let errMsg = `% FALSE: retApi`;
-            logConsole({ e, ee, 'msg': `${errMsg}`, });
+            logConsole({ e, ee, 'txt': `${errMsg}`, });
             infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': retApi, };
             await log(infLog);
             return retApi;
@@ -46,7 +46,7 @@ async function apiNire(inf = {}) {
         if (!texto.includes('ctl00_cphContent_frmPreVisualiza_lblCnpj') && !texto.includes('mas houve um problema em nosso servidor')) {
             // ### ENCONTROU: NÃO
             let errMsg = `% NIRE_INVALIDO`;
-            logConsole({ e, ee, 'msg': `${errMsg}`, });
+            logConsole({ e, ee, 'txt': `${errMsg}`, });
             infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto, };
             await log(infLog);
             ret['msg'] = `NIRE inválido`;
@@ -59,7 +59,7 @@ async function apiNire(inf = {}) {
                 ret['msg'] = `CNPJ do NIRE não encotrado`;
                 ret['ret'] = true;
                 let errMsg = `% ${ret.msg}`;
-                logConsole({ e, ee, 'msg': `${errMsg}`, });
+                logConsole({ e, ee, 'txt': `${errMsg}`, });
                 infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto, };
                 await log(infLog);
             } else {
@@ -72,7 +72,7 @@ async function apiNire(inf = {}) {
                     ret['msg'] = `Razão Social do CNPJ não encontrada`;
                     ret['ret'] = true;
                     let errMsg = `% ${ret.msg}`;
-                    logConsole({ e, ee, 'msg': `${errMsg}`, });
+                    logConsole({ e, ee, 'txt': `${errMsg}`, });
                     infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto, };
                     await log(infLog);
                 } else {
@@ -85,7 +85,7 @@ async function apiNire(inf = {}) {
                         ret['msg'] = `Tipo de empresa do CNPJ não encontrada`;
                         ret['ret'] = true;
                         let errMsg = `% ${ret.msg}`;
-                        logConsole({ e, ee, 'msg': `${errMsg}`, });
+                        logConsole({ e, ee, 'txt': `${errMsg}`, });
                         infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto, };
                         await log(infLog);
                     } else {
@@ -104,7 +104,7 @@ async function apiNire(inf = {}) {
                                 ret['msg'] = `Data do CNPJ não encontrada`;
                                 ret['ret'] = true;
                                 let errMsg = `% ${ret.msg}`;
-                                logConsole({ e, ee, 'msg': `${errMsg}`, });
+                                logConsole({ e, ee, 'txt': `${errMsg}`, });
                                 infLog = { e, 'folder': 'Registros', 'path': `${errMsg}.txt`, 'text': texto, };
                                 await log(infLog);
                             } else {
