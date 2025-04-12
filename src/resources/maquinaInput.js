@@ -12,8 +12,8 @@ async function maquinaInput(inf = {}) {
 
         async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
-            let path = `${pathScreenshot}_err_${inf.screenshot || 'x'}.jpg`; await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); try { await page.screenshot({ path, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path, fullPage: false, }); } browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); await screenshot({ e, page, 'fileName': `err_${inf.screenshot || 'x'}`, });
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
         } async function elementAction(inf = {}) {
             let { nameSearch = '', action = '', showConsoles = false, showAllEle = false, search = '', ignoreIsCovered = false, input, keys = false, max = 10000, } = inf;
             let ret = { 'ret': false, 'msg': '', }; let res = await new Promise((resolve) => {
@@ -86,10 +86,11 @@ async function maquinaInput(inf = {}) {
 
         console.log('ANTES');
         let res = await page.evaluate(async (f, p) => {
-            let run = new Function('return ' + f)(); run = await run(p); await new Promise(r => { setTimeout(r, 5000); }); return run;
+            let run = new Function('return ' + f)(); run = await run(p);
+            await new Promise(r => { setTimeout(r, 5000); }); // SIMULAR FUNÇÃO DEMORANDO PARA SER CONCLUÍDA
+            return run;
         }, injetarIsso.toString(), params);
         console.log('DEPOIS');
-
         console.log(res);
 
 

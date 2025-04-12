@@ -13,25 +13,18 @@ async function clientGetData(inf = {}) {
         let { page, browser, leadCnpj, } = inf;
 
         // PEGAR O ID DO LINK DA PÁGINA DO LEAD
-        pageValue = await page.content(); infRegex = { e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue, }; retRegex = regex(infRegex);
-        if (!retRegex.ret || !retRegex.res['1']) {
-            err = `% Não achou o ID do link da página do lead`;
-            logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, }; await sendData(infSendData);
-            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog); await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_5.jpg`, fullPage: true, });
+        pageValue = await page.content(); infRegex = { e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue, }; retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) {
+            err = `% Não achou o ID do link da página do lead`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, }; await sendData(infSendData);
+            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog); await screenshot({ e, page, 'fileName': `err_5`, });
             browser.close(); await new Promise(r => { setTimeout(r, 1000); }); crashCode();
         } leadPageId = retRegex.res['1'];
 
         // STATUS1 [Abrindo dados do cliente]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, });
-        await sendData(infSendData);
-        try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: true, }); }
-        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: false, }); }
 
         // CLICAR NO LINK DO ID DO LEAD
-        let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector);
-        await new Promise(r => { setTimeout(r, 400); });
+        let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector); await new Promise(r => { setTimeout(r, 200); });
         await link.click();
-        await new Promise(r => { setTimeout(r, 400); });
 
         // E DEFINIR SE É TELA ANTIGA OU NOVA
         let timeout = 30000; let selectors = [
@@ -67,24 +60,21 @@ async function clientGetData(inf = {}) {
         } // console.log(!!pageResult, leadDate)
 
         if (!pageResult) {
-            err = `% Não achou a data de abertura`;
-            logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
+            err = `% Não achou a data de abertura`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
-            try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_6.jpg`, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_6.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await screenshot({ e, page, 'fileName': `err_6`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA
-        let data = leadDate[0].split('/');
-        let dataDay = parseInt(data[0], 10).toString().padStart(2, '0');
-        let dataMon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
+        let data = leadDate[0].split('/'); let dataDay = parseInt(data[0], 10).toString().padStart(2, '0'); let dataMon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
         let dataYea = parseInt(data[2], 10).toString().padStart(4, '0');
         // DATA ENCONTRADA EM TIMESTAMP SEM MILESEGUNDOS
         dataC6 = new Date(dataYea, dataMon, dataDay, 0, 0, 0); // ANO-MÊS-DIA 00:00:00
         dataC6 = Math.floor(dataC6.getTime() / 1000);
         // DIFERENÇA MAIR QUE 5 DIAS 'true' DO CONTRÁRIO 'false' | + DE 5 DIAS → JÁ POSSUI CONTA | - DE 5 DIAS → ABERTO SF
         dataC6 = !!((Number(dateHour().res.tim) - dataC6) > ((5 * 86400) + 86400));
+
+        await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `${leadCnpj}_clientGetData_1`, 'awaitPageFinish': false, });
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT GET DATA: OK`;

@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+
 
 // let infClientImput, retClientImput
 // infClientImput = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
@@ -12,93 +12,61 @@ async function clientImput(inf = {}) {
 
         let { page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, } = inf;
 
-        let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente';
-        currentURL = page.url();
         // CHECAR SE É A PÁGINA DE INDICAÇÃO, SE NÃO FOR ABRIR ELA
-        if (!currentURL.includes(url)) {
+        let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'; currentURL = page.url(); if (!currentURL.includes(url)) {
             while (qtd < 3) {
                 await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++;
-                if (qtd > 2) {
-                    // ABRIR PÁGINA DE BUSCA GLOBAL
-                    await page.goto(url, { waitUntil: 'networkidle2', }); await new Promise(r => { setTimeout(r, 500); });
-                    try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: true, }); }
-                    catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: false, }); } await new Promise(r => { setTimeout(r, 500); });
-                }
+                if (qtd > 2) { await page.goto(url, { waitUntil: 'networkidle2', }); await new Promise(r => { setTimeout(r, 500); }); } // ABRIR PÁGINA DE BUSCA GLOBAL
             }
         }
 
         // ESPERAR OS CAMPOS APARECEREM
-        pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000, });
-        if (!pageInput) {
-            err = `% Não achou o formulário`;
-            logConsole({ e, ee, 'txt': `${err}`, });
-            infSendData = { e, 'stop': false, 'status1': `${err}`, };
-            await sendData(infSendData);
-            pageValue = await page.content();
-            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog);
-            try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_erro_8.jpg`, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_erro_8.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+        pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000, }); if (!pageInput) {
+            err = `% Não achou o formulário`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
+            await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
+            await screenshot({ e, page, 'fileName': `err_8`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
         }
 
         // REGEX PARA PEGAR O ID DOS CAMPOS
-        pageValue = await page.content();
-        infRegex = { e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue, };
-        retRegex = regex(infRegex);
-        if (!retRegex.ret || !retRegex.res['5']) {
-            err = `% Não achou o ID dos campos`;
-            logConsole({ e, ee, 'txt': `${err}`, });
-            infSendData = { e, 'stop': false, 'status1': `${err}`, };
-            await sendData(infSendData);
-            infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog);
-            try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_9.jpg`, fullPage: true, }); }
-            catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_9.jpg`, fullPage: false, }); }
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
-        }
-        retRegex = retRegex.res['5'];
+        pageValue = await page.content(); infRegex = { e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue, }; retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['5']) {
+            err = `% Não achou o ID dos campos`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, });
+            await log({ e, folder: 'Registros', path: `${err}.txt`, text: pageValue, }); await screenshot({ e, page, fileName: `err_9`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+        } retRegex = retRegex.res['5'];
 
         // STATUS1 [Indicando...]
-        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...`, };
-        logConsole({ e, ee, 'txt': `${infSendData.status1}`, });
-        await sendData(infSendData);
-        pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj,];
-        try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: true, }); }
-        catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}.jpg`, fullPage: false, }); }
+        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, });
+        await sendData(infSendData); pageImputs = [leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadCnpj,];
 
         for (let [index, value,] of retRegex.entries()) {
-            pageInput = await page.$(`input[id="${value}"]`);
-            if (!pageInput) {
-                err = `% Não achou o campo de imput [${index}]`;
-                logConsole({ e, ee, 'txt': `${err}`, });
-                infSendData = { e, 'stop': false, 'status1': `${err}`, };
-                await sendData(infSendData);
-                pageValue = await page.content();
-                infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-                await log(infLog);
-                try { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_10.jpg`, fullPage: true, }); }
-                catch (catchErr) { await page.screenshot({ path: `logs/screenshot_${gO.inf.screenshot}_err_10.jpg`, fullPage: false, }); }
-                browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
-            }
-            await page.$eval(`input[id="${value}"]`, input => (input.value = ''));
-            await new Promise(resolve => setTimeout(resolve, 250));
-            await page.type(`input[id="${value}"]`, pageImputs[index]);
-            await new Promise(r => { setTimeout(r, 400); });
+            pageInput = await page.$(`input[id="${value}"]`); if (!pageInput) {
+                err = `% Não achou o campo de imput [${index}]`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
+                await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
+                await screenshot({ e, page, 'fileName': `err_10`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            } await page.$eval(`input[id="${value}"]`, input => (input.value = '')); await new Promise(resolve => setTimeout(resolve, 200)); await page.type(`input[id="${value}"]`, pageImputs[index]);
+            await new Promise(r => { setTimeout(r, 200); });
         }
 
         // CLICAR NO BOTÃO 'Confirmar'
         await page.click('.slds-button.slds-button_neutral.button.uiButton--default.uiButton--brand.uiButton');
-        await new Promise(r => { setTimeout(r, 500); });
+
+        async function injetarIsso() {
+            let timeout = 30; let intervalo = 200; let tempoPassado = 0; let buscar = {
+                'erro': '/html/body/div[3]/div[2]/div/div[2]/div/div/div/div[1]/div[2]/div/div/span',
+                'indicado': '/html/body/div[3]/div[2]/div/div[1]/div/div[1]/header/div[2]/div/div[1]/div[2]/h1/div[2]/span',
+            }; function encontrarPorXPath(xpath) { let res = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null); return res.singleNodeValue; } return new Promise((resolve) => {
+                let che = setInterval(() => {
+                    for (let k in buscar) { let e = encontrarPorXPath(buscar[k]); if (e) { clearInterval(che); resolve({ ret: true, msg: `ELEMENTO ENCONTRADO`, res: { key: k, text: e.textContent.trim(), }, }); return; } }
+                    tempoPassado += intervalo; if (tempoPassado >= (timeout * 1000)) { clearInterval(che); resolve({ ret: false, msg: `ERRO | NENHUM ELEMENTO ENCONTRADO`, }); }
+                }, intervalo);
+            });
+        }
 
         // ESPERAR O RETORNO DO SERVIDOR APÓS ENVIAR O FORMULÁRIO
-        pageResult = await Promise.race([
-            page.waitForSelector('body > div.themeLayoutStarterWrapper.isHeroUnderHeader-false.isHeaderPinned-false.siteforceThemeLayoutStarter > div.body.isPageWidthFixed-true > div > div.slds-col--padded.contentRegion.comm-layout-column > div > div > div > div.container.EDIT.forceQuickActionLayout > div.pageLevelErrors > div > div', { timeout: 10000, }).then(() => false),
-            page.waitForNavigation({ timeout: 10000, }).then(() => true),
-        ]).catch(() => 'NADA_ACONTECEU');
+        let res = await page.evaluate(async (f, p) => { let run = new Function('return ' + f)(); run = await run(p); return run; }, injetarIsso.toString(), { 'a': 'b', 'c': 'd', });
+        if (!res.ret) { crashCode(); } else { pageResult = res.res.key !== 'erro'; }
 
-        pageValue = await page.content();
         if (!pageResult) {
+            pageValue = await page.content();
             if (pageValue.includes(`Já existe um lead cadastrado com o CNPJ informado`)) {
                 leadStatus = `Já existe um lead cadastrado com o CNPJ informado`;
             } else if (pageValue.includes(`Já existe um cliente cadastrado com o CNPJ informado`)) {
@@ -125,6 +93,8 @@ async function clientImput(inf = {}) {
         } else {
             leadStatus = `INDICAÇÃO OK`;
         }
+
+        await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `${leadCnpj}_clientImput_1`, 'awaitPageFinish': false, });
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT IMPUT: OK`;
