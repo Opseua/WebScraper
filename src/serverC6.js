@@ -5,7 +5,7 @@ async function serverRun(inf = {}) {
     try {
         /* IMPORTAR BIBLIOTECA [NODEJS] */ libs['puppeteer'] = { 'puppeteer': 1, 'pro': true, }; libs = await importLibs(libs, 'serverRun [WebScraper {C6}]');
 
-        logConsole({ e, ee, 'txt': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
+        await logConsole({ e, ee, 'txt': `**************** SERVER **************** [${startupTime(startup, new Date())}]`, });
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = time.hou, houMinSecMil = `${hou}.${time.min}.${time.sec}.${time.mil}`;
