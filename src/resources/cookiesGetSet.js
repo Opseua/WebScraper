@@ -26,7 +26,7 @@ async function cookiesGetSet(inf = {}) {
                 let cookies = await page.cookies();
 
                 // ADICIONAR CHAVE COM TIMESTAMP DO COOKIE
-                if (!ignoreAutUpdate) { cookies.unshift({ 'autUpdate': `${Math.floor(new Date().getTime() / 1000)}`, }); }
+                if (!ignoreAutUpdate) { cookies.unshift({ 'autUpdate': `${Math.floor(Date.now() / 1000)}`, }); }
 
                 // FILTRAR COOKIES
                 let filterCookies = (cookies, filters = {}) => {
@@ -69,7 +69,7 @@ async function cookiesGetSet(inf = {}) {
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
 }
 
-// CHROME | NODEJS
+// CHROME | NODE
 globalThis['cookiesGetSet'] = cookiesGetSet;
 
 

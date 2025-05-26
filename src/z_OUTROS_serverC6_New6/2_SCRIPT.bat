@@ -39,7 +39,7 @@ echo WScript.Echo(new Date().getTime()); > !temp!\time.js & for /f "delims=" %%a
 rem ESTAVA RODANDO [SIM]
 if "!ret!" == "TRUE" (
 	ping -n 3 -w 1000 127.0.0.1 > nul
-	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
+	set "url=http://!confHost!:!confPort!/?roo=AWS-NODE-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
 	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1Vr_vLxVwA4zZ7bvM24jWRJqcR39gf8lpogLBJWBIDmM","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| $ Script parado"]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES_!outrosAdd!.txt" & set "pathReq=!local!\z_BODY_REQ_!outrosAdd!.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
@@ -48,7 +48,7 @@ if "!ret!" == "TRUE" (
 
 rem ESTAVA RODANDO [NAO]
 if "!ret!" == "FALSE" (
-	set "url=http://!confHost!:!confPort!/?roo=AWS-NODEJS-WEBSOCKET-SERVER"
+	set "url=http://!confHost!:!confPort!/?roo=AWS-NODE-WEBSOCKET-SERVER"
 	set "headers=--header=Content-Type:application/json --header=chave1:valor1 --header=chave2:valor2"
 	set "body={"fun":[  {"securityPass":"!confSecurityPass!","retInf":false,"name":"googleSheets","par":{"action":"send","id":"1Vr_vLxVwA4zZ7bvM24jWRJqcR39gf8lpogLBJWBIDmM","tab":"INDICAR_MANUAL","range":"A32","values":[["!timeNow! ^| # Aguarde......"]]}}  ]}"
 	set "pathRes=!local!\z_BODY_RES_!outrosAdd!.txt" & set "pathReq=!local!\z_BODY_REQ_!outrosAdd!.txt" & echo !body! > "!pathReq!" & "!wget!" "--post-file=!pathReq!" "!headers!" --quiet -O "!pathRes!" "!url!"
