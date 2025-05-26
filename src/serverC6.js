@@ -24,11 +24,9 @@ async function serverRun(inf = {}) {
         let infSendData, retGoogleSheets, coldList, err, browser, page, pageValue, retCliGetDat, retClientImput, dataDayMonYea, autRange, leadStatus, json, retClientSearch; gO.inf['stop'] = false;
         let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); let range = 'A2';
 
-        /* DEFINIR O ID DA PLANILHA E ATALHO */ // gW.firstFileCall = 'serverC6_New8'; // ← ************ TESTES ************
+        /* DEFINIR O ID DA PLANILHA E ATALHO */ // gW.firstFileCall = 'serverC6_New3'; // ← ************ TESTES ************
         gO.inf['shortcut'] = `z_OUTROS_${gW.firstFileCall}`; gO.inf[`screenshot`] = `${gW.firstFileCall.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let sheetsMap = {
             'serverC6': '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc', 'serverC6_New2': '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8', 'serverC6_New3': '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY',
-            'serverC6_New4': '1uzlbsL9wqMs9gfMt1XHDEmh1k6MEdPA7JuQ8IzBA1pQ', 'serverC6_New5': '1SHr0tEam3biPOb4p9_iXbGIJCoMkkAgRquDCHLEZYrM', 'serverC6_New6': '1Vr_vLxVwA4zZ7bvM24jWRJqcR39gf8lpogLBJWBIDmM',
-            'serverC6_New7': '1xXWJhBEOCePSEsgrZnGPamTTiU2pqTxlJtTEE4pxMxI', 'serverC6_New8': '1A6rWJLCsVnKPyJxugfvHC3_Y2qEQqf2gS-fLHKVqKTk',
         }; gO.inf['sheetId'] = sheetsMap[gW.firstFileCall];
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
