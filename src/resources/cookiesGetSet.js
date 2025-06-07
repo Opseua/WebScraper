@@ -1,4 +1,4 @@
-// let infCookiesGetSet = { e, 'page': page, 'action': 'set', 'value': valueCookie } // 'logFun': true,
+// let infCookiesGetSet = { e, 'page': page, 'action': 'set', 'value': valueCookie }
 // let retCookiesGetSet = await cookiesGetSet(infCookiesGetSet)
 // console.log(retCookiesGetSet)
 

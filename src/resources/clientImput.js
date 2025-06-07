@@ -1,8 +1,8 @@
 
 
-// let infClientImput, retClientImput
-// infClientImput = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retClientImput = await clientImput(infClientImput); console.log(retClientImput)
+// let infClientImput, retClientImput;
+// infClientImput = { e, page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, 'leadTelefone': coldList ? leadTelefone.replace('55219', '219') : leadTelefone, };
+// retClientImput = await clientImput(infClientImput); console.log(retClientImput);
 
 let e = import.meta.url, ee = e;
 async function clientImput(inf = {}) {
@@ -14,23 +14,24 @@ async function clientImput(inf = {}) {
 
         // CHECAR SE É A PÁGINA DE INDICAÇÃO, SE NÃO FOR ABRIR ELA
         let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'; currentURL = page.url(); if (!currentURL.includes(url)) {
-            while (qtd < 3) {
-                await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++;
-                if (qtd > 2) { await page.goto(url, { waitUntil: 'networkidle2', }); await new Promise(r => { setTimeout(r, 500); }); } // ABRIR PÁGINA DE BUSCA GLOBAL
-            }
+            await page.goto('https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente', { waitUntil: 'networkidle2', });
+            // while (qtd < 3) {
+            //     await page.goBack(); await new Promise(resolve => setTimeout(resolve, 2000)); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++;
+            //     if (qtd > 2) { await page.goto(url, { waitUntil: 'networkidle2', }); /* await new Promise(r => { setTimeout(r, 500); }); */ } // ABRIR PÁGINA DE BUSCA GLOBAL
+            // }
         }
 
         // ESPERAR OS CAMPOS APARECEREM
         pageInput = await page.waitForSelector(`input[placeholder="Primeiro Nome"]`, { timeout: 20000, }); if (!pageInput) {
             err = `% Não achou o formulário`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
-            await screenshot({ e, page, 'fileName': `err_8`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await screenshot({ e, page, 'fileName': `err_8`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         }
 
         // REGEX PARA PEGAR O ID DOS CAMPOS
         pageValue = await page.content(); infRegex = { e, 'pattern': `" aria-describedby="" id="(.*?)" placeholder="`, 'text': pageValue, }; retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['5']) {
             err = `% Não achou o ID dos campos`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, });
-            await log({ e, folder: 'Registros', path: `${err}.txt`, text: pageValue, }); await screenshot({ e, page, fileName: `err_9`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await log({ e, folder: 'Registros', path: `${err}.txt`, text: pageValue, }); await screenshot({ e, page, fileName: `err_9`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         } retRegex = retRegex.res['5'];
 
         // STATUS1 [Indicando...]
@@ -41,9 +42,9 @@ async function clientImput(inf = {}) {
             pageInput = await page.$(`input[id="${value}"]`); if (!pageInput) {
                 err = `% Não achou o campo de imput [${index}]`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
                 await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
-                await screenshot({ e, page, 'fileName': `err_10`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+                await screenshot({ e, page, 'fileName': `err_10`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
             } await page.$eval(`input[id="${value}"]`, input => (input.value = '')); await new Promise(resolve => setTimeout(resolve, 200)); await page.type(`input[id="${value}"]`, pageImputs[index]);
-            await new Promise(r => { setTimeout(r, 200); });
+            await new Promise(r => { setTimeout(r, 50); });
         }
 
         // CLICAR NO BOTÃO 'Confirmar'

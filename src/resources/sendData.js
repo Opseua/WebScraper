@@ -1,4 +1,4 @@
-// let infSendData, retSendData // 'logFun': true,
+// let infSendData, retSendData
 // infSendData = { e, 'stop': true, 'status1': 'MENSAGEM AQUI', 'results': 'INFORMACAO PARA ENVIAR' }
 // retSendData = await sendData(infSendData)
 // console.log(retSendData)

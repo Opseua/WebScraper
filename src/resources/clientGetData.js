@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 
-// let infClientGetData, retClientGetData
-// infClientGetData = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retClientGetData = await clientGetData(infClientGetData); console.log(retClientGetData)
+// let infClientGetData, retClientGetData;
+// infClientGetData = { e, page, browser, leadCnpj, };
+// retClientGetData = await clientGetData(infClientGetData); console.log(retClientGetData);
 
 let e = import.meta.url, ee = e;
 async function clientGetData(inf = {}) {
@@ -20,10 +20,10 @@ async function clientGetData(inf = {}) {
         } leadPageId = retRegex.res['1'];
 
         // STATUS1 [Abrindo dados do cliente]
-        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, });
+        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Abrindo dados do cliente`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
 
         // CLICAR NO LINK DO ID DO LEAD
-        let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector); await new Promise(r => { setTimeout(r, 200); });
+        let linkSelector = `a[data-recordid="${leadPageId}"]`; await page.waitForSelector(linkSelector); let link = await page.$(linkSelector); // await new Promise(r => { setTimeout(r, 200); });
         await link.click();
 
         // E DEFINIR SE É TELA ANTIGA OU NOVA
@@ -62,7 +62,7 @@ async function clientGetData(inf = {}) {
         if (!pageResult) {
             err = `% Não achou a data de abertura`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
-            await screenshot({ e, page, 'fileName': `err_6`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await screenshot({ e, page, 'fileName': `err_6`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA

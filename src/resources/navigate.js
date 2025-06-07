@@ -1,4 +1,4 @@
-// let infNavigate, retNavigate // 'logFun': true,
+// let infNavigate, retNavigate
 // infNavigate = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
 // retNavigate = await navigate(infNavigate)
 // console.log(retNavigate)

@@ -6,7 +6,7 @@ let e = import.meta.url, ee = e;
 async function screenshot(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        let { page = false, fullPage = true, fileName = false, awaitPageFinish = 1, } = inf;
+        let { page = false, fullPage = true, fileName = false, awaitPageFinish = true, } = inf;
 
         if (!page) {
 

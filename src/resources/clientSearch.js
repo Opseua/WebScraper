@@ -1,7 +1,7 @@
-// let infClientSearch, retClientSearch // 'logFun': true,
-// infClientSearch = {e, 'browser': browser, 'page': page, 'url': 'https://www.jucesponline.sp.gov.br/BuscaAvancada.aspx?IDProduto=' }
-// retClientSearch = await clientSearch(infClientSearch)
-// console.log(retClientSearch)
+// let infClientSearch, retClientSearch;
+// infClientSearch = { e, page, browser, leadCnpj, };
+// retClientSearch = await clientSearch(infClientSearch);
+// console.log(retClientSearch);
 
 let e = import.meta.url, ee = e;
 async function clientSearch(inf = {}) {
@@ -12,12 +12,12 @@ async function clientSearch(inf = {}) {
         let { page, browser, leadCnpj, } = inf;
 
         // CHECAR SE É A PÁGINA DE INDICAÇÃO, SE NÃO FOR ABRIR ELA
-        let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'; currentURL = page.url(); if (!currentURL.includes(url)) {
-            while (qtd < 3) {
-                await page.goBack(); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++;
-                if (qtd > 2) { await page.goto(url, { waitUntil: 'networkidle2', }); await new Promise(r => { setTimeout(r, 500); }); } // ABRIR PÁGINA DE BUSCA GLOBAL
-            }
-        }
+        // let qtd = 0, currentURL, url = 'https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente'; currentURL = page.url(); if (!currentURL.includes(url)) {
+        //     while (qtd < 3) {
+        //         await page.goBack(); currentURL = page.url(); if (currentURL.includes(url)) { break; } qtd++;
+        //         if (qtd > 2) { await page.goto(url, { waitUntil: 'networkidle2', }); /* await new Promise(r => { setTimeout(r, 500); }); */ } // ABRIR PÁGINA DE BUSCA GLOBAL
+        //     }
+        // }
 
         // STATUS1 [Checando se é da base]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Checando se é da base`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
@@ -26,14 +26,14 @@ async function clientSearch(inf = {}) {
         pageValue = await page.content(); infRegex = { e, 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue, }; retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID da lupa de pesquisa`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog); await screenshot({ e, page, 'fileName': `err_2`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await log(infLog); await screenshot({ e, page, 'fileName': `err_2`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         } retRegex = retRegex.res['1'];
 
         // BUSCAR LEAD NA LUPA
         pageInput = await page.$(`input[id="${retRegex}"]`); if (!pageInput) {
             err = `% Não achou o campo de imput da lupa`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog); await screenshot({ e, page, 'fileName': `err_3`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await log(infLog); await screenshot({ e, page, 'fileName': `err_3`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         }
         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = '')); await new Promise(resolve => setTimeout(resolve, 200)); await page.type(`input[id="${retRegex}"]`, leadCnpj);
         await new Promise(resolve => setTimeout(resolve, 200)); await pageInput.press('Enter');
@@ -58,7 +58,7 @@ async function clientSearch(inf = {}) {
         if (!pageResult) {
             err = `% Não achou o resultado da consulta`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog); await screenshot({ e, page, 'fileName': `err_4`, }); browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            await log(infLog); await screenshot({ e, page, 'fileName': `err_4`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         } leadStatus = await pageResult.jsonValue(); logConsole({ e, ee, 'txt': `${leadStatus}`, });
 
         await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `${leadCnpj}_clientSearch_1`, 'awaitPageFinish': false, });

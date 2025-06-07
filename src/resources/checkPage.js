@@ -1,4 +1,4 @@
-// let infCheckPage, retCheckPage // 'logFun': true,
+// let infCheckPage, retCheckPage
 // infCheckPage = {e, 'body': body }
 // retCheckPage = await checkPage(infCheckPage)
 // console.log(retCheckPage)
