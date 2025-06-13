@@ -70,9 +70,10 @@ async function clientGetData(inf = {}) {
         let dataYea = parseInt(data[2], 10).toString().padStart(4, '0');
         // DATA ENCONTRADA EM TIMESTAMP SEM MILESEGUNDOS
         dataC6 = new Date(dataYea, dataMon, dataDay, 0, 0, 0); // ANO-MÊS-DIA 00:00:00
-        dataC6 = Math.floor(dataC6.getTime() / 1000);
+        let dif = Math.round((new Date().getTime() - dataC6.getTime()) / 1000 / 86400); // DIFERENÇA JÁ EM DIAS (ARREDONDADO)
+
         // DIFERENÇA MAIR QUE 5 DIAS 'true' DO CONTRÁRIO 'false' | + DE 5 DIAS → JÁ POSSUI CONTA | - DE 5 DIAS → ABERTO SF
-        dataC6 = !!((Number(dateHour().res.tim) - dataC6) > ((5 * 86400) + 86400));
+        dataC6 = !!(dif > 5);
 
         await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `${leadCnpj}_clientGetData_1`, 'awaitPageFinish': false, });
 
@@ -84,6 +85,7 @@ async function clientGetData(inf = {}) {
             'dataRes': dataC6 ? 'JÁ POSSUI CONTA' : 'ABERTO SF',
             'dataBoolean': dataC6,
             nameMaster,
+            dif,
         };
 
     } catch (catchErr) {
