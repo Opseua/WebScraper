@@ -128,7 +128,7 @@ async function serverRun(inf = {}) {
 
                         if (leadStatus === 'ENCONTRADO_CONTA' || leadStatus === 'ENCONTRADO_LEAD' || leadStatus === 'ENCONTRADO_EXPIRADO') {
                             // LEAD DA BASE [SIM] ******************************************************************
-                            retCliGetDat = await clientGetData({ page, browser, leadCnpj, }); // CLIENTE: PEGAR DADOS DO CONTA/LEAD
+                            retCliGetDat = await clientGetData({ page, browser, leadCnpj, leadStatus, }); // CLIENTE: PEGAR DADOS DO CONTA/LEAD
                             if (!retCliGetDat.ret) { logConsole({ e, ee, 'txt': `ERRO CLIENT GET DATA`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode(); }
                             else { retCliGetDat = retCliGetDat.res; } dataDayMonYea = retCliGetDat.dataDayMonYea; dataDayMonYeaFull = retCliGetDat.dataDayMonYeaFull; dataBoolean = retCliGetDat.dataBoolean;
                             dif = retCliGetDat.dif; statusInf = leadStatus === 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : retCliGetDat.dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull;

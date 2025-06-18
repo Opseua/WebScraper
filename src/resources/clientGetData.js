@@ -8,9 +8,15 @@ let e = import.meta.url, ee = e;
 async function clientGetData(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6, nameMaster;
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6, nameMaster, res;
 
-        let { page, browser, leadCnpj, } = inf;
+        let { page, browser, leadCnpj, leadStatus, } = inf;
+
+        async function screenshotAndStop(inf = {}) { // SCREENSHOT
+            let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
+            await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); await screenshot({ e, page, 'fileName': `err_${inf.screenshot || 'x'}`, });
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+        }
 
         // PEGAR O ID DO LINK DA PÁGINA DO LEAD
         pageValue = await page.content(); infRegex = { e, 'pattern': `data-recordid="(.*?)" rel=`, 'text': pageValue, }; retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) {
@@ -27,42 +33,45 @@ async function clientGetData(inf = {}) {
         await link.click();
 
         // E DEFINIR SE É TELA ANTIGA OU NOVA
-        let timeout = 30000; let selectors = [
-            '.uiOutputDateTime.forceOutputModStampWithPreview', '.slds-form.slds-form_stacked.slds-grid.slds-page-header__detail-row',
-        ]; try { let result = await Promise.race([page.waitForSelector(selectors[0], { timeout, }).then(() => 'ANTIGO'), page.waitForSelector(selectors[1], { timeout, }).then(() => 'NOVO'),]); pageResult = result; }
-        catch (catchErr) { pageResult = false; }
+        let timeout = 30000;
 
-        // DATA FOI ENCONTRADA
-        if (pageResult) {
-            if (pageResult === 'ANTIGO') {
-                // PEGAR O VALOR [TELA ANTIGA]
-                pageResult = await page.evaluate(() => {
-                    let elements = document.querySelectorAll('.uiOutputDateTime.forceOutputModStampWithPreview'); return Array.from(elements).map(element => element.textContent.trim());
-                }); leadDate = [pageResult[0],];
-            } else {
-                // ESPERAR O ELEMENTO APARECER [TELA NOVA]
-                await page.waitForFunction(() => {
-                    let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
-                }, { timeout, });
-                // PEGAR O VALOR
-                let leadDateAndMaster = await page.evaluate(() => {
-                    let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element ? element.textContent.trim() : null;
-                });
+        let params1 = {
+            'nameSearch': `TELA (ANTIGA)`, 'element': {
+                'elementMaxAwaitMil': 15000, 'tag': 'span', 'conteudo': 'Criado por', 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'test-id__field-label', },],
+            }, 'actions': [{ 'action': 'elementGetValue', },],
+        };
+        let params2 = {
+            'nameSearch': `TELA (NOVA)`, 'element': {
+                'elementMaxAwaitMil': 15000, 'tag': 'lightning-formatted-date-time', 'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
+            }, 'actions': [{ 'action': 'elementGetValue', },],
+        };
+        res = await Promise.race([
+            (page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params1)),
+            (page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params2)),
+        ]);
+        if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou a data do cliente`, 'screenshot': '1', }); }
 
-                // EXTRAIR DATA
-                infRegex = { e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDateAndMaster, };
-                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = '01/01/2001'; } else { pageResult = retRegex.res['1']; } leadDate = [`${pageResult} 00:00`,];
+        if (leadStatus !== 'ENCONTRADO_CONTA') {
+            // PEGAR O VALOR [TELA ANTIGA] (LEAD)
+            pageValue = await page.content();
+            leadDate = [pageValue.split('</lightning-formatted-text></records-modstamp>')[0].split('</span><lightning-formatted-text')[1].split('>')[1],];
+        } else {
+            // ESPERAR O ELEMENTO APARECER [TELA NOVA]
+            await page.waitForFunction(() => {
+                let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
+            }, { timeout, });
+            // PEGAR O VALOR
+            let leadDateAndMaster = await page.evaluate(() => {
+                let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element ? element.textContent.trim() : null;
+            });
 
-                // EXTRAIR MASTER
-                infRegex = { e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster, };
-                retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = 'ERRO'; } else { pageResult = retRegex.res['1']; } nameMaster = pageResult;
-            }
-        } // console.log(!!pageResult, leadDate)
+            // EXTRAIR DATA
+            infRegex = { e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDateAndMaster, };
+            retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = '01/01/2001'; } else { pageResult = retRegex.res['1']; } leadDate = [`${pageResult} 00:00`,];
 
-        if (!pageResult) {
-            err = `% Não achou a data de abertura`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
-            await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }; await log(infLog);
-            await screenshot({ e, page, 'fileName': `err_6`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
+            // EXTRAIR MASTER
+            infRegex = { e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster, };
+            retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = 'ERRO'; } else { pageResult = retRegex.res['1']; } nameMaster = pageResult;
         }
 
         // CHECAR SE É CONTA ANTIGA OU NOVA

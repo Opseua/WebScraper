@@ -31,7 +31,7 @@ async function elementAction(inf = {}) {
                 // ⬇️ Busca por XPath, se definido
                 if (inf.xpath) {
                     let xpathResult = document.evaluate(inf.xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); let encontrados = [];
-                    for (let i = 0; i < xpathResult.snapshotLength; i++) { encontrados.push(xpathResult.snapshotItem(i)); } clearInterval(intervalo); return resolve(encontrados);
+                    for (let i = 0; i < xpathResult.snapshotLength; i++) { encontrados.push(xpathResult.snapshotItem(i)); } if (encontrados.length > 0) { clearInterval(intervalo); return resolve(encontrados); }
                 }
                 let getAllElementsIncludingShadowDOM = (root = document) => {
                     let result = new Set(); let walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
@@ -154,7 +154,15 @@ async function elementAction(inf = {}) {
                                     resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO AO DEFINIR VALOR (${nameSearch}) → ${err.message}`, });
                                 }
                             } else if ('value' in el) {
-                                el.value = acao.elementValue; el.dispatchEvent(new Event('input', { bubbles: true, })); el.dispatchEvent(new Event('change', { bubbles: true, }));
+                                // ANTIGO
+                                // el.value = acao.elementValue; el.dispatchEvent(new Event('input', { bubbles: true, })); el.dispatchEvent(new Event('change', { bubbles: true, }));
+
+                                // NOVO
+                                el.focus(); let valor = acao.elementValue; el.value = valor;
+                                el.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true, })); el.dispatchEvent(new KeyboardEvent('keyup', { key: 'a', bubbles: true, }));
+                                el.dispatchEvent(new Event('input', { bubbles: true, })); el.dispatchEvent(new Event('change', { bubbles: true, })); el.blur();
+
+                                // NÃO ALTERADO
                                 resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${acao.action}]: OK (${nameSearch})`, });
                             } else {
                                 resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO | ELEMENTO NÃO ACEITA IMPUT (${nameSearch})`, });
@@ -198,12 +206,18 @@ globalThis['elementAction'] = elementAction;
 // let params;
 
 // params = { // [DIV] 'Oportunidade'
-//     'nameSearch': `[DIV] 'Oportunidade'`, 'element': {
-//         'elementMaxAwaitMil': 10000, 'tag': 'div', 'conteudo': `Oportunidade`,
-//         'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'entityNameTitle slds-line-height_reset', },],
-//     }, 'actions': [{ 'action': 'elementGetValue', },],
+//     'nameSearch': `TELA (ANTIGA)`, 'element': {
+//         'elementMaxAwaitMil': 2000, 'tag': 'span', // 'conteudo': 'Criado por',
+//         'propriedades': [
+//             { 'atributoNome': 'class', 'atributoValor': 'toastMessage forceActionsText', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'forceActionsText', },
+//         ],
+//     }, 'actions': [
+//         { 'action': 'elementGetValue', },
+//     ],
 // };
 
 // let encontrados = await elementAction(params);
 
 // console.log(encontrados);
+
+// // <span class="toastMessage forceActionsText" data-aura-rendered-by="3034:0" data-aura-class="forceActionsText">Existe uma oportunidade em andamento para o produto C6 Pay Link</span>
