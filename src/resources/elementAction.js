@@ -3,9 +3,8 @@
 // retModel = await elementoSearch(infModel); console.log(retModel)
 
 async function elementAction(inf = {}) {
-    let nameSearch = inf.nameSearch || 'xx'; let maxReturn = inf.element?.maxReturn || 10; let indexTarget = (inf.element?.indexTarget !== undefined) ? inf.element.indexTarget : -1;
-
-    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+    let nameSearch = inf.nameSearch || 'xx', maxReturn = inf.element?.maxReturn || 10, indexTarget = (inf.element?.indexTarget !== undefined) ? inf.element.indexTarget : -1;
+    let element = inf.element || {}; let maxAwaitMil = element.maxAwaitMil || 50; function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
     function getElementXPath(el) {
         let parts = []; while (el && el.nodeType === Node.ELEMENT_NODE) {
@@ -25,105 +24,57 @@ async function elementAction(inf = {}) {
     }
 
     async function elementSearch(inf = {}) {
-        let elementMaxAwaitMil = inf.elementMaxAwaitMil || 50; let inicio = Date.now();
-        return await new Promise(resolve => {
+        let inicio = Date.now(); return await new Promise(resolve => {
             let intervalo = setInterval(() => {
-                // ⬇️ Busca por XPath, se definido
-                if (inf.xpath) {
+                if (inf.xpath) {  // ⬇️ Busca por XPath, se definido
                     let xpathResult = document.evaluate(inf.xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); let encontrados = [];
                     for (let i = 0; i < xpathResult.snapshotLength; i++) { encontrados.push(xpathResult.snapshotItem(i)); } if (encontrados.length > 0) { clearInterval(intervalo); return resolve(encontrados); }
-                }
-                let getAllElementsIncludingShadowDOM = (root = document) => {
-                    let result = new Set(); let walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
-                    while (walker.nextNode()) { let node = walker.currentNode; result.add(node); if (node.shadowRoot) { for (let el of getAllElementsIncludingShadowDOM(node.shadowRoot)) { result.add(el); } } }
-                    return [...result,];
-                };
-                let todos = getAllElementsIncludingShadowDOM(); let resultadoBase = new Set();
-                for (let el of todos) {
-                    let ok = true;
-                    // buscaRapida: todos os termos devem estar no outerHTML
-                    if (ok && inf.buscaRapida && inf.buscaRapida.length > 0) {
+                } let getAllElementsIncludingShadowDOM = (root = document) => {
+                    let result = new Set(); let walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT); while (walker.nextNode()) {
+                        let node = walker.currentNode; result.add(node); if (node.shadowRoot) { for (let el of getAllElementsIncludingShadowDOM(node.shadowRoot)) { result.add(el); } }
+                    } return [...result,];
+                }; let todos = getAllElementsIncludingShadowDOM(); let resultadoBase = new Set(); for (let el of todos) {
+                    let ok = true; if (ok && inf.buscaRapida && inf.buscaRapida.length > 0) {  // buscaRapida: todos os termos devem estar no outerHTML
                         let html = (el.outerHTML || '').toLowerCase(); for (let termo of inf.buscaRapida) { if (!html.includes(termo.toLowerCase())) { ok = false; break; } }
-                    }
-                    // tag: deve ser uma das informadas
-                    if (ok && inf.tag) {
-                        if (el.tagName.toLowerCase() !== inf.tag.toLowerCase()) { ok = false; }
-                    }
-                    // conteudo: todos os termos devem estar no textContent ou value
-                    if (ok && inf.conteudo) {
+                    } if (ok && inf.tag) { if (el.tagName.toLowerCase() !== inf.tag.toLowerCase()) { ok = false; } /* tag: deve ser uma das informadas */ }
+                    if (ok && inf.conteudo) { // conteudo: todos os termos devem estar no textContent ou value
                         let termo = inf.conteudo.toLowerCase(); if (!(((el.textContent || '').toLowerCase()).includes(termo) || ((el.value || '').toLowerCase()).includes(termo))) { ok = false; }
-                    }
-                    // propriedades: todos devem ser atendidos
-                    if (ok && inf.propriedades && inf.propriedades.length > 0) {
-                        for (let prop of inf.propriedades) {
-                            let nomeOk = true; let valorOk = true;
-                            if (prop.atributoNome) {
-                                nomeOk = el.hasAttribute(prop.atributoNome);
-                            }
-                            if (prop.atributoValor) {
+                    } if (ok && inf.propriedades && inf.propriedades.length > 0) {
+                        for (let prop of inf.propriedades) { // propriedades: todos devem ser atendidos
+                            let nomeOk = true; let valorOk = true; if (prop.atributoNome) { nomeOk = el.hasAttribute(prop.atributoNome); } if (prop.atributoValor) {
                                 valorOk = false; for (let attr of el.attributes) { if (attr.value.includes(prop.atributoValor)) { valorOk = true; break; } }
-                            }
-                            if (!(nomeOk && valorOk)) {
-                                ok = false; break;
-                            }
+                            } if (!(nomeOk && valorOk)) { ok = false; break; }
                         }
-                    }
-                    if (ok) { resultadoBase.add(el); }
-                }
-                if (resultadoBase.size > 0 || elementMaxAwaitMil === 0) {
-                    clearInterval(intervalo);
-                    // Aplicar filtro de elementoParente, se houver
-                    if (!inf.elementoParente) {
-                        return resolve([...resultadoBase,]);
-                    }
-                    let resultadoFinal = new Set();
-                    for (let baseEl of resultadoBase) {
+                    } if (ok) { resultadoBase.add(el); }
+                } if (resultadoBase.size > 0 || maxAwaitMil === 0) {   // Aplicar filtro de elementoParente, se houver
+                    clearInterval(intervalo); if (!inf.elementoParente) { return resolve([...resultadoBase,]); } let resultadoFinal = new Set(); for (let baseEl of resultadoBase) {
                         let candidatos = new Set(); let tipo = inf.elementoParente.tipo;
-                        if (tipo === 'pai') {
-                            let atual = baseEl.parentElement; while (atual) { for (let el of getAllElementsIncludingShadowDOM(atual)) { candidatos.add(el); } atual = atual.parentElement; }
-                        }
-                        if (tipo === 'filho') {
-                            for (let el of getAllElementsIncludingShadowDOM(baseEl)) { candidatos.add(el); }
-                        }
-                        for (let el of candidatos) {
-                            let tagOk = true;
-                            if (inf.elementoParente.tag) {
-                                tagOk = el.tagName.toLowerCase() === inf.elementoParente.tag.toLowerCase();
-                            }
-                            let propOk = true;
+                        if (tipo === 'pai') { let atual = baseEl.parentElement; while (atual) { for (let el of getAllElementsIncludingShadowDOM(atual)) { candidatos.add(el); } atual = atual.parentElement; } }
+                        if (tipo === 'filho') { for (let el of getAllElementsIncludingShadowDOM(baseEl)) { candidatos.add(el); } } for (let el of candidatos) {
+                            let tagOk = true; if (inf.elementoParente.tag) { tagOk = el.tagName.toLowerCase() === inf.elementoParente.tag.toLowerCase(); } let propOk = true;
                             if (inf.elementoParente.propriedades) {
                                 propOk = inf.elementoParente.propriedades.every(p => {
-                                    let achou = false;
-                                    for (let attr of el.attributes) {
-                                        if (p.atributoNome && !p.atributoValor) {
-                                            if (attr.name === p.atributoNome) { achou = true; }
-                                        } else if (!p.atributoNome && p.atributoValor) {
+                                    let achou = false; for (let attr of el.attributes) {
+                                        if (p.atributoNome && !p.atributoValor) { if (attr.name === p.atributoNome) { achou = true; } } else if (!p.atributoNome && p.atributoValor) {
                                             if (attr.value.includes(p.atributoValor)) { achou = true; }
-                                        } else if (p.atributoNome && p.atributoValor) {
-                                            if (attr.name === p.atributoNome && attr.value.includes(p.atributoValor)) { achou = true; }
-                                        }
-                                    }
-                                    return achou;
+                                        } else if (p.atributoNome && p.atributoValor) { if (attr.name === p.atributoNome && attr.value.includes(p.atributoValor)) { achou = true; } }
+                                    } return achou;
                                 });
-                            }
-                            if (tagOk && propOk) { resultadoFinal.add(el); }
+                            } if (tagOk && propOk) { resultadoFinal.add(el); }
                         }
-                    }
-                    return resolve([...resultadoFinal,]);
-                }
-                if (Date.now() - inicio >= elementMaxAwaitMil) { clearInterval(intervalo); return resolve([]); }
+                    } return resolve([...resultadoFinal,]);
+                } if (Date.now() - inicio >= maxAwaitMil) { clearInterval(intervalo); return resolve([]); }
             }, 250); // intervalo de verificação
         });
     }
 
-    let element = inf.element || {}; let elementos = await elementSearch(element); let resultados = []; let actions = inf.actions || [];
-    if (!elementos || elementos.length === 0) { return [{ 'ret': false, 'msg': `ELEMENT ACTION: ERRO | NÃO ENCONTRADO/NÃO APARECEU A TEMPO (${nameSearch})`, },]; }
+    let elementos = await elementSearch(element); let resultados = []; let actions = inf.actions || []; let ehBodyIncludes = actions.some(a => a.action === 'bodyIncludes');
+    if ((!elementos || elementos.length === 0) && !ehBodyIncludes) { return [{ 'ret': false, 'msg': `ELEMENT ACTION: ERRO | NÃO ENCONTRADO/NÃO APARECEU A TEMPO (${nameSearch})`, },]; }
+    if (ehBodyIncludes) { elementos = [document.body,]; }
 
-    if (indexTarget > -1) { elementos = [elementos[indexTarget],]; } elementos = elementos.slice(0, maxReturn || elementos.length);
-    for (let el of elementos) {
+    if (indexTarget > -1) { elementos = [elementos[indexTarget],]; } elementos = elementos.slice(0, maxReturn || elementos.length); for (let el of elementos) {
         for (let [index, value,] of actions.entries()) {
-            let acao = value;
-            try {
+            let acao = value; try {
                 if (!el.isConnected) {
                     resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO | ELEMENTO NÃO ESTÁ MAIS NO DOM (${nameSearch})`, }); continue;
                 }
@@ -154,15 +105,10 @@ async function elementAction(inf = {}) {
                                     resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO AO DEFINIR VALOR (${nameSearch}) → ${err.message}`, });
                                 }
                             } else if ('value' in el) {
-                                // ANTIGO
-                                // el.value = acao.elementValue; el.dispatchEvent(new Event('input', { bubbles: true, })); el.dispatchEvent(new Event('change', { bubbles: true, }));
-
-                                // NOVO
                                 el.focus(); let valor = acao.elementValue; el.value = valor;
                                 el.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true, })); el.dispatchEvent(new KeyboardEvent('keyup', { key: 'a', bubbles: true, }));
                                 el.dispatchEvent(new Event('input', { bubbles: true, })); el.dispatchEvent(new Event('change', { bubbles: true, })); el.blur();
 
-                                // NÃO ALTERADO
                                 resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${acao.action}]: OK (${nameSearch})`, });
                             } else {
                                 resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO | ELEMENTO NÃO ACEITA IMPUT (${nameSearch})`, });
@@ -185,6 +131,14 @@ async function elementAction(inf = {}) {
                         resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${acao.action}]: OK (${nameSearch})`, 'res': (document.body.textContent || ''), });
                         break;
 
+                    case 'bodyIncludes':
+                        let inicio = Date.now(); let encontrou = false; while ((Date.now() - inicio) < maxAwaitMil) {
+                            let body = (document.body.textContent || ''); if (acao.lowerCase) { body = body.toLowerCase(); }
+                            if (body.includes(acao.text)) { encontrou = true; break; } await sleep(250);
+                        } if (encontrou) { resultados.push({ 'ret': true, 'msg': `ELEMENT ACTION [${acao.action}]: OK | TEXTO ENCONTRADO (${nameSearch})`, 'res': acao.text, }); }
+                        else { resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO | TEXTO NÃO ENCONTRADO/NÃO APARECEU A TEMPO (${nameSearch})`, }); }
+                        break;
+
                     default:
                         resultados.push({ 'ret': false, 'msg': `ELEMENT ACTION [${acao.action}]: ERRO | AÇÃO INVÁLIDA (${nameSearch})`, });
                 }
@@ -201,23 +155,23 @@ async function elementAction(inf = {}) {
 globalThis['elementAction'] = elementAction;
 
 
-
-
 // let params;
 
 // params = { // [DIV] 'Oportunidade'
 //     'nameSearch': `TELA (ANTIGA)`, 'element': {
-//         'elementMaxAwaitMil': 2000, 'tag': 'span', // 'conteudo': 'Criado por',
-//         'propriedades': [
-//             { 'atributoNome': 'class', 'atributoValor': 'toastMessage forceActionsText', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'forceActionsText', },
-//         ],
+//         'maxAwaitMil': 2000, 'tag': 'ul',
+//         'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'errorsList slds-list_dotted slds-m-left_medium', },],
 //     }, 'actions': [
 //         { 'action': 'elementGetValue', },
 //     ],
 // };
 
-// let encontrados = await elementAction(params);
+// params = { // [DIV] 'Oportunidade'
+//     'nameSearch': `TELA (ANTIGA)`, 'element': {
+//         'maxAwaitMil': 15000,
+//     }, 'actions': [
+//         { 'action': 'bodyIncludes', 'text': 'Criação concluída', 'lowerCase': false, },
+//     ],
+// };
 
-// console.log(encontrados);
-
-// // <span class="toastMessage forceActionsText" data-aura-rendered-by="3034:0" data-aura-class="forceActionsText">Existe uma oportunidade em andamento para o produto C6 Pay Link</span>
+// let encontrados = await elementAction(params); console.log(encontrados);

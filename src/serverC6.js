@@ -179,6 +179,8 @@ async function serverRun(inf = {}) {
                                 statusInf = 'ALERTA: CNPJ inválido';
                             } else if (imputRes === 'ALERTA: email inválido') {
                                 statusInf = 'ALERTA: email inválido';
+                            } else if (imputRes === 'ALERTA: nome inválido') {
+                                statusInf = 'ALERTA: nome inválido';
                             } else if (imputRes === 'ALERTA: campo não preenchido') {
                                 statusInf = 'ALERTA: campo não preenchido';
                             } else if (imputRes === 'ALERTA: status não identificado') {

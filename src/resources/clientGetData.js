@@ -8,7 +8,7 @@ let e = import.meta.url, ee = e;
 async function clientGetData(inf = {}) {
     let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
     try {
-        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6, nameMaster, res;
+        let infRegex, retRegex, infSendData, infLog, err, pageValue, pageResult, leadPageId, leadDate = [], dataC6, nameMaster, res, params1, params2;
 
         let { page, browser, leadCnpj, leadStatus, } = inf;
 
@@ -35,14 +35,14 @@ async function clientGetData(inf = {}) {
         // E DEFINIR SE É TELA ANTIGA OU NOVA
         let timeout = 30000;
 
-        let params1 = {
+        params1 = {
             'nameSearch': `TELA (ANTIGA)`, 'element': {
-                'elementMaxAwaitMil': 15000, 'tag': 'span', 'conteudo': 'Criado por', 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'test-id__field-label', },],
+                'maxAwaitMil': 15000, 'tag': 'span', 'conteudo': 'Criado por', 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'test-id__field-label', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         };
-        let params2 = {
+        params2 = {
             'nameSearch': `TELA (NOVA)`, 'element': {
-                'elementMaxAwaitMil': 15000, 'tag': 'lightning-formatted-date-time', 'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
+                'maxAwaitMil': 15000, 'tag': 'lightning-formatted-date-time', 'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         };
         res = await Promise.race([
