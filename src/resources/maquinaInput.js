@@ -48,6 +48,8 @@ async function maquinaInput(inf = {}) {
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
+        await new Promise(r => { setTimeout(r, 2000); });
+
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dados`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Novo'
             'nameSearch': `[BUTTON] 'Novo'`, 'element': {
@@ -56,6 +58,8 @@ async function maquinaInput(inf = {}) {
                 { 'atributoNome': 'type', 'atributoValor': 'button', }, { 'atributoNome': 'part', 'atributoValor': 'button', },],
             }, 'actions': [{ 'action': 'awaitMil', 'time': 500, }, { 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[1]?.msg || 'x');
+
+        await new Promise(r => { setTimeout(r, 2000); });
 
         // ******************** {Dados iniciais}
 
@@ -66,6 +70,8 @@ async function maquinaInput(inf = {}) {
                 { 'atributoNome': 'inputmode', 'atributoValor': 'decimal', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[0]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+
+        if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou a tela das taxas`, 'screenshot': '11', }); } // NÃO ACHOU A TELA COM AS TAXAS (FORÇAR PARADA)
 
         params = { // [INPUT] 'Crédito à vista'
             'nameSearch': `[INPUT] 'Crédito à vista'`, 'element': {

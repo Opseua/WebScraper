@@ -10,7 +10,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = time.hou, houMinSecMil = `${hou}.${time.min}.${time.sec}.${time.mil}`;
-        let pathWork = `logs/Registros/${mon}/${day}/${hou}.00-${hou}.59/${gW.firstFileCall.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'text': 'x', });
+        let pathWork = `logs/Registros/${mon}/${day}/${hou}.00-${hou}.59/${gW.firstFileCall.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
         function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 60, startupTab = nowFun(), startupTabCookie = startupTab, infSendData;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
@@ -113,7 +113,7 @@ async function serverRun(inf = {}) {
                             leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###'); if (leadAdministrador.length < 2) {
                                 leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###');
                             } leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = lead[7];
-                            coldList = gO.inf.sheetTab === 'LISTA_FRIA' || leadOrigem.includes('JSF') || !!leadOrigem.includes('JUCESP'); leadTelefone = coldList ? '887766' : leadTelefone;
+                            coldList = leadOrigem.includes('JSF'); leadTelefone = coldList ? '887766' : leadTelefone;
                         } else {
                             ({
                                 linha: leadLinha, cnpj: leadCnpj, dadosIniciais: leadDadosIniciais, produtos: leadProdutos, taxas: leadTaxas, modelo: leadModelo, quantidade: leadQuantidade, operadora: leadOperadora,

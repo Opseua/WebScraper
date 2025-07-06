@@ -66,8 +66,7 @@ async function clientGetData(inf = {}) {
             });
 
             // EXTRAIR DATA
-            infRegex = { e, 'pattern': `Início Relacionamento(.*?)Segmentação`, 'text': leadDateAndMaster, };
-            retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = '01/01/2001'; } else { pageResult = retRegex.res['1']; } leadDate = [`${pageResult} 00:00`,];
+            let m = leadDateAndMaster.match(/Início Relacionamento(\d{2}\/\d{2}\/\d{4})/); leadDate = [`${m[1]} 00:00`,];
 
             // EXTRAIR MASTER
             infRegex = { e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster, };

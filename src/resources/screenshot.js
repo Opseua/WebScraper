@@ -43,7 +43,7 @@ async function screenshot(inf = {}) {
             pathOk = `logs/Registros/${!byHour ? `` : `${pathOk}_`}${fileName}.png`;
 
             // CRIAR PASTA
-            if (byHour) { let r = await file({ 'action': 'write', 'path': `${pathOk.replace(pathOk.split('/').reverse()[0], '')}#_Z_#.txt`, 'text': `${pathOk}\n`, 'add': true, }); if (!r.ret) { return r; } }
+            if (byHour) { let r = await file({ 'action': 'write', 'path': `${pathOk.replace(pathOk.split('/').reverse()[0], '')}#_Z_#.txt`, 'content': `${pathOk}\n`, 'add': true, }); if (!r.ret) { return r; } }
 
             // ESPERAR A PÁGINA TERMINAR DE CARREGAR TODOS OS ELEMENTOS
             if (awaitPageFinish) {
