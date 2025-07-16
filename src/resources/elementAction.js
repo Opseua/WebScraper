@@ -3,7 +3,7 @@
 // retModel = await elementoSearch(infModel); console.log(retModel)
 
 async function elementAction(inf = {}) {
-    let nameSearch = inf.nameSearch || 'xx', maxReturn = inf.element?.maxReturn || 10, indexTarget = (inf.element?.indexTarget !== undefined) ? inf.element.indexTarget : -1;
+    let nameSearch = inf.nameSearch || 'xx', maxReturn = Number(inf.element?.maxReturn) || 10, indexTarget = (inf.element?.indexTarget !== undefined) ? inf.element.indexTarget : -1;
     let element = inf.element || {}; let maxAwaitMil = element.maxAwaitMil || 50; function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
     function getElementXPath(el) {
@@ -37,8 +37,8 @@ async function elementAction(inf = {}) {
                     let ok = true; if (ok && inf.buscaRapida && inf.buscaRapida.length > 0) {  // buscaRapida: todos os termos devem estar no outerHTML
                         let html = (el.outerHTML || '').toLowerCase(); for (let termo of inf.buscaRapida) { if (!html.includes(termo.toLowerCase())) { ok = false; break; } }
                     } if (ok && inf.tag) { if (el.tagName.toLowerCase() !== inf.tag.toLowerCase()) { ok = false; } /* tag: deve ser uma das informadas */ }
-                    if (ok && inf.conteudo) { // conteudo: todos os termos devem estar no textContent ou value
-                        let termo = inf.conteudo.toLowerCase(); if (!(((el.textContent || '').toLowerCase()).includes(termo) || ((el.value || '').toLowerCase()).includes(termo))) { ok = false; }
+                    if (ok && inf.content) { // content: todos os termos devem estar no textContent ou value
+                        let termo = inf.content.toLowerCase(); if (!(((el.textContent || '').toLowerCase()).includes(termo) || ((el.value || '').toLowerCase()).includes(termo))) { ok = false; }
                     } if (ok && inf.propriedades && inf.propriedades.length > 0) {
                         for (let prop of inf.propriedades) { // propriedades: todos devem ser atendidos
                             let nomeOk = true; let valorOk = true; if (prop.atributoNome) { nomeOk = el.hasAttribute(prop.atributoNome); } if (prop.atributoValor) {
@@ -157,21 +157,17 @@ globalThis['elementAction'] = elementAction;
 
 // let params;
 
-// params = { // [DIV] 'Oportunidade'
-//     'nameSearch': `TELA (ANTIGA)`, 'element': {
-//         'maxAwaitMil': 2000, 'tag': 'ul',
-//         'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'errorsList slds-list_dotted slds-m-left_medium', },],
-//     }, 'actions': [
-//         { 'action': 'elementGetValue', },
-//     ],
-// };
-
-// params = { // [DIV] 'Oportunidade'
-//     'nameSearch': `TELA (ANTIGA)`, 'element': {
-//         'maxAwaitMil': 15000,
-//     }, 'actions': [
-//         { 'action': 'bodyIncludes', 'text': 'Criação concluída', 'lowerCase': false, },
-//     ],
+// params = { // [DIV] 'Resultado lupa (lead encontrado)'
+//     'nameSearch': `{INDICADO}`, 'element': {
+//         'maxAwaitMil': 2000, 'tag': 'records-entity-label',
+//         'propriedades': [{ 'atributoNome': 'slot', 'atributoValor': 'entityLabel', },],
+//     }, 'actions': [{ 'action': 'elementGetValue', },],
 // };
 
 // let encontrados = await elementAction(params); console.log(encontrados);
+
+// {/* <div lwc-3mmmrd7j9v4="" class="entityNameTitle slds-line-height--reset">
+//   <slot lwc-3mmmrd7j9v4="" name="entityLabel">
+//     <records-entity-label slot="entityLabel">Lead</records-entity-label>
+//   </slot>
+// </div> */}

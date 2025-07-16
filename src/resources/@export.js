@@ -29,6 +29,7 @@ globalThis['getTextElement'] = (inf) => { return importFun({ 'engOk': (!eng), 'p
 globalThis['imput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/imput.js`, inf, project, }); };
 globalThis['maquinaInput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/maquinaInput.js`, inf, project, }); };
 globalThis['navigate'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/navigate.js`, inf, project, }); };
+globalThis['newAccounts'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/newAccounts.js`, inf, project, }); };
 globalThis['screenshot'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/screenshot.js`, inf, project, }); };
 globalThis['sendData'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/sendData.js`, inf, project, }); };
 

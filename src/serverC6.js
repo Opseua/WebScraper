@@ -22,7 +22,7 @@ async function serverRun(inf = {}) {
             await processForceStop({ 'origin': `${title} ${text}`, });
         } function stringToObj(t, s) { let o = {}; try { let p = t.split(s); for (let i = 0; i < p.length; i += 2) { o[p[i]] = p[i + 1] !== undefined ? p[i + 1] : ''; } } catch (c) { o = false; } return o; }
 
-        let coldList, err, browser, page, pageValue, dataDayMonYea, autRange, leadStatus, json, retGoogleSheets, retCliGetDat, retClientImput, retClientSearch, retMaquinaInput, range = 'A2'; gO.inf['stop'] = false;
+        let coldList, err, browser, page, pageValue, autRange, leadStatus, json, retGoogleSheets, retCliGetDat, retClientImput, retClientSearch, retMaquinaInput, range = 'A2'; gO.inf['stop'] = false;
         let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); // gW.firstFileCall = 'serverC6_New2'; // TESTES
 
         /* DEFINIR O ID DA PLANILHA E ATALHO */ // gW.firstFileCall = 'serverC6_New3'; // ← ************ TESTES ************
@@ -54,12 +54,9 @@ async function serverRun(inf = {}) {
             ], 'ignoreDefaultArgs': ['--disable-extensions',],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
-        // COOKIE [SET]
-        await cookiesGetSet({ e, page, 'action': 'set', 'value': aut, });
-
-        // ABRIR PÁGINA DE BUSCA GLOBAL
-        async function openHome() { await page.goto('https://c6bank.my.site.com/partners/s/createrecord/IndicacaoContaCorrente', { waitUntil: 'networkidle2', }); await screenshot({ e, page, 'fileName': `screenshot`, }); }
-        await openHome();
+        // COOKIE [SET] | ABRIR PÁGINA DE BUSCA GLOBAL
+        await cookiesGetSet({ e, page, 'action': 'set', 'value': aut, }); let url = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default';
+        async function openHome() { await page.goto(url, { waitUntil: 'networkidle2', }); await screenshot({ e, page, 'fileName': `screenshot`, }); } await openHome();
 
         // COOKIE: CHECAR E SALVAR
         async function cookieCheckSave() {
@@ -86,34 +83,34 @@ async function serverRun(inf = {}) {
                 logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData); await processForceStop({ 'origin': 'serverC6 STATUS1 [Fora do horário permitido]', }); // FORÇAR PARADA DO SCRIPT
             } else {
                 // (SEG <> DMON → [00:00] <> [00:00]) DEFINIR ABA ATUAL
-                tabsInf['index'] = tabsInf.index < (tabsInf.names.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.names[tabsInf.index];
+                tabsInf['index'] = tabsInf.index < (tabsInf.names.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.names[tabsInf.index]; let sheetTab = gO.inf.sheetTab;
 
                 if ((tabsInf.lastCheck[tabsInf.index]) > now) {
-                    // IGNORAR CHECAGEM
-                    logConsole({ e, ee, 'txt': `IGNORADA | ${gO.inf.sheetTab}`, });
+                    logConsole({ e, ee, 'txt': `IGNORADA | ${sheetTab}`, }); // IGNORAR CHECAGEM
                 } else {
                     // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
-                    retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, range, }); if (!retGoogleSheets.ret) {
+                    retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': sheetTab, range, }); if (!retGoogleSheets.ret) {
                         err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]', }); // FORÇAR PARADA DO SCRIPT
                     } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
                     catch (c) { await errA2(`[1]`); /* FORÇAR PARADA DO SCRIPT */ } let { colC6: col, leadsQtd, leads: lead, } = gO.inf.sheetKepp; tabsInf['leadsQtd'][tabsInf.index] = Number(leadsQtd);
 
-                    logConsole({ e, ee, 'txt': `LEADS: ${tabsInf.leadsQtd[tabsInf.index]} | ${gO.inf.sheetTab}`, }); if (tabsInf.leadsQtd[tabsInf.index] === 0) {
+                    logConsole({ e, ee, 'txt': `LEADS: ${tabsInf.leadsQtd[tabsInf.index]} | ${sheetTab}`, }); if (tabsInf.leadsQtd[tabsInf.index] === 0) {
                         tabsInf.lastCheck[tabsInf.index] = now + secAwaitNewCheck; await sendData({ e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...`, }); // NADA PENDENTE
                     } else {
-                        let leadLinha, leadCnpj, leadTelefone, leadEmail, leadAdministrador, leadPrimeiroNome, leadSobrenome, leadOrigem, statusInf = 'STATUS NÃO DEFINIDO 1', statusDate = '', statusDateFull = '', dif = 0;
-                        let leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia, nameMaster = '', dataBoolean, dataDayMonYeaFull;
+                        if (sheetTab === 'BOAS_VINDAS') { await newAccounts({ page, browser, 'sheetKepp': gO.inf.sheetKepp, }); tabsInf.lastCheck[tabsInf.index] = now + secAwaitNewCheck; continue; }
+
+                        let leadLinha, leadCnpj, leadTelefone, leadEmail, leadRazaoSocial, leadAdministrador, leadPrimeiroNome, leadSobrenome, leadOrigem, statusInf = 'STATUS NÃO DEFINIDO', dif = 0;
+                        let leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia, nameMaster = '', leadDate = '';
 
                         // DADOS DO LEAD
                         if (!lead.includes('KEY_VALUE')) {
                             lead = lead.split(conSpl); leadLinha = lead[0].replace(/^\s+/g, '').replace('LINHA_', ''); leadCnpj = lead[2].replace(/^\s+/g, '');
-                            leadTelefone = `55${lead[3].replace(/^\s+/g, '')}`; leadEmail = lead[5].length > 4 ? lead[5] : 'semEmail@gmail.com';
+                            leadTelefone = `55${lead[3].replace(/^\s+/g, '')}`; leadEmail = lead[5].length > 4 ? lead[5] : 'semEmail@gmail.com'; leadRazaoSocial = lead[6];
                             leadAdministrador = lead[4].length > 4 && lead[4].includes(' ') ? lead[4] : lead[6].length > 4 ? lead[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)];
                             leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###'); if (leadAdministrador.length < 2) {
                                 leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###');
-                            } leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = lead[7];
-                            coldList = leadOrigem.includes('JSF'); leadTelefone = coldList ? '887766' : leadTelefone;
+                            } leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = lead[7]; coldList = leadOrigem.includes('JSF'); leadTelefone = coldList ? '887766' : leadTelefone;
                         } else {
                             ({
                                 linha: leadLinha, cnpj: leadCnpj, dadosIniciais: leadDadosIniciais, produtos: leadProdutos, taxas: leadTaxas, modelo: leadModelo, quantidade: leadQuantidade, operadora: leadOperadora,
@@ -122,92 +119,75 @@ async function serverRun(inf = {}) {
                         }
 
                         // CLIENTE: BUSCAR NA LUPA
-                        retClientSearch = await clientSearch({ page, browser, leadCnpj, }); if (!retClientSearch.ret) {
-                            logConsole({ e, ee, 'txt': `ERRO CLIENT SEACH`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
-                        } else { retClientSearch = retClientSearch.res.leadStatus; } leadStatus = retClientSearch;
+                        retClientSearch = (await clientSearch({ page, browser, leadCnpj, })).res; leadStatus = retClientSearch.leadStatus; leadDate = retClientSearch.leadDate;
 
-                        if (leadStatus === 'ENCONTRADO_CONTA' || leadStatus === 'ENCONTRADO_LEAD' || leadStatus === 'ENCONTRADO_EXPIRADO') {
-                            // LEAD DA BASE [SIM] ******************************************************************
-                            retCliGetDat = await clientGetData({ page, browser, leadCnpj, leadStatus, }); // CLIENTE: PEGAR DADOS DO CONTA/LEAD
-                            if (!retCliGetDat.ret) { logConsole({ e, ee, 'txt': `ERRO CLIENT GET DATA`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode(); }
-                            else { retCliGetDat = retCliGetDat.res; } dataDayMonYea = retCliGetDat.dataDayMonYea; dataDayMonYeaFull = retCliGetDat.dataDayMonYeaFull; dataBoolean = retCliGetDat.dataBoolean;
-                            dif = retCliGetDat.dif; statusInf = leadStatus === 'ENCONTRADO_LEAD' ? 'INDICAÇÃO OK' : retCliGetDat.dataRes; statusDate = dataDayMonYea; statusDateFull = dataDayMonYeaFull;
-                            if (gO.inf.sheetTab === 'NOME_MASTER') { nameMaster = retCliGetDat.nameMaster; }
+                        // CLIENTE: PEGAR DADOS DO CONTA (SE NÃO FOR LEAD)
+                        if (['ENCONTRADO_CONTA',].includes(leadStatus)) { retCliGetDat = (await clientGetData({ page, browser, leadCnpj, })).res; leadDate = retCliGetDat.leadDate; nameMaster = retCliGetDat.nameMaster; }
+
+                        // CALCULAR DIFERENÇA DE DATA (LEAD OU CONTA)
+                        if (leadDate) { // ANO-MÊS-DIA 00:00:00 | DIFERENÇA JÁ EM DIAS (ARREDONDADO)
+                            let data = leadDate.split('/'); let dataDay = parseInt(data[0], 10).toString().padStart(2, '0'); let dataMon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
+                            let dataYea = parseInt(data[2], 10).toString().padStart(4, '0'); dif = new Date(dataYea, dataMon, dataDay, 0, 0, 0); dif = Math.round((new Date().getTime() - dif.getTime()) / 1000 / 86400);
                         }
 
-                        if (['SOMENTE_CONSULTAR', 'NOME_MASTER', 'RECHECAGEM', 'MAQUINA_MANUAL',].includes(gO.inf.sheetTab)) {
-                            if (!(leadStatus === 'ENCONTRADO_CONTA' && ['MAQUINA_MANUAL',].includes(gO.inf.sheetTab))) {
-                                statusInf = statusInf.includes(`STATUS NÃO DEFINIDO`) ? 'NADA ENCONTRADO' : leadStatus === 'ENCONTRADO_EXPIRADO' ? 'FORA DO PRAZO' : statusInf;
-                                if (gO.inf.sheetTab === 'NOME_MASTER') { statusDateFull = statusDateFull || 'xx/xx/xxxx 00:00'; nameMaster = nameMaster || 'NÃO ENCONTRADO'; }
-                            } else {
-                                retMaquinaInput = await maquinaInput({
-                                    page, browser, leadCnpj, leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia,
-                                }); statusInf = retMaquinaInput.res.imputRes; statusDate = '';
-                            }
-                        } else if (leadStatus === 'NADA_ENCONTRADO' || leadStatus === 'ENCONTRADO_EXPIRADO') {
-                            // CLIENTE: INDICAR → LEAD DA BASE [NÃO] | EXPIRADO
-                            retClientImput = await clientImput({ page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, 'leadTelefone': coldList ? leadTelefone.replace('55219', '219') : leadTelefone, });
-                            if (!retClientImput.ret) { logConsole({ e, ee, 'txt': `ERRO CLIENT IMPUT`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode(); }
-                            else { retClientImput = retClientImput.res; } let imputRes = retClientImput.imputRes;
+                        if (['INDICAR_MANUAL', 'INDICAR_AUTOMATICO',].includes(sheetTab) && (leadStatus === 'NADA_ENCONTRADO' || (leadStatus === 'ENCONTRADO_EXPIRADO' && (dif > 45)))) {
+                            // IMPUT NECESSÁRIO: SIM → IMPUTAR LEAD
+                            leadTelefone = coldList ? leadTelefone.replace('55219', '219') : leadTelefone;
+                            retClientImput = (await clientImput({ page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadRazaoSocial, })).res; statusInf = retClientImput.imputRes;
+                        } else if (['MAQUINA_MANUAL',].includes(sheetTab) && leadStatus === 'ENCONTRADO_CONTA') {
+                            // IMPUT NECESSÁRIO: SIM → IMPUTAR MÁQUINA
+                            retMaquinaInput = await maquinaInput({
+                                page, browser, leadCnpj, leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia,
+                            }); retMaquinaInput = retMaquinaInput.res; statusInf = retMaquinaInput.imputRes;
+                        } if (sheetTab !== 'NOME_MASTER') { nameMaster = ''; } // OCULTAR O NOME DO MASTER EM ABAS QUE NÃO PRECISAM
 
-                            // STATUS DE ACORDO COM O ERRO VERMELHO
-                            if (imputRes === 'Já existe um lead cadastrado com o CNPJ informado' || imputRes === 'Lead pertence a outro escritorio') {
-                                if (leadStatus === 'ENCONTRADO_EXPIRADO' & dif < 45) {
-                                    statusInf = 'FORA DO PRAZO';
-                                } else {
-                                    statusInf = 'INDICAÇÃO OUTRO ECE';
-                                }
-                            } else if (imputRes === 'Já existe um cliente cadastrado com o CNPJ informado' & dif < 45) {
-                                if (leadStatus === 'ENCONTRADO_EXPIRADO') {
-                                    statusInf = 'FORA DO PRAZO';
-                                } else {
-                                    statusInf = leadStatus === 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF';
-                                }
-                            } else if (imputRes === 'Já existe um lead e um cliente cadastrado com o CNPJ informado') {
-                                if (leadStatus === 'ENCONTRADO_EXPIRADO' & dif < 45) {
-                                    statusInf = 'FORA DO PRAZO';
-                                } else {
-                                    statusInf = leadStatus === 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dataBoolean ? 'JÁ POSSUI CONTA' : 'ABERTO SF';
-                                }
-                            } else if (imputRes === 'Lead expirou' || imputRes === 'Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo') {
-                                statusInf = 'FORA DO PRAZO';
-                            } else if (imputRes === 'INDICAÇÃO OK') {
-                                statusInf = 'INDICAÇÃO OK';
-                            } else if (imputRes === 'ALERTA: telefone inválido') {
-                                statusInf = coldList ? 'DISPONÍVEL' : 'ALERTA: telefone inválido';
-                            } else if (imputRes === 'ALERTA: CNPJ inválido') {
-                                statusInf = 'ALERTA: CNPJ inválido';
-                            } else if (imputRes === 'ALERTA: email inválido') {
-                                statusInf = 'ALERTA: email inválido';
-                            } else if (imputRes === 'ALERTA: nome inválido') {
-                                statusInf = 'ALERTA: nome inválido';
-                            } else if (imputRes === 'ALERTA: campo não preenchido') {
-                                statusInf = 'ALERTA: campo não preenchido';
-                            } else if (imputRes === 'ALERTA: status não identificado') {
-                                statusInf = 'ALERTA: status não identificado';
-                            } else {
-                                statusInf = 'STATUS NÃO DEFINIDO 1';
-                            }
+                        // DEFINIR STATUS FINAL
+                        if (statusInf.includes('INDICAÇÃO') || (['MAQUINA_MANUAL',].includes(sheetTab) && leadStatus === 'ENCONTRADO_CONTA')) {
+                            statusInf = statusInf; if (!statusInf.includes('ERR') && sheetTab !== 'MAQUINA_MANUAL') { leadDate = `${time.day}/${time.mon}/${time.yea} ${time.hou}:${time.min}:${time.sec}`; }
+                        } else if (statusInf.includes('Já existe um lead cadastrado com o CNPJ informado') || statusInf.includes('Lead pertence a outro escritorio')) {
+                            statusInf = leadStatus === 'ENCONTRADO_EXPIRADO' & dif < 45 ? 'FORA DO PRAZO' : 'INDICAÇÃO OUTRO ECE';
+                        } else if (statusInf.includes('Já existe um cliente cadastrado com o CNPJ informado') || statusInf.includes('Já existe um lead e um cliente cadastrado com o CNPJ informado')) {
+                            statusInf = leadStatus === 'NADA_ENCONTRADO' ? 'JÁ POSSUI CONTA (OUTRO ECE)' : dif < 5 ? 'ABERTO SF' : 'JÁ POSSUI CONTA';
+                        } else if (statusInf.includes('Lead expirou') || statusInf.includes('Esse lead foi indicado por você ou membros do seu escritório recentemente e a conta não foi aberta no prazo')) {
+                            statusInf = 'FORA DO PRAZO';
+                        } else if (statusInf.includes('elefone')) {
+                            statusInf = 'ALERTA: telefone inválido';
+                        } else if (statusInf.includes('CNPJ')) {
+                            statusInf = 'ALERTA: CNPJ inválido';
+                        } else if (statusInf.includes('mail')) {
+                            statusInf = 'ALERTA: email inválido';
+                        } else if (statusInf.includes('completo')) {
+                            statusInf = 'ALERTA: nome inválido';
+                        } else if (statusInf.includes('Os seguintes campos obrigatórios devem ser preenchidos')) {
+                            statusInf = 'ALERTA: campo não preenchido';
+                        } else if (statusInf.includes('CAPTCHA')) {
+                            statusInf = 'BLOQUEADO PELO CAPTCHA';
+                        } else if (['ENCONTRADO_CONTA',].includes(leadStatus)) {
+                            statusInf = dif < 5 ? 'ABERTO SF' : 'JÁ POSSUI CONTA';
+                        } else if (['ENCONTRADO_LEAD',].includes(leadStatus)) {
+                            statusInf = 'INDICAÇÃO OK';
+                        } else if (['ENCONTRADO_EXPIRADO',].includes(leadStatus)) {
+                            statusInf = dif < 45 ? 'FORA DO PRAZO' : 'EXPIRADO';
+                        } else if (['NADA_ENCONTRADO',].includes(leadStatus)) {
+                            statusInf = 'NADA ENCONTRADO';
+                        } else if (!statusInf.includes('INDICAÇÃO')) {
+                            statusInf = 'STATUS NÃO DEFINIDO';
                         }
 
-                        // STATUS1 [STATUS DA CONSULTA]
-                        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | ${statusInf} ${statusDate}`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
-                        await screenshot({ e, page, 'fileName': `screenshot`, }); // MANDAR PARA A PLANILHA O RESULTADO 
-                        time = dateHour().res; let results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, statusDateFull, nameMaster,],]; results = results[0].join(conSpl);
-                        retGoogleSheets = await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results,],], }); if (!retGoogleSheets.ret) {
+                        // STATUS1 [STATUS DA CONSULTA] | MANDAR PARA A PLANILHA O RESULTADO
+                        let t = `${leadCnpj} | ${statusInf}`; logConsole({ e, ee, 'txt': `${t}`, }); await sendData({ e, 'stop': false, 'status1': `${t}`, }); await screenshot({ e, page, 'fileName': `screenshot`, });
+                        time = dateHour().res; let results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, leadDate || '', nameMaster || '',],]; results = results[0].join(conSpl);
+                        retGoogleSheets = await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results,],], }); if (!retGoogleSheets.ret) {
                             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
                             await screenshot({ e, page, 'fileName': `err_7`, }); await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO', }); // FORÇAR PARADA DO SCRIPT
                         }
                     }
                 }
 
-                // COOKIE KEEP [F5] {x MIN}: (CASO NENHUMA ABA TENHA LEADS PENDENTES)
+                // COOKIE KEEP [F5] {x MIN}: (CASO NENHUMA ABA TENHA LEADS PENDENTES) | COOKIE SALVAR {x MIN}: CHECAR SE EXPIROU E REGISTRAR NA PLANILHA
                 if ((startupTab + (5 * 60)) < now && tabsInf.leadsQtd.reduce((a, c) => a + c, 0) === 0) {
                     startupTab = now; logConsole({ e, ee, 'txt': `ATUALIZANDO PÁGINA [KEEP COOKIE]`, }); await openHome(); await new Promise(r => { setTimeout(r, 30000); });
-                }
-
-                // COOKIE SALVAR {x MIN}: CHECAR SE EXPIROU E REGISTRAR NA PLANILHA
-                if ((startupTabCookie + (5 * 60)) < now) { startupTabCookie = now; await cookieCheckSave(); }
+                } if ((startupTabCookie + (5 * 60)) < now) { startupTabCookie = now; await cookieCheckSave(); }
 
             }
 
