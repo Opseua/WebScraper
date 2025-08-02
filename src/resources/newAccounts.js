@@ -25,7 +25,7 @@ async function newAccounts(inf = {}) {
 
         // PEGAR CNPJs ANTIGOS DA PLANILHA E ABA DE BOAS VINDAS
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': `${id2}`, 'tab': `${tabContas}`, 'range': `${colContas}:${colContas}`, });
-        let leadsObj = {}; for (let [index, value,] of retGoogleSheets.res.entries()) { if (!leadsObj[`_${value}`]) { leadsObj[`_${value}`] = true; } } let leadsQtd = Object.keys(leadsObj).length;
+        let leadsObj = {}; for (let [index, value,] of retGoogleSheets.res.entries()) { value = Number(value); if (!leadsObj[`_${value}`]) { leadsObj[`_${value}`] = true; } } let leadsQtd = Object.keys(leadsObj).length;
 
         // [STATUS 1]
         status1 = `Checando ${leadsQtd} leads`; logConsole({ e, ee, 'txt': `${status1}`, }); await sendData({ e, 'stop': false, 'status1': `${status1}`, 'id': `${id1}`, });
@@ -67,11 +67,11 @@ async function newAccounts(inf = {}) {
 
         // CHECAR SE O CNPJ DA CONTA JÁ ESTÁ NAS BOAS VINDAS
         for (let [index, value,] of cnpjs.entries()) {
-            let lead = value.res; if (!leadsObj[`_${lead}`] && !contas[index].res.replaceAll('.', '').includes(`${stringGet(lead, '>', 8)}`)) {
+            let lead = Number(value.res); if (!leadsObj[`_${lead}`] && !contas[index].res.replaceAll('.', '').includes(`${stringGet(value.res, '>', 8)}`)) {
                 // APENAS CLIENTES QUE NÃO ESTÃO NA PLANILHA E NÃO CONTÉM OS 8 PRIMEIROS DÍGITOS DO CNPJ NA RAZÃO SOCIAL ('50.258.269 MASCLEIDE ALVES DE OLIVEIRA')
 
                 // CLIENTE: BUSCAR NA LUPA
-                let leadCnpj = lead, telefone1, telefone2; let retClientSearch = (await clientSearch({ page, browser, leadCnpj, })).res;
+                let leadCnpj = `${lead}`, telefone1, telefone2; let retClientSearch = (await clientSearch({ page, browser, leadCnpj, })).res;
                 if (retClientSearch.leadStatus !== 'ENCONTRADO_CONTA') {
                     telefone1 = 'NÃO ENCONTRADO'; telefone2 = 'NÃO ENCONTRADO';
                 } else {
@@ -97,6 +97,8 @@ async function newAccounts(inf = {}) {
         // [STATUS 1]
         status1 = `Nada pendente, esperando 10 minutos...`; logConsole({ e, ee, 'txt': `${status1}`, }); await sendData({ e, 'stop': false, 'status1': `${status1}`, 'id': `${id1}`, });
 
+        await screenshot({ e, page, 'fileName': `screenshot`, });
+
         ret['ret'] = true;
         ret['msg'] = `NEW ACCOUNT: OK`;
         ret['res'] = {
@@ -110,7 +112,7 @@ async function newAccounts(inf = {}) {
         let errMsg = `% TRYCATCH Script erro!`; let infSendData = { e, 'stop': true, 'status1': errMsg, }; await sendData(infSendData);
     }
 
-    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
+    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.hasOwnProperty('res') && { 'res': ret.res, }), };
 }
 
 // CHROME | NODE

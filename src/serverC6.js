@@ -11,12 +11,12 @@ async function serverRun(inf = {}) {
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = time.hou, houMinSecMil = `${hou}.${time.min}.${time.sec}.${time.mil}`;
         let pathWork = `logs/Registros/${mon}/${day}/${hou}.00-${hou}.59/${gW.firstFileCall.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
-        function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 60, startupTab = nowFun(), startupTabCookie = startupTab, infSendData;
+        function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 60, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
         async function processForceStop(inf = {}) {
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}`, });
-            await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); crashCode();
+            await commandLine({ e, 'command': `${pp}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); crashCode();
         } async function errA2(inf = '') {
             let title = `ERRO PARSE CÉLULA A2`; let text = `[${inf}] ${gO.inf.sheetTab}\n${gW.project}\n${gO.inf.shortcut}`; await notification({ e, 'legacy': true, title, text, });
             await processForceStop({ 'origin': `${title} ${text}`, });
@@ -28,14 +28,14 @@ async function serverRun(inf = {}) {
         /* DEFINIR O ID DA PLANILHA E ATALHO */ // gW.firstFileCall = 'serverC6_New3'; // ← ************ TESTES ************
         gO.inf['shortcut'] = `z_OUTROS_${gW.firstFileCall}`; gO.inf[`screenshot`] = `${gW.firstFileCall.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let sheetsMap = {
             'serverC6': '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc', 'serverC6_New2': '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8', 'serverC6_New3': '1dgWhel8Non6gEbLujYr5ZrBB6hEi340Aa7upzP8RWGY',
-        }; gO.inf['sheetId'] = sheetsMap[gW.firstFileCall];
+        }; gO.inf['sheetId'] = sheetsMap[gW.firstFileCall]; let width = 1280, height = 1024, infCL = { e, 'awaitFinish': true, }, ppOk = `${pp}/logs/resolution.txt`, infFl = { e, 'action': 'read', 'path': ppOk, };
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, range, }); if (!retGoogleSheets.ret) {
             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]', }); // FORÇAR PARADA DO SCRIPT
         } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
-        catch (c) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } // '0' → APARECE | '1' → OCULTO
+        catch (c) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } let resize = function (a, b) { return Math.floor(parseInt(a, 10) * b); }; // '0' → APARECE | '1' → OCULTO
         let { tabsWork, autC6: aut, conSpl, randomNames: leadRandomNames, scriptHourWebScraper: scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
         tabsInf.names = [...new Set([...tabsWork,]),].filter(v => v !== '' && v !== null); chromiumHeadless = chromiumHeadless === '1' ? 'new' : false; scriptHour = scriptHour.split('|'); if (tabsInf.names.length === 0) {
             let text = `'tabsWork' VAZIA`; await logConsole({ e, ee, txt: text, }); await notification({ e, legacy: true, title: `ERRO ${gW.firstFileCall}`, text, }); await processForceStop({ origin: text, });
@@ -44,13 +44,19 @@ async function serverRun(inf = {}) {
         // STATUS1 [Iniciando script, aguarde]
         infSendData = { e, 'stop': false, 'status1': '# Iniciando script, aguarde', }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
 
+        // PEGAR RESOLUÇÃO DA TELA
+        infCL['command'] = `powershell.exe -Command ""Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea.ToString() | Out-File ${ppOk} -Encoding UTF8""`;
+        await commandLine(infCL); let x = await file(infFl); if (x.res) { let n = x.res.match(/\d+/g); width = Number(n[2]); height = Number(n[3]); } width = resize(width, 0.6); height = resize(height, 1);
+
         // INICIAR PUPPETEER | FECHAR ABA EM BRANCO 
         browser = await _puppeteer.launch({ // false | 'new'
-            'userDataDir': `./${pathWork}/${houMinSecMil}_node${gW.project}_${gO.inf.shortcut.replace('z_OUTROS_', '')}_`, 'headless': chromiumHeadless, 'defaultViewport': { width: 1050, height: 964, },
-            'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--no-first-run', '--no-zygote', '--disable-gpu', '--disable-extensions',
-                '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-software-rasterizer', '--disable-webrtc',
-                '--disable-print-preview', '--disable-infobars', '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache',
-                '--disable-webgl', '--disable-remote-fonts', '--dns-prefetch-disable', '--renderer-process-limit=1', '--disable-download-notification', '--disable-download-resumption', '--disable-touch-drag-drop',
+            'userDataDir': `./${pathWork}/${houMinSecMil}_node${gW.project}_${gO.inf.shortcut.replace('z_OUTROS_', '')}_`, 'headless': chromiumHeadless,
+            'defaultViewport': { width, height, 'deviceScaleFactor': 2, /* AUMENTAR QUALIDADE 1, 2.5, 3.8 */ }, 'args': ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--no-first-run',
+                /* RECURSOS DE VÍDEO: REDUZIR */ // '--disable-accelerated-2d-canvas', '--disable-gpu', '--disable-software-rasterizer', '--disable-webgl', '--disable-remote-fonts', '--disable-webrtc', /* XXX */
+                /* RECURSOS DE VÍDEO: AUMENTAR */ '--enable-accelerated-2d-canvas', '--enable-gpu-rasterization', '--enable-webgl', /* XXX */
+                '--single-process', '--disable-features=AudioServiceOutOfProcess', '--disable-default-apps', '--disable-sync', '--disable-plugins', '--disable-print-preview', '--disable-infobars',
+                '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--dns-prefetch-disable', '--renderer-process-limit=1',
+                '--disable-download-notification', '--disable-download-resumption', '--disable-touch-drag-drop', `--window-size=${width},${height}`, `--window-position=0,0`, '--disable-extensions', '--no-zygote',
             ], 'ignoreDefaultArgs': ['--disable-extensions',],
         }); page = await browser.newPage(); await (await browser.pages())[0].close();
 
@@ -80,7 +86,7 @@ async function serverRun(inf = {}) {
 
             if (!((['SEG', 'TER', 'QUA', 'QUI', 'SEX',].includes(a) && (b > c && b < d)) || (['SAB', 'DOM',].includes(a) && (b > c && b < d - 7)))) {
                 infSendData = { e, 'stop': false, 'status1': `$ Fora do horário permitido (${scriptHour[0]}:00 <> ${scriptHour[1]}:00)`, };
-                logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData); await processForceStop({ 'origin': 'serverC6 STATUS1 [Fora do horário permitido]', }); // FORÇAR PARADA DO SCRIPT
+                logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
             } else {
                 // (SEG <> DMON → [00:00] <> [00:00]) DEFINIR ABA ATUAL
                 tabsInf['index'] = tabsInf.index < (tabsInf.names.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.names[tabsInf.index]; let sheetTab = gO.inf.sheetTab;
@@ -198,7 +204,7 @@ async function serverRun(inf = {}) {
         let err = `% TRYCATCH Script erro!`; await sendData({ e, 'stop': true, 'status1': err, });
     }
 
-    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
+    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.hasOwnProperty('res') && { 'res': ret.res, }), };
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!
 serverRun();

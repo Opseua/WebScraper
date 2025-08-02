@@ -9,7 +9,7 @@ async function maquinaInput(inf = {}) {
         let { page, browser, leadCnpj, leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia, } = inf;
 
         let pageValue, infSendData, params, res; leadTaxas = leadTaxas.split(`|`); leadDadosIniciais = leadDadosIniciais.split(`|`).filter(v => /^\d+$/.test(v)); // arr; 
-        leadProdutos = leadProdutos.split('|'); let hasLink = null; let fim = ''; let cep1 = ''; let cep2 = '';
+        leadProdutos = leadProdutos.split('|'); let hasLink = null, fim = '', cep1 = '', cep2 = '', imputRes;
 
         async function logConNew(txt = '') { await logConsole({ e, ee, txt, }); } async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
@@ -39,7 +39,7 @@ async function maquinaInput(inf = {}) {
                     'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
                 }, 'actions': [{ 'action': 'elementGetValue', },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
-            cep2 = res?.[0].res || false; if (cep2) { cep2 = (cep2.match(/\d{8}/) || [])[0] || '0'; }
+            cep2 = res?.[0]?.res || false; if (cep2) { cep2 = (cep2.match(/\d{8}/) || [])[0] || '0'; }
             await logConNew(`CEPS: ${cep1} - ${cep2}`);
         }
 
@@ -75,7 +75,7 @@ async function maquinaInput(inf = {}) {
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[0]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
-        if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou a tela das taxas`, 'screenshot': '11', }); } // NÃO ACHOU A TELA COM AS TAXAS (FORÇAR PARADA)
+        if (res.length === 0 || !res?.[0].ret) { await screenshotAndStop({ 'err': `Não achou a tela das taxas`, 'screenshot': '11', }); } // NÃO ACHOU A TELA COM AS TAXAS (FORÇAR PARADA)
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
@@ -127,9 +127,12 @@ async function maquinaInput(inf = {}) {
                 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'toastMessage forceActionsText', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'forceActionsText', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
-        if (res?.[0].ret && res?.[0].res) {
-            ret['res'] = { 'imputRes': `${res[0].res?.includes(`Lista: J0,J1,J2`) ? `SEGMENTAÇÃO BLOQUEADA` : res = res[0].res}`, }; ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`;
-            await screenshot({ e, page, fileName: `${leadCnpj}_maquinaInput_2`, awaitPageFinish: false, }); return ret;
+        if (res?.[0].ret && res?.[0]?.res) {
+            imputRes = res?.[0]?.res;
+            if (imputRes.includes(`Lista: J0,J1,J2`)) {
+                imputRes = `SEGMENTAÇÃO BLOQUEADA`;
+            }
+            ret['res'] = { imputRes, }; ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_2`, 'awaitPageFinish': false, }); return ret;
         }
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
@@ -167,9 +170,12 @@ async function maquinaInput(inf = {}) {
                 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'toastMessage forceActionsText', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'forceActionsText', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
-        if (res?.[0].ret && res?.[0].res) {
-            ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'imputRes': `${res?.[0].res}`, };
-            await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_produtos`, 'awaitPageFinish': false, }); return ret;
+        if (res?.[0].ret && res?.[0]?.res) {
+            imputRes = res?.[0]?.res;
+            if (imputRes.includes(`uma oportunidade em andamento para`)) {
+                imputRes = `EXISTE PROPOSTA EM ANDAMENTO`;
+            }
+            ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { imputRes, }; await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_produtos`, 'awaitPageFinish': false, }); return ret;
         }
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
@@ -300,7 +306,7 @@ async function maquinaInput(inf = {}) {
                         'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'Street', },],
                     }, 'actions': [{ 'action': 'elementGetValue', },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
-                if (!(res?.[0].res !== '')) { ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'imputRes': `ALERTA: CEP inválido → ${fim}`, }; return ret; }
+                if (!(res?.[0]?.res !== '')) { ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'imputRes': `ALERTA: CEP inválido → ${fim}`, }; return ret; }
 
                 params = { // [INPUT] 'Número'
                     'nameSearch': `[INPUT] 'Número'`, 'element': {
@@ -375,7 +381,7 @@ async function maquinaInput(inf = {}) {
         await screenshot({ e, page, 'fileName': `${leadCnpj}_resumoDePedido`, 'awaitPageFinish': false, });
 
         // ### ÚLTIMA VALIDAÇÃO
-        if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou do Resumo de pedido`, 'screenshot': '10', }); } // NÃO ACHOU A TELA DE RESUMO (FORÇAR PARADA)
+        if (res.length === 0 || !res?.[0]?.ret) { await screenshotAndStop({ 'err': `Não achou do Resumo de pedido`, 'screenshot': '10', }); } // NÃO ACHOU A TELA DE RESUMO (FORÇAR PARADA)
 
         await new Promise(r => { setTimeout(r, 1000); });
 
@@ -385,7 +391,13 @@ async function maquinaInput(inf = {}) {
                 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_success', }, { 'atributoNome': 'title', 'atributoValor': 'Aceitar e Contrata', },
                 { 'atributoNome': 'part', 'atributoValor': 'button', },],
             }, 'actions': [{ 'action': 'elementClick', },],
-        }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+        };
+
+
+
+        // res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+
+
 
         // ******************** (APÓS A FINALIZAÇÃO)
 
@@ -394,7 +406,14 @@ async function maquinaInput(inf = {}) {
                 'maxAwaitMil': 15000, 'tag': 'div', 'content': `Sucesso`,
                 'propriedades': [{ 'atributoNome': 'id', }, { 'atributoNome': 'class', 'atributoValor': 'toastTitle slds-text-heading--small', }, { 'atributoNome': 'data-aura-rendered-by', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
-        }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+        };
+
+
+
+        // res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+
+
+
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_sucesso`, 'awaitPageFinish': false, });
 
         await screenshot({ e, page, 'fileName': `screenshot`, });
@@ -415,4 +434,5 @@ async function maquinaInput(inf = {}) {
 
 // CHROME | NODE
 globalThis['maquinaInput'] = maquinaInput;
+
 

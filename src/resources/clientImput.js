@@ -21,6 +21,8 @@ async function clientImput(inf = {}) {
 
         // ---------------------------------------
 
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
         // CLICAR EM 'Novo Lead'
         params = { // [span] 'Novo Lead'
             'nameSearch': `[span] 'Novo Lead'`, 'element': {
@@ -28,6 +30,8 @@ async function clientImput(inf = {}) {
                 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'label bBody', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         // ESPERAR O FORMULÁRIO APARECER
         await new Promise(r => { setTimeout(r, 1500); }); params = { // [input] 'Razão Social'
@@ -37,6 +41,8 @@ async function clientImput(inf = {}) {
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
         if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou o formulário`, 'screenshot': '1', }); } // NÃO ACHOU A TELA DO FORMULÁRIO (FORÇAR PARADA)
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         // ---------------------------------------
 
@@ -49,6 +55,8 @@ async function clientImput(inf = {}) {
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadPrimeiroNome}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
         params = { // [INPUT] 'Sobrenome'
             'nameSearch': `[INPUT] 'Sobrenome'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input',
@@ -56,12 +64,16 @@ async function clientImput(inf = {}) {
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadSobrenome}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
         params = { // [INPUT] 'Email'
             'nameSearch': `[INPUT] 'Email'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input',
                 'propriedades': [{ 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'Email', }, { 'atributoNome': 'inputmode', 'atributoValor': 'email', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadEmail}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         params = { // [INPUT] 'Razão Social'
             'nameSearch': `[INPUT] 'Razão Social'`, 'element': {
@@ -72,6 +84,8 @@ async function clientImput(inf = {}) {
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadRazaoSocial}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
         params = { // [INPUT] 'Telefone'
             'nameSearch': `[INPUT] 'Telefone'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input',
@@ -79,12 +93,16 @@ async function clientImput(inf = {}) {
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadTelefone}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
         params = { // [INPUT] 'CNPJ'
             'nameSearch': `[INPUT] 'CNPJ'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input',
                 'propriedades': [{ 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'CNPJ__c', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadCnpj}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         // params = { // [BUTTON] 'Salvar'
         //     'nameSearch': `[BUTTON] 'Salvar'`, 'element': {
@@ -101,6 +119,8 @@ async function clientImput(inf = {}) {
                 { 'atributoNome': 'part', 'atributoValor': 'button', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         // <button lwc-40a585din3p="" class="slds-button slds-button_neutral" aria-disabled="false" type="button" part="button">Confirmar</button>
 
@@ -131,10 +151,12 @@ async function clientImput(inf = {}) {
             (page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params2)),
         ]);
 
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
         if (res.length === 0 || !res[0].ret) {
             // CHECAGEM DE CAPTCHA
             pageValue = await page.content();
-            if (pageValue.includes(`Score is too low or not applicable`)) {
+            if (pageValue.includes(`Score is too low or not applicable`) || pageValue.includes(`muito baixa ou`)) {
                 imputRes = 'CAPTCHA';
             } else {
                 // NENHUM ALERTA DE ERRO OU POPUP DE SUCESSO (FORÇAR PARADA)
@@ -145,6 +167,8 @@ async function clientImput(inf = {}) {
         } else {
             imputRes = res[0]?.res;
         }
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `${leadCnpj}_clientImput_1`, 'awaitPageFinish': false, });
 
@@ -157,6 +181,8 @@ async function clientImput(inf = {}) {
                 ],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
+
+        await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
 
         ret['ret'] = true;
         ret['msg'] = `CLIENT IMPUT: OK`;
@@ -171,7 +197,7 @@ async function clientImput(inf = {}) {
         let errMsg = `% TRYCATCH Script erro!`; let infSendData = { e, 'stop': true, 'status1': errMsg, }; await sendData(infSendData);
     }
 
-    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.res && { 'res': ret.res, }), };
+    return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.hasOwnProperty('res') && { 'res': ret.res, }), };
 }
 
 // CHROME | NODE
