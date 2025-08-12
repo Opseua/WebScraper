@@ -57,7 +57,7 @@ async function screenshot(inf = {}) {
 
             try {
                 await page.screenshot({ 'path': pathOk, fullPage, });
-            } catch (catchErr) {
+            } catch {
                 await page.screenshot({ 'path': pathOk, 'fullPage': false, });
             }
 

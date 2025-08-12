@@ -32,6 +32,6 @@ globalThis['navigate'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': 
 globalThis['newAccounts'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/newAccounts.js`, inf, project, }); };
 globalThis['screenshot'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/screenshot.js`, inf, project, }); };
 globalThis['sendData'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/sendData.js`, inf, project, }); };
-globalThis['timGetPedidoDetails'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/timGetPedidoDetails.js`, inf, project, }); };
+globalThis['timGetOrderDetails'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/timGetOrderDetails.js`, inf, project, }); };
 
 
