@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e;
 async function apiNire(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { nire = '12345678', aut = 'ASP.NET_SessionId=aaaaaaaaaaaa', date, } = inf;
         let infRegex, retRegex, infLog;

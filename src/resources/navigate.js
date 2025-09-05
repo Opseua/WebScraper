@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e;
 async function navigate(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { browser, page, url, } = inf;
         if (!url) {

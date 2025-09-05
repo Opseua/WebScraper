@@ -4,7 +4,7 @@
 
 let e = import.meta.url, ee = e;
 async function cookiesGetSet(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { page, action, value, ignoreAutUpdate = false, } = inf;
         if (!action || (!action === 'get' || !action === 'set')) {

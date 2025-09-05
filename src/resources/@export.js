@@ -10,12 +10,7 @@ await import(`../../../${process.env.fileChrome_Extension.split('PROJETOS\\')[1]
 // DEFINIR → LETTER | ROOT | FUNCTION | PROJECT | FILE | LINE
 await getPath({ 'e': new Error(), devChildren, });
 
-// console.log(`${eng} | ${engName} | ${letter}\n${fileProjetos} | ${fileWindows}`); console.log('\n'); console.log('securityPass:', gW.securityPass);
-// console.log('portWeb:', gW.portWeb, '|', 'serverWeb:', gW.serverWeb); console.log('portLoc:', gW.portLoc, '|', 'serverLoc:', gW.serverLoc);
-// console.log(`devMaster: ${gW.devMaster}\ndevSlave: ${gW.devSlave}\ndevChildren: ${gW.devChildren}`); console.log(`devSend:\n${gW.devSend}`);
-// console.log(`devGet:\n${gW.devGet[0]}\n${gW.devGet[1]}`); console.log('conf:', gW.conf); console.log('root:', gW.root); console.log('functions:', gW.functions); console.log('project:', gW.project);
-
-/* FUNÇÕES DESSE PROJETO */ let project = gW.project;
+/* FUNÇÕES */ let project = gW.project;
 globalThis['apiCnpj'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/apiCnpj.js`, inf, project, }); };
 globalThis['apiNire'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/apiNire.js`, inf, project, }); };
 globalThis['awaitLoad'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/awaitLoad.js`, inf, project, }); };
@@ -32,6 +27,5 @@ globalThis['navigate'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': 
 globalThis['newAccounts'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/newAccounts.js`, inf, project, }); };
 globalThis['screenshot'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/screenshot.js`, inf, project, }); };
 globalThis['sendData'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/sendData.js`, inf, project, }); };
-globalThis['timGetOrderDetails'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/timGetOrderDetails.js`, inf, project, }); };
 
 

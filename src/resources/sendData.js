@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e;
 async function sendData(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { status1, status2, results, id = gO.inf.sheetId, tab = gO.inf.sheetTab, range = 'A32', } = inf;
         // # Aguarde...                                →→→ SERÁ REINICIADO [NÃO] | PARADO [?]

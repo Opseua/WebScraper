@@ -4,7 +4,7 @@
 
 let e = import.meta.url, ee = e;
 async function clientImput(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let pageValue, res, params, params1, params2, imputRes;
 
@@ -22,6 +22,13 @@ async function clientImput(inf = {}) {
         // ---------------------------------------
 
         await new Promise(r => { setTimeout(r, 2500); }); // REMOVER ISSO
+
+        // params = { // [a] 'Leads' (SOMENTE SE NECESSÁRIO!!!)
+        //     'nameSearch': `[a] 'Leads'`, 'element': {
+        //         'maxAwaitMil': 250, 'tag': 'a', 'content': 'Leads',
+        //         'propriedades': [{ 'atributoNome': 'role', 'atributoValor': 'menuitem', }, { 'atributoNome': 'class', 'atributoValor': 'comm-navigation__top-level-item-link js-top-level-menu-item linkBtn', },],
+        //     }, 'actions': [{ 'action': 'elementClick', },],
+        // }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
         // CLICAR EM 'Novo Lead'
         params = { // [span] 'Novo Lead'
@@ -113,7 +120,7 @@ async function clientImput(inf = {}) {
         // }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
         params = { // [BUTTON] 'Confirmar'
-            'nameSearch': `[BUTTON] 'Salvar'`, 'element': {
+            'nameSearch': `[BUTTON] 'Confirmar'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'button', 'content': 'Confirmar',
                 'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_neutral', }, { 'atributoNome': 'type', 'atributoValor': 'button', },
                 { 'atributoNome': 'part', 'atributoValor': 'button', },],

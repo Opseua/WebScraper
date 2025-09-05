@@ -5,7 +5,7 @@
 
 let e = import.meta.url, ee = e; let rate = rateLimiter({ 'max': 1, 'sec': 600, });
 async function newAccounts(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { page, browser, sheetKepp, } = inf;
 
@@ -38,6 +38,7 @@ async function newAccounts(inf = {}) {
                 'propriedades': [{ 'atributoNome': 'data-label', 'atributoValor': 'Conta', }, { 'atributoNome': 'class', 'atributoValor': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
+
         if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou o tabela de contas`, 'screenshot': '1', }); } // NÃO ACHOU A TABELA DE CONTAS ABERTAS (FORÇAR PARADA)
         let contas = res.reverse();
 
@@ -80,24 +81,25 @@ async function newAccounts(inf = {}) {
                 }
 
                 // ENVIAR OS DADOS NA NOVA CONTA PARA BOAS VINDAS
-                let date = dateHour(`${datasDeCriacao[index].res}`).res; retGoogleSheets = await googleSheets({
+                let date = dateHour(`${datasDeCriacao[index].res}`).res; date = `${date.day}/${date.mon}/${date.yea}`; retGoogleSheets = await googleSheets({
                     e, 'action': 'addLines', 'id': `${id2}`, 'tab': `${tabContas}`, 'values': [
                         [
                             `${contas[index].res}`, // RAZAO SOCIAL
                             `${cnpjs[index].res}`, // CNPJ
-                            `${date.day}/${date.mon}/${date.yea}`, // DATA ABERTURA
+                            `${date}`, // DATA ABERTURA
                             `${telefone2}`, // TELEFONE 1
                             `${telefone1}`, // TELEFONE MASTER
                         ],
                     ],
                 });
+                await logConsole({ e, ee, 'txt': `[${index}] ${lead} → DATE: ${date}`, });
             }
         }
 
         // [STATUS 1]
         status1 = `Nada pendente, esperando 10 minutos...`; logConsole({ e, ee, 'txt': `${status1}`, }); await sendData({ e, 'stop': false, 'status1': `${status1}`, 'id': `${id1}`, });
 
-        await screenshot({ e, page, 'fileName': `screenshot`, });
+        await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `newAccounts`, 'awaitPageFinish': false, });
 
         ret['ret'] = true;
         ret['msg'] = `NEW ACCOUNT: OK`;

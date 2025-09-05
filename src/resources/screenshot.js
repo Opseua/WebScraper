@@ -4,7 +4,7 @@
 
 let e = import.meta.url, ee = e;
 async function screenshot(inf = {}) {
-    let ret = { 'ret': false, }; e = inf && inf.e ? inf.e : e;
+    let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { page = false, fullPage = true, fileName = false, awaitPageFinish = true, } = inf;
 
@@ -22,19 +22,19 @@ async function screenshot(inf = {}) {
             let mon = `MES_${time.mon}_${time.monNam}`;
             let day = `DIA_${time.day}`;
             let monDay = `${mon}/${day}`;
-            let firstFileCall = gW.firstFileCall.replace('server', ''); let pathOk = '';
+            let cloneProject = gW.cloneProject.replace('server', ''); let pathOk = '';
 
             let byHour = fileName !== `screenshot`;
 
             if (!byHour) {
-                fileName = `${firstFileCall}_${fileName}`;
+                fileName = `${cloneProject}_${fileName}`;
             } else {
 
                 let min = `${time.min}`;
                 let sec = `${time.sec}`;
                 let mil = `${time.mil}`;
                 let hou = `${time.hou}`;
-                pathOk = `${monDay}/${hou}.00-${hou}.59/${firstFileCall}/${hou}.${min}.${sec}.${mil}`;
+                pathOk = `${monDay}/${hou}.00-${hou}.59/${cloneProject}/${hou}.${min}.${sec}.${mil}`;
 
             }
 
