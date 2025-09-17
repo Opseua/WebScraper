@@ -13,7 +13,7 @@ async function serverRun(inf = {}) {
         function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
-        serverWeb = gW.serverWeb; // serverWeb = gW.serverWebEstrelar;
+        serverWeb = gW.serverWeb; serverWeb = gW.serverWebEstrelar;
         chromeDestiny = `ESTRELAR_MARCOS-CHROME-NAO_DEFINIDO`; // chromeDestiny = `OPSEUA-CHROME-CHROME_EXTENSION-USUARIO_0`; 
         chromeDestiny = `${serverWeb}:${gW.portWeb}/?roo=${chromeDestiny}`; async function processForceStop(inf = {}) {
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}`, });
@@ -137,41 +137,41 @@ async function serverRun(inf = {}) {
                             let dataYea = parseInt(data[2], 10).toString().padStart(4, '0'); dif = new Date(dataYea, dataMon, dataDay, 0, 0, 0); dif = Math.round((new Date().getTime() - dif.getTime()) / 1000 / 86400);
                         }
 
-                        if (['INDICAR_MANUAL', 'INDICAR_AUTOMATICO',].includes(sheetTab) && (leadStatus === 'NADA_ENCONTRADO' || (leadStatus === 'ENCONTRADO_EXPIRADO' && (dif > 45)))) {
+                        if (['INDICAR_MANUAL', 'INDICAR_AUTOMATICO',].includes(sheetTab) && (leadStatus === 'NADA_ENCONTRADO' || (leadStatus === 'ENCONTRADO_EXPIRADO' && (dif > 0)))) { // ERA 45
                             // IMPUT NECESSÁRIO: SIM → IMPUTAR LEAD
                             leadTelefone = coldList ? leadTelefone.replace('55219', '219') : leadTelefone;
                             // retClientImput = (await clientImput({ page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadRazaoSocial, })).res; statusInf = retClientImput.imputRes;
 
+                            // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
                             // STATUS1 [Indicando...]
                             infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData); message = {
                                 'fun': [{
-                                    'securityPass': gW.securityPass, 'retInf': true, 'name': 'clientImputChromeNew',
-                                    'par': { 'lead': `${leadPrimeiroNome} ${leadSobrenome}	${leadCnpj}	${leadEmail}	${leadTelefone}	${leadRazaoSocial}`, },
+                                    'securityPass': gW.securityPass, 'retInf': true, 'name': 'clientImputChrome',
+                                    'par': { 'lead': `${leadPrimeiroNome} ${leadSobrenome}	${leadCnpj}	${leadEmail}	${leadTelefone}	${leadRazaoSocial}`, 'origin': 'MAQUINA_VIRTUAL', },
                                 },],
                             };
-
-
-                            retClientImput = await messageSend({ destination: `${chromeDestiny}`, message, secondsAwait: 30, });
+                            retClientImput = await messageSend({ 'destination': `${chromeDestiny}`, message, 'secondsAwait': 30, });
                             logConsole({ e, ee, 'txt': `PC 1\n${JSON.stringify(retClientImput)}`, });
 
-
-                            if (retClientImput?.res?.imputRes) { statusInf = retClientImput?.res?.imputRes; } else {
+                            if (retClientImput?.res?.imputRes) {
+                                statusInf = retClientImput?.res?.imputRes;
+                            } else {
                                 // [MANDAR PARA O OUTRO PC] CONFIRMAR QUE O OUTRO PC NÃO CONSEGUIU INDICAR
                                 let newStatus = (await clientSearch({ page, browser, leadCnpj, })).res; infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Tentando no outro PC...`, };
-                                logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData); if (newStatus.leadStatus !== 'ENCONTRADO_LEAD') {
-
+                                logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
+                                if (newStatus.leadStatus !== 'ENCONTRADO_LEAD') {
 
                                     retClientImput = await messageSend({ 'destination': `${chromeDestiny.replace('MARCOS', 'THAYNA')}`, message, 'secondsAwait': 30, });
                                     logConsole({ e, ee, 'txt': `PC 2\n${JSON.stringify(retClientImput)}`, });
 
-
-                                    // let aaaa = '15.228.250.109:8889/?roo=OPSEUA-CHROME-CHROME_EXTENSION-USUARIO_0'; retClientImput = await messageSend({ destination: `${aaaa}`, message, secondsAwait: 30, });
                                 } else {
                                     retClientImput = { 'res': { 'imputRes': 'INDICAÇÃO OK', }, };
                                 }
-                            } statusInf = retClientImput?.res?.imputRes || 'PROBLEMA NO ESCRITÓRIO';
+                            }
+                            statusInf = retClientImput?.res?.imputRes || 'PROBLEMA NO ESCRITÓRIO';
 
+                            // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
                         } else if (['MAQUINA_MANUAL',].includes(sheetTab) && leadStatus === 'ENCONTRADO_CONTA') {
                             // IMPUT NECESSÁRIO: SIM → IMPUTAR MÁQUINA
@@ -197,9 +197,9 @@ async function serverRun(inf = {}) {
                             statusInf = 'ALERTA: CNPJ inválido';
                         } else if (statusInf.includes('mail')) {
                             statusInf = 'ALERTA: email inválido';
-                        } else if (statusInf.includes('completo')) {
+                        } else if (statusInf.includes('nome')) {
                             statusInf = 'ALERTA: nome inválido';
-                        } else if (statusInf.includes('Os seguintes campos obrigatórios devem ser preenchidos')) {
+                        } else if (statusInf.includes('preenchido')) {
                             statusInf = 'ALERTA: campo não preenchido';
                         } else if (statusInf.includes('CAPTCHA')) {
                             statusInf = 'BLOQUEADO PELO CAPTCHA';
