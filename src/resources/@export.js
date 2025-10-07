@@ -17,11 +17,11 @@ globalThis['awaitLoad'] = (inf) => { return importFun({ 'engOk': (!eng), 'path':
 globalThis['buttonElement'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/buttonElement.js`, inf, project, }); };
 globalThis['checkPage'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/checkPage.js`, inf, project, }); };
 globalThis['clientGetData'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/clientGetData.js`, inf, project, }); };
-globalThis['clientImput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/clientImput.js`, inf, project, }); };
+globalThis['clientInput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/clientInput.js`, inf, project, }); };
 globalThis['clientSearch'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/clientSearch.js`, inf, project, }); };
 globalThis['cookiesGetSet'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/cookiesGetSet.js`, inf, project, }); };
 globalThis['getTextElement'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/getTextElement.js`, inf, project, }); };
-globalThis['imput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/imput.js`, inf, project, }); };
+globalThis['input'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/input.js`, inf, project, }); };
 globalThis['maquinaInput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/maquinaInput.js`, inf, project, }); };
 globalThis['navigate'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/navigate.js`, inf, project, }); };
 globalThis['newAccounts'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/newAccounts.js`, inf, project, }); };

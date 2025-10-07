@@ -49,7 +49,7 @@ async function clientSearch(inf = {}) {
                 return 'NADA_ENCONTRADO';
             }
             return false;
-        }, { timeout: 30000, }).catch(async () => {
+        }, { 'timeout': 30000, }).catch(async () => {
             return false;
         });
 
@@ -65,9 +65,9 @@ async function clientSearch(inf = {}) {
         // PEGAR DATA (SE FOR LEAD)
         if (['ENCONTRADO_EXPIRADO', 'ENCONTRADO_LEAD',].includes(leadStatus)) {
             params = { // [DIV] 'Resultado lupa (lead encontrado)'
-                'nameSearch': `Resultado lupa (lead encontrado)`, 'element': {
+                'paramId': `Resultado lupa (lead encontrado)`, 'element': {
                     'maxAwaitMil': 250, 'tag': 'span',
-                    'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'uiOutputDateTime', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'uiOutputDateTime', },],
+                    'properties': [{ 'attributeName': 'class', 'attributeValue': 'uiOutputDateTime', }, { 'attributeName': 'data-aura-class', 'attributeValue': 'uiOutputDateTime', },],
                 }, 'actions': [
                     { 'action': 'elementGetValue', },
                 ],

@@ -50,7 +50,7 @@ async function screenshot(inf = {}) {
                 await page.evaluate((tempo) => {
                     return new Promise((resolve) => {
                         let timeout; let obs = new MutationObserver(() => { clearTimeout(timeout); timeout = setTimeout(() => { obs.disconnect(); resolve(); }, (1 * 1000)); });
-                        obs.observe(document.body, { attributes: true, childList: true, subtree: true, characterData: true, }); timeout = setTimeout(() => { obs.disconnect(); resolve(); }, tempo);
+                        obs.observe(document.body, { 'attributes': true, 'childList': true, 'subtree': true, 'characterData': true, }); timeout = setTimeout(() => { obs.disconnect(); resolve(); }, tempo);
                     });
                 }, (awaitPageFinish * 1000));
             }

@@ -32,8 +32,8 @@ async function clientGetData(inf = {}) {
 
         // ESPERAR O ELEMENTO APARECER
         params = {
-            'nameSearch': `TELA (NOVA)`, 'element': {
-                'maxAwaitMil': 15000, 'tag': 'lightning-formatted-date-time', 'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
+            'paramId': `TELA (NOVA)`, 'element': {
+                'maxAwaitMil': 15000, 'tag': 'lightning-formatted-date-time', 'properties': [{ 'attributeName': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         };
         res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
@@ -57,17 +57,17 @@ async function clientGetData(inf = {}) {
         // EXTAIR TELEFONE (APENAS SE NECESSÁRIO)
         let tel = 'xxxxxxxxxxx', telefone1 = tel, telefone2 = tel; if (origin === 'newAccounts') {
             params = { // [P] {TELEFONE} (GERAL)
-                'nameSearch': `[P] {TELEFONE} (GERAL)`, 'element': {
+                'paramId': `[P] {TELEFONE} (GERAL)`, 'element': {
                     'maxAwaitMil': 250, 'tag': 'lightning-formatted-phone',
-                    'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
+                    'properties': [{ 'attributeName': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
                 }, 'actions': [{ 'action': 'elementGetValue', },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
             telefone2 = res?.[0]?.res?.slice(2) || tel;
 
             params = { // [P] {TELEFONE} (NOME MASTER)
-                'nameSearch': `[P] {TELEFONE} (NOME MASTER)`, 'element': {
+                'paramId': `[P] {TELEFONE} (NOME MASTER)`, 'element': {
                     'maxAwaitMil': 250, 'tag': 'p',
-                    'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', }, { 'atributoNome': 'class', 'atributoValor': 'slds-truncate slds-text-link hover-cursor', },],
+                    'properties': [{ 'attributeName': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', }, { 'attributeName': 'class', 'attributeValue': 'slds-truncate slds-text-link hover-cursor', },],
                 }, 'actions': [{ 'action': 'elementHover', }, { 'action': 'awaitMil', 'time': 750, }, { 'action': 'getBody', },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[2]?.msg || 'x');
             if ((res.length === 0 || !res[0].ret) && !leadDateAndMaster.includes('Início Relacionamento')) {

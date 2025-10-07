@@ -24,9 +24,9 @@ async function maquinaInput(inf = {}) {
 
         if (leadNumero.toString() === '99999') {
             params = { // [P] {CEP} (NOME MASTER)
-                'nameSearch': `[P] {CEP} (NOME MASTER)`, 'element': {
+                'paramId': `[P] {CEP} (NOME MASTER)`, 'element': {
                     'maxAwaitMil': 15000, 'tag': 'p',
-                    'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', }, { 'atributoNome': 'class', 'atributoValor': 'slds-truncate slds-text-link hover-cursor', },],
+                    'properties': [{ 'attributeName': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', }, { 'attributeName': 'class', 'attributeValue': 'slds-truncate slds-text-link hover-cursor', },],
                 }, 'actions': [{ 'action': 'elementHover', }, { 'action': 'awaitMil', 'time': 750, }, { 'action': 'getBody', },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[2]?.msg || 'x');
             cep1 = res?.[2]?.res || false; if (cep1) { cep1 = (cep1.split('Informações do Master')?.[1].split('<br>BRA')?.[0].split('- BRA')?.[0].split('Endereço')?.[1].trim().match(/\d{8}$/) || [])[0] || '0'; }
@@ -34,9 +34,9 @@ async function maquinaInput(inf = {}) {
             // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
             params = { // [P] {CEP} (GERAL)
-                'nameSearch': `[P] {CEP} (GERAL)`, 'element': {
+                'paramId': `[P] {CEP} (GERAL)`, 'element': {
                     'maxAwaitMil': 250, 'tag': 'p', 'content': ' - BRA',
-                    'propriedades': [{ 'atributoNome': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
+                    'properties': [{ 'attributeName': 'c-c6businesshighlightsinformation_c6businesshighlightsinformation', },],
                 }, 'actions': [{ 'action': 'elementGetValue', },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
             cep2 = res?.[0].res || false; if (cep2) { cep2 = (cep2.match(/\d{8}/) || [])[0] || '0'; }
@@ -46,9 +46,9 @@ async function maquinaInput(inf = {}) {
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [LI] 'C6 Pay'
-            'nameSearch': `[LI] 'C6 Pay'`, 'element': {
+            'paramId': `[LI] 'C6 Pay'`, 'element': {
                 'maxAwaitMil': 15000, 'tag': 'span', 'content': 'C6 Pay',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'title', }, { 'atributoNome': 'data-aura-rendered-by', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'title', }, { 'attributeName': 'data-aura-rendered-by', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -56,10 +56,10 @@ async function maquinaInput(inf = {}) {
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dados`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Novo'
-            'nameSearch': `[BUTTON] 'Novo'`, 'element': {
+            'paramId': `[BUTTON] 'Novo'`, 'element': {
                 'maxAwaitMil': 7000, 'tag': 'button', 'content': 'Novo',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_neutral', }, { 'atributoNome': 'aria-disabled', 'atributoValor': 'false', },
-                { 'atributoNome': 'type', 'atributoValor': 'button', }, { 'atributoNome': 'part', 'atributoValor': 'button', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_neutral', }, { 'attributeName': 'aria-disabled', 'attributeValue': 'false', },
+                { 'attributeName': 'type', 'attributeValue': 'button', }, { 'attributeName': 'part', 'attributeValue': 'button', },],
             }, 'actions': [{ 'action': 'awaitMil', 'time': 500, }, { 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[1]?.msg || 'x');
 
@@ -68,10 +68,10 @@ async function maquinaInput(inf = {}) {
         // ******************** {Dados iniciais}
 
         params = { // [INPUT] 'Débito'
-            'nameSearch': `[INPUT] 'Débito'`, 'element': {
+            'paramId': `[INPUT] 'Débito'`, 'element': {
                 'maxAwaitMil': 2500, 'tag': 'input', 'indexTarget': 0,
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', },
-                { 'atributoNome': 'inputmode', 'atributoValor': 'decimal', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
+                { 'attributeName': 'inputmode', 'attributeValue': 'decimal', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[0]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -80,30 +80,30 @@ async function maquinaInput(inf = {}) {
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [INPUT] 'Crédito à vista'
-            'nameSearch': `[INPUT] 'Crédito à vista'`, 'element': {
+            'paramId': `[INPUT] 'Crédito à vista'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input', 'indexTarget': 1,
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', },
-                { 'atributoNome': 'inputmode', 'atributoValor': 'decimal', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
+                { 'attributeName': 'inputmode', 'attributeValue': 'decimal', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[1]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [INPUT] 'Crédito PSJ 7 à 12'
-            'nameSearch': `[INPUT] 'Crédito PSJ 2 à 6'`, 'element': {
+            'paramId': `[INPUT] 'Crédito PSJ 2 à 6'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input', 'indexTarget': 2,
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', },
-                { 'atributoNome': 'inputmode', 'atributoValor': 'decimal', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
+                { 'attributeName': 'inputmode', 'attributeValue': 'decimal', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[2]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [INPUT] 'Crédito PSJ 7 à 12'
-            'nameSearch': `[INPUT] 'Crédito PSJ 7 à 12'`, 'element': {
+            'paramId': `[INPUT] 'Crédito PSJ 7 à 12'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'input', 'indexTarget': 3,
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', },
-                { 'atributoNome': 'inputmode', 'atributoValor': 'decimal', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
+                { 'attributeName': 'inputmode', 'attributeValue': 'decimal', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[3]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -111,10 +111,10 @@ async function maquinaInput(inf = {}) {
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dadosIniciais`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Continuar'
-            'nameSearch': `[BUTTON] 'Continuar'`, 'element': {
+            'paramId': `[BUTTON] 'Continuar'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'button',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_brand', }, { 'atributoNome': 'title', 'atributoValor': 'Continuar', },
-                { 'atributoNome': 'type', 'atributoValor': 'button', }, { 'atributoNome': 'part', 'atributoValor': 'button', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_brand', }, { 'attributeName': 'title', 'attributeValue': 'Continuar', },
+                { 'attributeName': 'type', 'attributeValue': 'button', }, { 'attributeName': 'part', 'attributeValue': 'button', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -122,14 +122,14 @@ async function maquinaInput(inf = {}) {
 
         // →→→ CHECAR SE DEU ERRO
         params = { // [SPAN] 'Alert' {pegar}
-            'nameSearch': `[SPAN] 'Alert' {pegar}`, 'element': {
+            'paramId': `[SPAN] 'Alert' {pegar}`, 'element': {
                 'maxAwaitMil': 1000, 'tag': 'span',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'toastMessage forceActionsText', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'forceActionsText', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'toastMessage forceActionsText', }, { 'attributeName': 'data-aura-class', 'attributeValue': 'forceActionsText', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
         if (res?.[0].ret && res?.[0].res) {
-            ret['res'] = { 'imputRes': `${res[0].res?.includes(`Lista: J0,J1,J2`) ? `SEGMENTAÇÃO BLOQUEADA` : res = res[0].res}`, }; ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`;
-            await screenshot({ e, page, fileName: `${leadCnpj}_maquinaInput_2`, awaitPageFinish: false, }); return ret;
+            ret['res'] = { 'inputRes': `${res[0].res?.includes(`Lista: J0,J1,J2`) ? `SEGMENTAÇÃO BLOQUEADA` : res = res[0].res}`, }; ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`;
+            await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_2`, 'awaitPageFinish': false, }); return ret;
         }
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
@@ -137,24 +137,24 @@ async function maquinaInput(inf = {}) {
         // ******************** {Produtos}
 
         params = { // [BUTTON] 'C6 Pay Maquininha' (ORDEM INVERTIDA)
-            'nameSearch': `[BUTTON] '${leadProdutos[1]}'`, 'element': {
+            'paramId': `[BUTTON] '${leadProdutos[1]}'`, 'element': {
                 'maxAwaitMil': 2500, 'tag': 'p', 'content': `${leadProdutos[1]}`,
-                'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesproducts_commercialcardmachinesalesproducts', },
-                { 'atributoNome': 'class', 'atributoValor': 'slds-line-clamp_medium slds-text-heading_small', }, { 'atributoNome': 'title', 'atributoValor': `${leadProdutos[1]}`, },],
+                'properties': [{ 'attributeName': 'c-commercialcardmachinesalesproducts_commercialcardmachinesalesproducts', },
+                { 'attributeName': 'class', 'attributeValue': 'slds-line-clamp_medium slds-text-heading_small', }, { 'attributeName': 'title', 'attributeValue': `${leadProdutos[1]}`, },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
         if (!res?.[0].ret) {
-            ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'imputRes': `SEM OPÇÃO DE MÁQUINA`, };
+            ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'inputRes': `SEM OPÇÃO DE MÁQUINA`, };
             await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_produtos`, 'awaitPageFinish': false, }); return ret;
         }
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [BUTTON] 'C6 Pay Link' (ORDEM INVERTIDA)
-            'nameSearch': `[BUTTON] '${leadProdutos[0]}'`, 'element': {
+            'paramId': `[BUTTON] '${leadProdutos[0]}'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'p', 'content': `${leadProdutos[0]}`,
-                'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesproducts_commercialcardmachinesalesproducts', },
-                { 'atributoNome': 'class', 'atributoValor': 'slds-line-clamp_medium slds-text-heading_small', }, { 'atributoNome': 'title', 'atributoValor': `${leadProdutos[0]}`, },],
+                'properties': [{ 'attributeName': 'c-commercialcardmachinesalesproducts_commercialcardmachinesalesproducts', },
+                { 'attributeName': 'class', 'attributeValue': 'slds-line-clamp_medium slds-text-heading_small', }, { 'attributeName': 'title', 'attributeValue': `${leadProdutos[0]}`, },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -162,31 +162,31 @@ async function maquinaInput(inf = {}) {
 
         // →→→ CHECAR SE TEM PROPOSTA EM ANDAMENTO
         params = {
-            'nameSearch': `CHECAR SE TEM PROPOSTA EM ANDAMENTO`, 'element': {
+            'paramId': `CHECAR SE TEM PROPOSTA EM ANDAMENTO`, 'element': {
                 'maxAwaitMil': 2000, 'tag': 'span',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'toastMessage forceActionsText', }, { 'atributoNome': 'data-aura-class', 'atributoValor': 'forceActionsText', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'toastMessage forceActionsText', }, { 'attributeName': 'data-aura-class', 'attributeValue': 'forceActionsText', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
         if (res?.[0].ret && res?.[0].res) {
-            ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'imputRes': `${res?.[0].res}`, };
+            ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'inputRes': `${res?.[0].res}`, };
             await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_produtos`, 'awaitPageFinish': false, }); return ret;
         }
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [BUTTON] 'C6 Pay Link' {CHECAR SE ESTÁ DISPONÍVEL}
-            'nameSearch': `[BUTTON] '${leadProdutos[0]}' {CHECAR SE ESTÁ DISPONÍVEL}`, 'element': {
+            'paramId': `[BUTTON] '${leadProdutos[0]}' {CHECAR SE ESTÁ DISPONÍVEL}`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'span', 'content': `Produto indisponível no momento`,
-                'propriedades': [{ 'atributoNome': 'part', 'atributoValor': 'badge', }, { 'atributoNome': 'exportparts', 'atributoValor': 'icon', },],
+                'properties': [{ 'attributeName': 'part', 'attributeValue': 'badge', }, { 'attributeName': 'exportparts', 'attributeValue': 'icon', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); hasLink = !(res?.[0]?.res?.includes(' '));
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_produtos`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Continuar'
-            'nameSearch': `[BUTTON] 'Continuar'`, 'element': {
+            'paramId': `[BUTTON] 'Continuar'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'button', 'content': 'Continuar',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_brand', },
-                { 'atributoNome': 'title', 'atributoValor': 'Continuar', }, { 'atributoNome': 'part', 'atributoValor': 'button', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_brand', },
+                { 'attributeName': 'title', 'attributeValue': 'Continuar', }, { 'attributeName': 'part', 'attributeValue': 'button', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -197,9 +197,9 @@ async function maquinaInput(inf = {}) {
 
         if (hasLink) { // →→→ APENAS DE TIVER O LINK
             params = { // [BUTTON] 'Escolher taxa X [1]'
-                'nameSearch': `[BUTTON] 'Escolher taxa X [1]'`, 'element': {
+                'paramId': `[BUTTON] 'Escolher taxa X [1]'`, 'element': {
                     'maxAwaitMil': 2500, 'tag': 'button', 'content': `${leadTaxas[0]}`,
-                    'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesfees_commercialcardmachinesalesfees', },],
+                    'properties': [{ 'attributeName': 'c-commercialcardmachinesalesfees_commercialcardmachinesalesfees', },],
                 }, 'actions': [{ 'action': 'elementClick', },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
             await logConNew(res?.[0]?.msg || 'x');
@@ -208,18 +208,18 @@ async function maquinaInput(inf = {}) {
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [BUTTON] 'Escolher C6 Pay Essencial' / 'Escolher C6 Pay Super Mini' / 'Escolher C6 Pay TEF Paygo'
-            'nameSearch': `[BUTTON] '___MODELO___'`, 'element': {
+            'paramId': `[BUTTON] '___MODELO___'`, 'element': {
                 'maxAwaitMil': 2500, 'tag': 'button', 'content': `${leadModelo}`,
-                'propriedades': [{ 'atributoNome': 'class', }, { 'atributoNome': 'c-commercialcardmachinesalessubproduct_commercialcardmachinesalessubproduct', },],
+                'properties': [{ 'attributeName': 'class', }, { 'attributeName': 'c-commercialcardmachinesalessubproduct_commercialcardmachinesalessubproduct', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
         params = { // [BUTTON] 'Escolher taxa X [2]'
-            'nameSearch': `[BUTTON] 'Escolher taxa X [2]'`, 'element': {
+            'paramId': `[BUTTON] 'Escolher taxa X [2]'`, 'element': {
                 'maxAwaitMil': 2500, 'tag': 'button', 'content': `${leadTaxas[1]}`,
-                'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesfees_commercialcardmachinesalesfees', },],
+                'properties': [{ 'attributeName': 'c-commercialcardmachinesalesfees_commercialcardmachinesalesfees', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
@@ -231,19 +231,19 @@ async function maquinaInput(inf = {}) {
             if (leadNumero.toString() === '99999') {
                 // ******************** (Escolher da lista)
 
-                await screenshot({ e, page, fileName: `${leadCnpj}_maquinaInput_endereçosDeEntrega`, awaitPageFinish: false, });
+                await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_endereçosDeEntrega`, 'awaitPageFinish': false, });
                 params = { // [LABEL] '{Endereço}' (ENDEREÇO GERAL)
-                    'nameSearch': `[LABEL] '{Endereço}' (ENDEREÇO GERAL)' [${cep2}]`, 'element': {
+                    'paramId': `[LABEL] '{Endereço}' (ENDEREÇO GERAL)' [${cep2}]`, 'element': {
                         'maxAwaitMil': 2500, 'tag': 'label', 'content': `${cep2}`, 'indexTarget': 0,
-                        'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesaddress_commercialcardmachinesalesaddress', },],
+                        'properties': [{ 'attributeName': 'c-commercialcardmachinesalesaddress_commercialcardmachinesalesaddress', },],
                     }, 'actions': [{ 'action': 'elementClick', },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
                 if (!res?.[0].ret) {
                     params = { // [P] {CEP} (NOME MASTER)
-                        'nameSearch': `[P] {CEP} (NOME MASTER)' [${cep1}]`, 'element': {
+                        'paramId': `[P] {CEP} (NOME MASTER)' [${cep1}]`, 'element': {
                             'maxAwaitMil': 2500, 'tag': 'label', 'content': `${cep1}`, 'indexTarget': 0,
-                            'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesaddress_commercialcardmachinesalesaddress', },],
+                            'properties': [{ 'attributeName': 'c-commercialcardmachinesalesaddress_commercialcardmachinesalesaddress', },],
                         }, 'actions': [{ 'action': 'elementClick', },],
                     }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
                     await logConNew(res?.[0]?.msg || 'x');
@@ -253,9 +253,9 @@ async function maquinaInput(inf = {}) {
 
                 if (!res?.[0].ret) {
                     params = { // [LABEL] '{Endereço}' (ESCOLHER O PRIMEIRO)
-                        'nameSearch': `[LABEL] '{Endereço}' [_INDEX_0_INDEX_]`, 'element': {
+                        'paramId': `[LABEL] '{Endereço}' [_INDEX_0_INDEX_]`, 'element': {
                             'maxAwaitMil': 250, 'tag': 'label', 'content': `CEP`, 'indexTarget': 0,
-                            'propriedades': [{ 'atributoNome': 'c-commercialcardmachinesalesaddress_commercialcardmachinesalesaddress', },],
+                            'properties': [{ 'attributeName': 'c-commercialcardmachinesalesaddress_commercialcardmachinesalesaddress', },],
                         }, 'actions': [{ 'action': 'elementClick', },],
                     }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
                     await logConNew(res?.[0]?.msg || 'x');
@@ -267,53 +267,54 @@ async function maquinaInput(inf = {}) {
                 // ******************** {Cadastrar novo endereço}
 
                 params = { // [BUTTON] 'Cadastrar novo endereço'
-                    'nameSearch': `[BUTTON] 'Cadastrar novo endereço'`, 'element': {
+                    'paramId': `[BUTTON] 'Cadastrar novo endereço'`, 'element': {
                         'maxAwaitMil': 2500, 'tag': 'button', 'content': 'Cadastrar novo endereço',
-                        'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_neutral', }, { 'atributoNome': 'title', 'atributoValor': 'Cadastrar novo endereço', },
-                        { 'atributoNome': 'type', 'atributoValor': 'button', }, { 'atributoNome': 'part', 'atributoValor': 'button', },],
+                        'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_neutral', }, { 'attributeName': 'title', 'attributeValue': 'Cadastrar novo endereço', },
+                        { 'attributeName': 'type', 'attributeValue': 'button', }, { 'attributeName': 'part', 'attributeValue': 'button', },],
                     }, 'actions': [{ 'action': 'elementClick', },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
                 // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
                 params = { // [BUTTON] 'Entendi'
-                    'nameSearch': `[BUTTON] 'Entendi'`, 'element': {
+                    'paramId': `[BUTTON] 'Entendi'`, 'element': {
                         'maxAwaitMil': 500, 'tag': 'button', 'content': 'Entendi',
-                        'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_brand slds-float_right', },],
+                        'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_brand slds-float_right', },],
                     }, 'actions': [{ 'action': 'elementClick', },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
                 // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
                 params = { // [INPUT] 'Cep'
-                    'nameSearch': `[INPUT] 'Cep'`, 'element': {
+                    'paramId': `[INPUT] 'Cep'`, 'element': {
                         'maxAwaitMil': 250, 'tag': 'input',
-                        'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'ZipCode', },],
+                        'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', }, { 'attributeName': 'name', 'attributeValue': 'ZipCode', },],
                     }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadCep}`, },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
                 // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
                 await new Promise(r => { setTimeout(r, 2000); }); params = { // [INPUT] 'Rua' {pegar}
-                    'nameSearch': `[INPUT] 'Rua' {pegar}`, 'element': {
+                    'paramId': `[INPUT] 'Rua' {pegar}`, 'element': {
                         'maxAwaitMil': 250, 'tag': 'input',
-                        'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'Street', },],
+                        'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', }, { 'attributeName': 'name', 'attributeValue': 'Street', },],
                     }, 'actions': [{ 'action': 'elementGetValue', },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
-                if (!(res?.[0].res !== '')) { ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'imputRes': `ALERTA: CEP inválido → ${fim}`, }; return ret; }
+                if (!(res?.[0].res !== '')) { ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; ret['res'] = { 'inputRes': `ALERTA: CEP inválido → ${fim}`, }; return ret; }
 
                 params = { // [INPUT] 'Número'
-                    'nameSearch': `[INPUT] 'Número'`, 'element': {
+                    'paramId': `[INPUT] 'Número'`, 'element': {
                         'maxAwaitMil': 250, 'tag': 'input',
-                        'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'number', },],
+                        'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', }, { 'attributeName': 'name', 'attributeValue': 'number', },],
                     }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadNumero}`, },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
                 if (leadComplemento) {
                     params = { // [INPUT] 'Complemento'
-                        'nameSearch': `[INPUT] 'Complemento'`, 'element': {
+                        'paramId': `[INPUT] 'Complemento'`, 'element': {
                             'maxAwaitMil': 250, 'tag': 'input',
-                            'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'name', 'atributoValor': 'Complement', },],
+                            'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
+                            { 'attributeName': 'name', 'attributeValue': 'Complement', },],
                         }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadComplemento}`, },],
                     }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
                     await logConNew(res?.[0]?.msg || 'x');
@@ -321,10 +322,10 @@ async function maquinaInput(inf = {}) {
 
                 if (leadReferencia) {
                     params = { // [INPUT] 'Ponto de referência'
-                        'nameSearch': `[INPUT] 'Ponto de referência'`, 'element': {
+                        'paramId': `[INPUT] 'Ponto de referência'`, 'element': {
                             'maxAwaitMil': 250, 'tag': 'input',
-                            'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', },
-                            { 'atributoNome': 'name', 'atributoValor': 'Reference_point', },],
+                            'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
+                            { 'attributeName': 'name', 'attributeValue': 'Reference_point', },],
                         }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadReferencia}`, },],
                     }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
                     await logConNew(res?.[0]?.msg || 'x');
@@ -333,10 +334,10 @@ async function maquinaInput(inf = {}) {
                 // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
                 params = { // [BUTTON] 'Salvar'
-                    'nameSearch': `[BUTTON] 'Salvar'`, 'element': {
+                    'paramId': `[BUTTON] 'Salvar'`, 'element': {
                         'maxAwaitMil': 250, 'tag': 'button', 'content': 'Salvar',
-                        'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_success', }, { 'atributoNome': 'title', 'atributoValor': 'Salvar', },
-                        { 'atributoNome': 'part', 'atributoValor': 'button', },],
+                        'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_success', }, { 'attributeName': 'title', 'attributeValue': 'Salvar', },
+                        { 'attributeName': 'part', 'attributeValue': 'button', },],
                     }, 'actions': [{ 'action': 'elementClick', },],
                 }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
             }
@@ -349,27 +350,27 @@ async function maquinaInput(inf = {}) {
 
         if (!leadModelo.includes('TEF')) {
             params = { // [INPUT] 'Quantidade'
-                'nameSearch': `[INPUT] 'Quantidade'`, 'element': {
+                'paramId': `[INPUT] 'Quantidade'`, 'element': {
                     'maxAwaitMil': 2500, 'tag': 'input',
-                    'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-input', }, { 'atributoNome': 'part', 'atributoValor': 'input', }, { 'atributoNome': 'inputmode', 'atributoValor': 'decimal', },
-                    { 'atributoNome': 'min', 'atributoValor': '1', }, { 'atributoNome': 'type', 'atributoValor': 'text', },],
+                    'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', }, { 'attributeName': 'inputmode', 'attributeValue': 'decimal', },
+                    { 'attributeName': 'min', 'attributeValue': '1', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
                 }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadQuantidade}`, },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
             // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO
 
             params = { // [SELECT] 'Operadora'
-                'nameSearch': `[SELECT] 'Operadora`, 'element': {
+                'paramId': `[SELECT] 'Operadora`, 'element': {
                     'maxAwaitMil': 250, 'tag': 'button',
-                    'propriedades': [{ 'atributoNome': 'aria-haspopup', 'atributoValor': 'listbox', }, { 'atributoNome': 'name', 'atributoValor': 'Operadora', },],
+                    'properties': [{ 'attributeName': 'aria-haspopup', 'attributeValue': 'listbox', }, { 'attributeName': 'name', 'attributeValue': 'Operadora', },],
                 }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadOperadora}`, },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
         }
 
         params = { // [SELECT] 'Forma de pagamento'
-            'nameSearch': `[SELECT] 'Forma de pagamento'`, 'element': {
+            'paramId': `[SELECT] 'Forma de pagamento'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'button',
-                'propriedades': [{ 'atributoNome': 'aria-haspopup', 'atributoValor': 'listbox', }, { 'atributoNome': 'name', 'atributoValor': 'Forma de pagamento', },],
+                'properties': [{ 'attributeName': 'aria-haspopup', 'attributeValue': 'listbox', }, { 'attributeName': 'name', 'attributeValue': 'Forma de pagamento', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': 'Débito em conta', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
         await screenshot({ e, page, 'fileName': `${leadCnpj}_resumoDePedido`, 'awaitPageFinish': false, });
@@ -380,19 +381,19 @@ async function maquinaInput(inf = {}) {
         await new Promise(r => { setTimeout(r, 1000); });
 
         params = { // [BUTTON] 'Aceitar e Contratar'
-            'nameSearch': `[BUTTON] 'Aceitar e Contratar'`, 'element': {
+            'paramId': `[BUTTON] 'Aceitar e Contratar'`, 'element': {
                 'maxAwaitMil': 250, 'tag': 'button', 'content': 'Aceitar e Contratar',
-                'propriedades': [{ 'atributoNome': 'class', 'atributoValor': 'slds-button slds-button_success', }, { 'atributoNome': 'title', 'atributoValor': 'Aceitar e Contrata', },
-                { 'atributoNome': 'part', 'atributoValor': 'button', },],
+                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_success', }, { 'attributeName': 'title', 'attributeValue': 'Aceitar e Contrata', },
+                { 'attributeName': 'part', 'attributeValue': 'button', },],
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
         // ******************** (APÓS A FINALIZAÇÃO)
 
         params = { // [DIV] 'Sucesso'
-            'nameSearch': `[DIV] 'Sucesso'`, 'element': {
+            'paramId': `[DIV] 'Sucesso'`, 'element': {
                 'maxAwaitMil': 15000, 'tag': 'div', 'content': `Sucesso`,
-                'propriedades': [{ 'atributoNome': 'id', }, { 'atributoNome': 'class', 'atributoValor': 'toastTitle slds-text-heading--small', }, { 'atributoNome': 'data-aura-rendered-by', },],
+                'properties': [{ 'attributeName': 'id', }, { 'attributeName': 'class', 'attributeValue': 'toastTitle slds-text-heading--small', }, { 'attributeName': 'data-aura-rendered-by', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_sucesso`, 'awaitPageFinish': false, });
@@ -403,7 +404,7 @@ async function maquinaInput(inf = {}) {
 
         ret['ret'] = true;
         ret['msg'] = `MAQUINA INPUT: OK`;
-        ret['res'] = { 'imputRes': `${res?.[0].ret ? `INDICAÇÃO MÁQUINA OK` : `INDICAÇÃO MÁQUINA: ERRO`}`, };
+        ret['res'] = { 'inputRes': `${res?.[0].ret ? `INDICAÇÃO MÁQUINA OK` : `INDICAÇÃO MÁQUINA: ERRO`}`, };
 
     } catch (catchErr) {
         let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];

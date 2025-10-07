@@ -21,7 +21,7 @@ async function newAccounts(inf = {}) {
         }
 
         // ABRIR TELA 'Encarteiramento'
-        await page.goto('https://c6bank.my.site.com/partners/s/encarteiramento', { waitUntil: 'networkidle2', }); await screenshot({ e, page, 'fileName': `screenshot`, });
+        await page.goto('https://c6bank.my.site.com/partners/s/encarteiramento', { 'waitUntil': 'networkidle2', }); await screenshot({ e, page, 'fileName': `screenshot`, });
 
         // PEGAR CNPJs ANTIGOS DA PLANILHA E ABA DE BOAS VINDAS
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': `${id2}`, 'tab': `${tabContas}`, 'range': `${colContas}:${colContas}`, });
@@ -33,9 +33,9 @@ async function newAccounts(inf = {}) {
         // ### TABELA DE CONTAS ABERTAS
 
         params = { // 'Coluna Conta'
-            'nameSearch': `Coluna Conta`, 'element': {
+            'paramId': `Coluna Conta`, 'element': {
                 'maxAwaitMil': 2000, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
-                'propriedades': [{ 'atributoNome': 'data-label', 'atributoValor': 'Conta', }, { 'atributoNome': 'class', 'atributoValor': 'slds-cell-wrap', },],
+                'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Conta', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
 
@@ -43,25 +43,25 @@ async function newAccounts(inf = {}) {
         let contas = res.reverse();
 
         params = { // 'Coluna CNPJ'
-            'nameSearch': `Coluna CNPJ`, 'element': {
+            'paramId': `Coluna CNPJ`, 'element': {
                 'maxAwaitMil': 750, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
-                'propriedades': [{ 'atributoNome': 'data-label', 'atributoValor': 'CNPJ', }, { 'atributoNome': 'class', 'atributoValor': 'slds-cell-wrap', },],
+                'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'CNPJ', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
         let cnpjs = res.reverse();
 
         params = { // 'Coluna Data de criação'
-            'nameSearch': `Coluna Data de criação`, 'element': {
+            'paramId': `Coluna Data de criação`, 'element': {
                 'maxAwaitMil': 750, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
-                'propriedades': [{ 'atributoNome': 'data-label', 'atributoValor': 'Data de criação', }, { 'atributoNome': 'class', 'atributoValor': 'slds-cell-wrap', },],
+                'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Data de criação', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
         let datasDeCriacao = res.reverse();
 
         // params = { // 'Consultor encarteirado'
-        //     'nameSearch': `Consultor encarteirado`, 'element': {
+        //     'paramId': `Consultor encarteirado`, 'element': {
         //         'maxAwaitMil': 750, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
-        //         'propriedades': [{ 'atributoNome': 'data-label', 'atributoValor': 'Consultor encarteirado', }, { 'atributoNome': 'class', 'atributoValor': 'slds-cell-wrap', },],
+        //         'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Consultor encarteirado', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
         //     }, 'actions': [{ 'action': 'elementGetValue', },],
         // }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); 
         // let consultoresEncarteirados = res.reverse();

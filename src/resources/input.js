@@ -1,22 +1,22 @@
-// let infImput, retImput
-// infImput = {e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': '13112023' }
-// retImput = await imput(infImput)
-// console.log(retImput)
+// let infInput, retInput
+// infInput = {e, 'browser': browser, 'page': page, 'element': '#ctl00_cphContent_frmBuscaAvancada_txtDataAberturaInicio', 'value': '13112023' }
+// retInput = await input(infInput)
+// console.log(retInput)
 
 let e = import.meta.url, ee = e;
-async function imput(inf = {}) {
+async function input(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
     try {
         let { browser, page, element, value, } = inf;
         if (!element) {
-            ret['msg'] = `IMPUT: ERRO | INFORMAR O 'element'`;
+            ret['msg'] = `INPUT: ERRO | INFORMAR O 'element'`;
         } else if (!value) {
-            ret['msg'] = `IMPUT: ERRO | INFORMAR O 'value'`;
+            ret['msg'] = `INPUT: ERRO | INFORMAR O 'value'`;
         } else {
             // IMPUTAR VALOR
             await page.focus(element);
             page.keyboard.type(value);
-            ret['msg'] = `IMPUT: OK`;
+            ret['msg'] = `INPUT: OK`;
             ret['ret'] = true;
         }
     } catch (catchErr) {
@@ -28,6 +28,6 @@ async function imput(inf = {}) {
 }
 
 // CHROME | NODE
-globalThis['imput'] = imput;
+globalThis['input'] = input;
 
 
