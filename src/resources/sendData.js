@@ -67,10 +67,10 @@ async function sendData(inf = {}) {
 
         // STOP
         if (inf.stop) {
-            gO.inf['stop'] = true; await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); crashCode();
+            gO.inf['stop'] = true; await commandLine({ e, 'command': `${fileProjetos}/${gW.project}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); codeStop();
         }
     } catch (catchErr) {
-        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res']; crashCode();
+        let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res']; codeStop();
     }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.hasOwnProperty('res') && { 'res': ret.res, }), };

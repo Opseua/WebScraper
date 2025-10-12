@@ -16,7 +16,7 @@ async function clientInput(inf = {}) {
         async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); await screenshot({ e, page, 'fileName': `err_${inf.screenshot || 'x'}`, });
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); codeStop();
         }
 
         // ---------------------------------------

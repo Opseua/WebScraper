@@ -23,6 +23,7 @@ globalThis['cookiesGetSet'] = (inf) => { return importFun({ 'engOk': (!eng), 'pa
 globalThis['getTextElement'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/getTextElement.js`, inf, project, }); };
 globalThis['input'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/input.js`, inf, project, }); };
 globalThis['maquinaInput'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/maquinaInput.js`, inf, project, }); };
+globalThis['moveLeadsMaquinas'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/moveLeadsMaquinas.js`, inf, project, }); };
 globalThis['navigate'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/navigate.js`, inf, project, }); };
 globalThis['newAccounts'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/newAccounts.js`, inf, project, }); };
 globalThis['screenshot'] = (inf) => { return importFun({ 'engOk': (!eng), 'path': `./src/resources/screenshot.js`, inf, project, }); };

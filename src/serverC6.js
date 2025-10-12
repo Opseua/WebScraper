@@ -13,14 +13,12 @@ async function serverRun(inf = {}) {
         function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
-        gO.inf['indicationUrl'] = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default'; serverWeb = gW.serverWeb; serverWeb = gW.serverWebEstrelar; // serverWeb = '127.0.0.1';
-
-        async function navigateUrl(p) { await p.goto(gO.inf.indicationUrl, { 'waitUntil': 'networkidle2', }); await screenshot({ e, 'page': p, 'fileName': `screenshot`, }); }
-        chromeDestiny = `ESTRELAR_THAYNA-CHROME-NAO_DEFINIDO`; chromeDestiny = `ESTRELAR-CHROME-NAO_DEFINIDO`; chromeDestiny = `OPSEUA-CHROME-CHROME_EXTENSION-USUARIO_0`;
-        chromeDestiny = `${serverWeb}:${gW.portWeb}/?roo=${chromeDestiny}`; async function processForceStop(inf = {}) {
+        gO.inf['indicationUrl'] = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default'; serverWeb = gW.serverWeb; serverWeb = gW.serverWebEstrelar;
+        chromeDestiny = `ESTRELAR_MARCOS-CHROME-NAO_DEFINIDO`; // chromeDestiny = `OPSEUA-CHROME-CHROME_EXTENSION-USUARIO_0`; 
+        async function navigateUrl(p) { await p.goto(gO.inf.indicationUrl, { 'waitUntil': 'networkidle2', }); await screenshot({ e, 'page': p, 'fileName': `screenshot`, }); } async function processForceStop(inf = {}) {
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}`, });
-            await commandLine({ e, 'command': `${pp}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); crashCode();
-        } async function errA2(inf = '') {
+            await commandLine({ e, 'command': `${pp}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); codeStop();
+        } chromeDestiny = `${serverWeb}:${gW.portWeb}/?roo=${chromeDestiny}`; async function errA2(inf = '') {
             let title = `ERRO PARSE CÉLULA A2`; let text = `[${inf}] ${gO.inf.sheetTab}\n${gW.project}\n${gO.inf.shortcut}`; await notification({ e, 'legacy': true, title, text, });
             await processForceStop({ 'origin': `${title} ${text}`, });
         } function stringToObj(t, s) { let o = {}; try { let p = t.split(s); for (let i = 0; i < p.length; i += 2) { o[p[i]] = p[i + 1] !== undefined ? p[i + 1] : ''; } } catch { o = false; } return o; }
@@ -29,31 +27,24 @@ async function serverRun(inf = {}) {
         let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); // gW.cloneProject = 'serverC6_New2'; // TESTES
 
         // DEFINIR O ID DA PLANILHA E ATALHO
-        gO.inf['shortcut'] = `z_OUTROS_${gW.cloneProject}`; gO.inf[`screenshot`] = `${gW.cloneProject.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0];
-        let message, sheetsMap = {
-            // 'serverC6': '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc',
-
-
-            'serverC6': '1ysKgg_TZ-b1mzYXN1UAMUtpVWL3DXwk0fPNtApfXwes',
-
+        gO.inf['shortcut'] = `z_OUTROS_${gW.cloneProject}`; gO.inf[`screenshot`] = `${gW.cloneProject.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let message, sheetsMap = {
+            'serverC6': '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc',
+            // 'serverC6': '1ysKgg_TZ-b1mzYXN1UAMUtpVWL3DXwk0fPNtApfXwes', // TESTES
 
             'serverC6_New2': '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8',
-        };
-        gO.inf['sheetId'] = sheetsMap[gW.cloneProject]; let width = 1280, height = 1024, infCL = { e, 'awaitFinish': true, }, ppOk = `${pp}/logs/resolution.txt`, infFl = { e, 'action': 'read', 'path': ppOk, };
+        }; gO.inf['sheetId'] = sheetsMap[gW.cloneProject]; let width = 1280, height = 1024, infCL = { e, 'awaitFinish': true, }, ppOk = `${pp}/logs/resolution.txt`, infFl = { e, 'action': 'read', 'path': ppOk, };
+
+        moveLeadsMaquinas(); setInterval(() => { moveLeadsMaquinas(); }, (3 * 60 * 1000));
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, range, }); if (!retGoogleSheets.ret) {
             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]', }); // FORÇAR PARADA DO SCRIPT
-        } try {
-            json = retGoogleSheets.res[0][0];
-            // json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '');
-            gO.inf['sheetKepp'] = JSON.parse(json);
-        }
+        } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
         catch (c) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } let resize = function (a, b) { return Math.floor(parseInt(a, 10) * b); }; // '0' → APARECE | '1' → OCULTO
-        let { tabsWork, 'autC6': aut, conSpl, 'randomNames': leadRandomNames, 'scriptHourWebScraper': scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
+        let { tabsWork, autC6: aut, conSpl, randomNames: leadRandomNames, scriptHourWebScraper: scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
         tabsInf.names = [...new Set([...tabsWork,]),].filter(v => v !== '' && v !== null); chromiumHeadless = chromiumHeadless === '1' ? 'new' : false; scriptHour = scriptHour.split('|'); if (tabsInf.names.length === 0) {
-            let text = `'tabsWork' VAZIA`; await logConsole({ e, ee, 'txt': text, }); await notification({ e, 'legacy': true, 'title': `ERRO ${gW.cloneProject}`, text, }); await processForceStop({ 'origin': text, });
+            let text = `'tabsWork' VAZIA`; await logConsole({ e, ee, txt: text, }); await notification({ e, legacy: true, title: `ERRO ${gW.cloneProject}`, text, }); await processForceStop({ origin: text, });
         }
 
         // STATUS1 [Iniciando script, aguarde]
@@ -113,20 +104,17 @@ async function serverRun(inf = {}) {
                     retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': sheetTab, range, }); if (!retGoogleSheets.ret) {
                         err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]', }); // FORÇAR PARADA DO SCRIPT
-                    } try {
-                        json = retGoogleSheets.res[0][0];
-                        // json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, '');
-                        gO.inf['sheetKepp'] = JSON.parse(json);
-                    }
-                    catch (c) { await errA2(`[1]`); /* FORÇAR PARADA DO SCRIPT */ } let { 'colC6': col, leadsQtd, 'leads': lead, } = gO.inf.sheetKepp; tabsInf['leadsQtd'][tabsInf.index] = Number(leadsQtd);
+                    } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
+                    catch (c) { await errA2(`[1]`); /* FORÇAR PARADA DO SCRIPT */ } let { colC6: col, leadsQtd, leads: lead, } = gO.inf.sheetKepp; tabsInf['leadsQtd'][tabsInf.index] = Number(leadsQtd);
 
                     logConsole({ e, ee, 'txt': `LEADS: ${tabsInf.leadsQtd[tabsInf.index]} | ${sheetTab}`, }); if (tabsInf.leadsQtd[tabsInf.index] === 0) {
                         tabsInf.lastCheck[tabsInf.index] = now + secAwaitNewCheck; await sendData({ e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...`, }); // NADA PENDENTE
                     } else {
                         if (sheetTab === 'BOAS_VINDAS') { await newAccounts({ page, browser, 'sheetKepp': gO.inf.sheetKepp, }); tabsInf.lastCheck[tabsInf.index] = now + secAwaitNewCheck; continue; }
 
-                        let leadLinha, leadCnpj, leadTelefone, leadEmail, leadRazaoSocial, leadAdministrador, leadPrimeiroNome, leadSobrenome, leadOrigem, statusInf = 'STATUS NÃO DEFINIDO', dif = 0;
+                        let leadLinha, leadCnpj, leadTelefone, leadEmail, leadRazaoSocial, leadAdministrador, leadPrimeiroNome, leadSobrenome, leadOrigem, leadUrl, statusInf = 'STATUS NÃO DEFINIDO', dif = 0;
                         let leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia, nameMaster = '', leadDate = '';
+                        let telefone1 = '', telefone2 = '', razaoSocialOk = '';
 
                         // DADOS DO LEAD
                         if (!lead.includes('KEY_VALUE')) {
@@ -135,11 +123,12 @@ async function serverRun(inf = {}) {
                             leadAdministrador = lead[4].length > 4 && lead[4].includes(' ') ? lead[4] : lead[6].length > 4 ? lead[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)];
                             leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###'); if (leadAdministrador.length < 2) {
                                 leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###');
-                            } leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = lead[7];
+                            } leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = lead[7]; leadUrl = lead[8] || ''; coldList = leadOrigem.includes('JSF');
+                            leadTelefone = coldList ? '887766' : leadTelefone;
                         } else {
                             ({
-                                'linha': leadLinha, 'cnpj': leadCnpj, 'dadosIniciais': leadDadosIniciais, 'produtos': leadProdutos, 'taxas': leadTaxas, 'modelo': leadModelo, 'quantidade': leadQuantidade,
-                                'operadora': leadOperadora, 'cep': leadCep, 'numero': leadNumero, 'complemento': leadComplemento, 'referencia': leadReferencia,
+                                linha: leadLinha, cnpj: leadCnpj, dadosIniciais: leadDadosIniciais, produtos: leadProdutos, taxas: leadTaxas, modelo: leadModelo, quantidade: leadQuantidade, operadora: leadOperadora,
+                                cep: leadCep, numero: leadNumero, complemento: leadComplemento, referencia: leadReferencia,
                             } = stringToObj(lead, conSpl));
                         }
 
@@ -147,7 +136,10 @@ async function serverRun(inf = {}) {
                         retClientSearch = (await clientSearch({ page, browser, leadCnpj, })).res; leadStatus = retClientSearch.leadStatus; leadDate = retClientSearch.leadDate;
 
                         // CLIENTE: PEGAR DADOS DO CONTA (SE NÃO FOR LEAD)
-                        if (['ENCONTRADO_CONTA',].includes(leadStatus)) { retCliGetDat = (await clientGetData({ page, browser, leadCnpj, })).res; leadDate = retCliGetDat.leadDate; nameMaster = retCliGetDat.nameMaster; }
+                        if (['ENCONTRADO_CONTA',].includes(leadStatus)) {
+                            retCliGetDat = (await clientGetData({ page, browser, leadCnpj, })).res;
+                            leadDate = retCliGetDat.leadDate; nameMaster = retCliGetDat.nameMaster; telefone1 = retCliGetDat.telefone1; telefone2 = retCliGetDat.telefone2; razaoSocialOk = retCliGetDat.razaoSocial;
+                        }
 
                         // CALCULAR DIFERENÇA DE DATA (LEAD OU CONTA)
                         if (leadDate) { // ANO-MÊS-DIA 00:00:00 | DIFERENÇA JÁ EM DIAS (ARREDONDADO)
@@ -156,51 +148,46 @@ async function serverRun(inf = {}) {
                         }
 
                         if (['INDICAR_MANUAL', 'INDICAR_AUTOMATICO',].includes(sheetTab) && (leadStatus === 'NADA_ENCONTRADO' || (leadStatus === 'ENCONTRADO_EXPIRADO' && (dif > 0)))) { // ERA 45
-                            // INPUT NECESSÁRIO: SIM → IMPUTAR LEAD
+                            // INPUT NECESSÁRIO: SIM → INPUTAR LEAD
+                            leadTelefone = coldList ? leadTelefone.replace('55219', '219') : leadTelefone;
                             // retClientInput = (await clientInput({ page, browser, leadCnpj, leadPrimeiroNome, leadSobrenome, leadEmail, leadTelefone, leadRazaoSocial, })).res; statusInf = retClientInput.inputRes;
-
-
-
-
-
 
                             // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
                             // STATUS1 [Indicando...]
                             infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando...`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData); message = {
                                 'fun': [{
-                                    'securityPass': gW.securityPass, 'retInf': true, 'name': 'clientInputChrome',
-                                    'par': { 'lead': `${leadPrimeiroNome} ${leadSobrenome}	${leadCnpj}	${leadEmail}	${leadTelefone}	${leadRazaoSocial}`, 'origin': 'VM_SERVER', },
+                                    'securityPass': gW.securityPass, 'retInf': true, 'name': 'clientImputChrome', // TROCAR DEPOIS
+                                    'par': { 'lead': `${leadPrimeiroNome} ${leadSobrenome}	${leadCnpj}	${leadEmail}	${leadTelefone}	${leadRazaoSocial}`, 'origin': 'MAQUINA_VIRTUAL', },
                                 },],
                             };
-                            retClientInput = await messageSend({ 'destination': `${chromeDestiny}`, message, 'secondsAwait': 40, }); logConsole({ e, ee, 'txt': `PC 1\n${JSON.stringify(retClientInput)}`, });
+                            retClientInput = await messageSend({ 'destination': `${chromeDestiny}`, message, 'secondsAwait': 35, });
+                            logConsole({ e, ee, 'txt': `PC 1\n${JSON.stringify(retClientInput)}`, });
 
-                            if (retClientInput?.res?.inputRes) {
-                                statusInf = retClientInput?.res?.inputRes;
+                            if (retClientInput?.res?.imputRes) {
+                                statusInf = retClientInput?.res?.imputRes; // TROCAR DEPOIS
                             } else {
-
-                                await new Promise(r => { setTimeout(r, 30000); });
-
-                                // CONFIRMAR QUE O OUTRO PC NÃO CONSEGUIU INDICAR → [MANDAR PARA O OUTRO PC]
-                                let newStatus = (await clientSearch({ page, browser, leadCnpj, })).res;
-
+                                // [MANDAR PARA O OUTRO PC] CONFIRMAR QUE O OUTRO PC NÃO CONSEGUIU INDICAR
+                                // await new Promise(r => setTimeout(r, (1.5 * 60 * 1000)));
+                                let newStatus = (await clientSearch({ page, browser, leadCnpj, })).res; infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Tentando no outro PC...`, };
+                                logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
                                 if (newStatus.leadStatus !== 'ENCONTRADO_LEAD') {
-                                    infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Tentando no outro PC...`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
 
-                                    retClientInput = await messageSend({ 'destination': `${chromeDestiny.replace('MARCOS', 'THAYNA')}`, message, 'secondsAwait': 40, });
-                                    // if (retClientInput?.res?.inputRes?.includes('Já existe um lead cadastrado com o CNPJ informado')) { retClientInput.res.inputRes = 'INDICAÇÃO OK'; } // FOI INDICADO NO PC 1
+                                    retClientInput = await messageSend({ 'destination': `${chromeDestiny.replace('MARCOS', 'THAYNA')}`, message, 'secondsAwait': 35, });
                                     logConsole({ e, ee, 'txt': `PC 2\n${JSON.stringify(retClientInput)}`, });
 
                                 } else {
-                                    retClientInput = { 'res': { 'inputRes': 'INDICAÇÃO OK', }, };
+                                    retClientInput = { 'res': { 'imputRes': 'INDICAÇÃO OK', }, };
                                 }
                             }
-                            statusInf = retClientInput?.res?.inputRes || 'PROBLEMA NO ESCRITÓRIO';
+                            statusInf = retClientInput?.res?.imputRes || 'PROBLEMA NO ESCRITÓRIO';
 
 
 
                             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                            if (statusInf?.includes('ESCRITÓRIO')) { await notification({ e, 'legacy': true, 'title': 'Reiniciando...', 'text': statusInf, }); crashCode(); }
+                            if (statusInf?.includes('ESCRITÓRIO')) {
+                                await new Promise(r => setTimeout(r, (1.5 * 60 * 1000))); await notification({ e, 'legacy': true, 'title': 'Reiniciando...', 'text': statusInf, }); codeStop();
+                            }
                             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
@@ -208,7 +195,7 @@ async function serverRun(inf = {}) {
                             // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
                         } else if (['MAQUINA_MANUAL',].includes(sheetTab) && leadStatus === 'ENCONTRADO_CONTA') {
-                            // IMPUT NECESSÁRIO: SIM → IMPUTAR MÁQUINA
+                            // INPUT NECESSÁRIO: SIM → INPUTAR MÁQUINA
                             retMaquinaInput = await maquinaInput({
                                 page, browser, leadCnpj, leadDadosIniciais, leadProdutos, leadTaxas, leadModelo, leadQuantidade, leadOperadora, leadCep, leadNumero, leadComplemento, leadReferencia,
                             }); retMaquinaInput = retMaquinaInput.res; statusInf = retMaquinaInput.inputRes;
@@ -251,11 +238,25 @@ async function serverRun(inf = {}) {
 
                         // STATUS1 [STATUS DA CONSULTA] | MANDAR PARA A PLANILHA O RESULTADO
                         let t = `${leadCnpj} | ${statusInf}`; logConsole({ e, ee, 'txt': `${t}`, }); await sendData({ e, 'stop': false, 'status1': `${t}`, }); await screenshot({ e, page, 'fileName': `screenshot`, });
-                        time = dateHour().res; let results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, leadDate || '', nameMaster || '',],]; results = results[0].join(conSpl);
+                        time = dateHour().res; let results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, leadDate || '', nameMaster || '',],];
+                        if (sheetTab === 'MAQUINA_MANUAL') { results = [['ID AQUI', `${time.day}/${time.mon} ${time.hou}:${time.min}:${time.sec}`, statusInf, leadDate, razaoSocialOk, telefone1, telefone2,],]; }
+                        results = results[0].join(conSpl);
                         retGoogleSheets = await googleSheets({ e, 'action': 'send', 'id': gO.inf.sheetId, 'tab': sheetTab, 'range': `${col}${leadLinha}`, 'values': [[results,],], }); if (!retGoogleSheets.ret) {
                             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
                             await screenshot({ e, page, 'fileName': `err_7`, }); await processForceStop({ 'origin': 'serverC6 MANDAR PARA A PLANILHA O RESULTADO', }); // FORÇAR PARADA DO SCRIPT
                         }
+
+                        // MANDAR PARA O WEBHOOK
+                        if (leadOrigem?.toLowerCase()?.includes('chatwoot')) {
+                            let splitTxt = `conversations/`; let idN8n = !leadUrl?.includes(splitTxt) ? 'SEM_ID' : leadUrl.split(splitTxt)[1];
+                            let urlN8n = 'https://estrelar-n8n.muugtk.easypanel.host/webhook/425f8226-fd8b-4920-9627-4c9aefbba10f'; let infApi = {
+                                'method': 'POST', 'url': urlN8n, 'headers': { 'Content-Type': 'application/json', }, 'body': { 'id': idN8n, 'status': statusInf, },
+                            }; let resOk = await api(infApi); let { mon, day, hou, min, sec, mil, } = dateHour().res; let dateHourOk = `${day}/${mon} ${hou}:${min}:${sec}.${mil}`; await api({
+                                'method': 'POST', 'code': true, 'object': true, 'url': `https://ntfy.sh/N8N_TESTE`, 'headers': { 'Content-Type': 'application/json', },
+                                'body': JSON.stringify({ 'hora': dateHourOk, 'url': `${urlN8n}`, 'respostaN8n': resOk.res.code || false, 'body': infApi, }, null, 2),
+                            });
+                        }
+
                     }
                 }
 
@@ -270,7 +271,7 @@ async function serverRun(inf = {}) {
         }
     } catch (catchErr) {
         let retRegexE = await regexE({ inf, 'e': catchErr, }); ret['msg'] = retRegexE.res; ret['ret'] = false; delete ret['res'];
-        // let err = `% TRYCATCH Script erro!`; await sendData({ e, 'stop': true, 'status1': err, });
+        let err = `% TRYCATCH Script erro!`; await sendData({ e, 'stop': true, 'status1': err, });
     }
 
     return { ...({ 'ret': ret.ret, }), ...(ret.msg && { 'msg': ret.msg, }), ...(ret.hasOwnProperty('res') && { 'res': ret.res, }), };

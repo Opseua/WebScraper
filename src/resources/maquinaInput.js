@@ -14,7 +14,7 @@ async function maquinaInput(inf = {}) {
         async function logConNew(txt = '') { await logConsole({ e, ee, txt, }); } async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); await screenshot({ e, page, 'fileName': `err_${inf.screenshot || 'x'}`, });
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); codeStop();
         }
 
         // STATUS1 [Indicando máquina...]
@@ -52,24 +52,24 @@ async function maquinaInput(inf = {}) {
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
-        await new Promise(r => { setTimeout(r, 2000); });
+        // await new Promise(r => { setTimeout(r, 2000); });
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dados`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Novo'
             'paramId': `[BUTTON] 'Novo'`, 'element': {
-                'maxAwaitMil': 7000, 'tag': 'button', 'content': 'Novo',
+                'maxAwaitMil': 10000, 'tag': 'button', 'content': 'Novo',
                 'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_neutral', }, { 'attributeName': 'aria-disabled', 'attributeValue': 'false', },
                 { 'attributeName': 'type', 'attributeValue': 'button', }, { 'attributeName': 'part', 'attributeValue': 'button', },],
             }, 'actions': [{ 'action': 'awaitMil', 'time': 500, }, { 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[1]?.msg || 'x');
 
-        await new Promise(r => { setTimeout(r, 2000); });
+        // await new Promise(r => { setTimeout(r, 2000); });
 
         // ******************** {Dados iniciais}
 
         params = { // [INPUT] 'Débito'
             'paramId': `[INPUT] 'Débito'`, 'element': {
-                'maxAwaitMil': 2500, 'tag': 'input', 'indexTarget': 0,
+                'maxAwaitMil': 4500, 'tag': 'input', 'indexTarget': 0,
                 'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
                 { 'attributeName': 'inputmode', 'attributeValue': 'decimal', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[0]}`, },],
@@ -378,7 +378,7 @@ async function maquinaInput(inf = {}) {
         // ### ÚLTIMA VALIDAÇÃO
         if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou do Resumo de pedido`, 'screenshot': '10', }); } // NÃO ACHOU A TELA DE RESUMO (FORÇAR PARADA)
 
-        await new Promise(r => { setTimeout(r, 1000); });
+        // await new Promise(r => { setTimeout(r, 1000); });
 
         params = { // [BUTTON] 'Aceitar e Contratar'
             'paramId': `[BUTTON] 'Aceitar e Contratar'`, 'element': {

@@ -11,13 +11,13 @@ async function newAccounts(inf = {}) {
 
         if (!rate.check().ret) { await new Promise(r => { setTimeout(r, 1000); }); return ret; }
 
-        let { tabContas, colContas, } = sheetKepp; let params, res, pageValue, maxReturn = 200, retGoogleSheets, status1;
+        let { tabContas, colContas, } = sheetKepp; let params, res, pageValue, maxElements = 200, retGoogleSheets, status1;
         let id1 = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8', id2 = '1yRDGDNGhjQ-O4wwMeJmnE8HlbadXWuLLjt0tlsos-GQ';
 
         async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); await screenshot({ e, page, 'fileName': `err_${inf.screenshot || 'x'}`, });
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); codeStop();
         }
 
         // ABRIR TELA 'Encarteiramento'
@@ -34,7 +34,7 @@ async function newAccounts(inf = {}) {
 
         params = { // 'Coluna Conta'
             'paramId': `Coluna Conta`, 'element': {
-                'maxAwaitMil': 2000, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
+                'maxAwaitMil': 2000, 'maxElements': `${maxElements}`, 'tag': 'lightning-primitive-cell-factory',
                 'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Conta', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
@@ -44,7 +44,7 @@ async function newAccounts(inf = {}) {
 
         params = { // 'Coluna CNPJ'
             'paramId': `Coluna CNPJ`, 'element': {
-                'maxAwaitMil': 750, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
+                'maxAwaitMil': 750, 'maxElements': `${maxElements}`, 'tag': 'lightning-primitive-cell-factory',
                 'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'CNPJ', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
@@ -52,7 +52,7 @@ async function newAccounts(inf = {}) {
 
         params = { // 'Coluna Data de criação'
             'paramId': `Coluna Data de criação`, 'element': {
-                'maxAwaitMil': 750, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
+                'maxAwaitMil': 750, 'maxElements': `${maxElements}`, 'tag': 'lightning-primitive-cell-factory',
                 'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Data de criação', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
@@ -60,7 +60,7 @@ async function newAccounts(inf = {}) {
 
         // params = { // 'Consultor encarteirado'
         //     'paramId': `Consultor encarteirado`, 'element': {
-        //         'maxAwaitMil': 750, 'maxReturn': `${maxReturn}`, 'tag': 'lightning-primitive-cell-factory',
+        //         'maxAwaitMil': 750, 'maxElements': `${maxElements}`, 'tag': 'lightning-primitive-cell-factory',
         //         'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Consultor encarteirado', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
         //     }, 'actions': [{ 'action': 'elementGetValue', },],
         // }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); 

@@ -14,7 +14,7 @@ async function clientSearch(inf = {}) {
         async function logConNew(txt = '') { await logConsole({ e, ee, txt, }); } async function screenshotAndStop(inf = {}) { // SCREENSHOT
             let err = `% ${inf.err}`; logConsole({ e, ee, 'txt': `${err}`, }); await sendData({ e, 'stop': false, 'status1': `${err}`, }); pageValue = await page.content();
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, }); await screenshot({ e, page, 'fileName': `err_${inf.screenshot || 'x'}`, });
-            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); crashCode();
+            browser.close(); await new Promise(r => { setTimeout(r, 2000); }); codeStop();
         }
 
         // STATUS1 [Buscando na lupa]
@@ -24,14 +24,14 @@ async function clientSearch(inf = {}) {
         pageValue = await page.content(); infRegex = { e, 'pattern': `placeholder="Pesquisar" id="(.*?)" class=`, 'text': pageValue, }; retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) {
             err = `% Não achou o ID da lupa de pesquisa`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog); await screenshot({ e, page, 'fileName': `err_2`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
+            await log(infLog); await screenshot({ e, page, 'fileName': `err_2`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); codeStop();
         } retRegex = retRegex.res['1'];
 
         // BUSCAR LEAD NA LUPA
         pageInput = await page.$(`input[id="${retRegex}"]`); if (!pageInput) {
             err = `% Não achou o campo de input da lupa`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog); await screenshot({ e, page, 'fileName': `err_3`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
+            await log(infLog); await screenshot({ e, page, 'fileName': `err_3`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); codeStop();
         }
         await page.$eval(`input[id="${retRegex}"]`, input => (input.value = '')); await new Promise(resolve => setTimeout(resolve, 200)); await page.type(`input[id="${retRegex}"]`, leadCnpj);
         await new Promise(resolve => setTimeout(resolve, 200)); await pageInput.press('Enter');
@@ -56,7 +56,7 @@ async function clientSearch(inf = {}) {
         if (!pageResult) {
             err = `% Não achou o resultado da consulta`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
-            await log(infLog); await screenshot({ e, page, 'fileName': `err_4`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
+            await log(infLog); await screenshot({ e, page, 'fileName': `err_4`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); codeStop();
         }
         leadStatus = await pageResult.jsonValue(); logConsole({ e, ee, 'txt': `${leadStatus}`, });
 
