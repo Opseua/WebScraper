@@ -13,7 +13,7 @@ async function input(inf = {}) {
         } else if (!value) {
             ret['msg'] = `INPUT: ERRO | INFORMAR O 'value'`;
         } else {
-            // IMPUTAR VALOR
+            // INPUTAR VALOR
             await page.focus(element);
             page.keyboard.type(value);
             ret['msg'] = `INPUT: OK`;

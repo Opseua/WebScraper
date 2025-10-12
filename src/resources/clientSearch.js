@@ -29,7 +29,7 @@ async function clientSearch(inf = {}) {
 
         // BUSCAR LEAD NA LUPA
         pageInput = await page.$(`input[id="${retRegex}"]`); if (!pageInput) {
-            err = `% Não achou o campo de imput da lupa`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
+            err = `% Não achou o campo de input da lupa`; logConsole({ e, ee, 'txt': `${err}`, }); infSendData = { e, 'stop': false, 'status1': `${err}`, };
             await sendData(infSendData); pageValue = await page.content(); infLog = { e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': pageValue, };
             await log(infLog); await screenshot({ e, page, 'fileName': `err_3`, }); browser.close(); await new Promise(r => { setTimeout(r, 500); }); crashCode();
         }
