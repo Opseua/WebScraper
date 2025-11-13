@@ -24,7 +24,7 @@ async function serverRun(inf = {}) {
         } function stringToObj(t, s) { let o = {}; try { let p = t.split(s); for (let i = 0; i < p.length; i += 2) { o[p[i]] = p[i + 1] !== undefined ? p[i + 1] : ''; } } catch { o = false; } return o; }
 
         let coldList, err, browser, page, pageValue, autRange, leadStatus, json, retGoogleSheets, retCliGetDat, retClientInput, retClientSearch, retMaquinaInput, range = 'A2'; gO.inf['stop'] = false;
-        let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); // gW.cloneProject = 'serverC6_New2'; // TESTES
+        let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); gW.cloneProject = 'serverC6_New2'; // TESTES
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         gO.inf['shortcut'] = `z_OUTROS_${gW.cloneProject}`; gO.inf[`screenshot`] = `${gW.cloneProject.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let message, sheetsMap = {
@@ -96,6 +96,14 @@ async function serverRun(inf = {}) {
             } else {
                 // (SEG <> DMON → [00:00] <> [00:00]) DEFINIR ABA ATUAL
                 tabsInf['index'] = tabsInf.index < (tabsInf.names.length - 1) ? (tabsInf.index + 1) : 0; gO.inf['sheetTab'] = tabsInf.names[tabsInf.index]; let sheetTab = gO.inf.sheetTab;
+
+
+
+                // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
+                // if (sheetTab === 'BOAS_VINDAS') { continue; }
+                // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
+
+
 
                 if ((tabsInf.lastCheck[tabsInf.index]) > now) {
                     logConsole({ e, ee, 'txt': `IGNORADA | ${sheetTab}`, }); // IGNORAR CHECAGEM
@@ -184,11 +192,11 @@ async function serverRun(inf = {}) {
 
 
 
-                            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                            // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
                             if (statusInf?.includes('ESCRITÓRIO')) {
                                 await new Promise(r => setTimeout(r, (1.5 * 60 * 1000))); await notification({ e, 'legacy': true, 'title': 'Reiniciando...', 'text': statusInf, }); codeStop();
                             }
-                            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                            // 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴
 
 
 
@@ -248,12 +256,14 @@ async function serverRun(inf = {}) {
 
                         // MANDAR PARA O WEBHOOK
                         if (leadOrigem?.toLowerCase()?.includes('chatwoot')) {
-                            let splitTxt = `conversations/`; let idN8n = !leadUrl?.includes(splitTxt) ? 'SEM_ID' : leadUrl.split(splitTxt)[1];
-                            let urlN8n = 'https://estrelar-n8n.muugtk.easypanel.host/webhook/425f8226-fd8b-4920-9627-4c9aefbba10f'; let infApi = {
-                                'method': 'POST', 'url': urlN8n, 'headers': { 'Content-Type': 'application/json', }, 'body': { 'id': idN8n, 'status': statusInf, },
-                            }; let resOk = await api(infApi); let { mon, day, hou, min, sec, mil, } = dateHour().res; let dateHourOk = `${day}/${mon} ${hou}:${min}:${sec}.${mil}`; await api({
+                            let { mon, day, hou, min, sec, mil, } = dateHour().res; let dateHourOk = `${day}/${mon} ${hou}:${min}:${sec}.${mil}`;
+                            let infApi1, infApi2, retApi1, retApi2, splitTxt = `conversations/`; let idN8n = !leadUrl?.includes(splitTxt) ? 'SEM_ID' : leadUrl.split(splitTxt)[1];
+                            let methodHeadersBody = { 'method': 'POST', 'headers': { 'Content-Type': 'application/json', }, 'body': { 'id': idN8n, 'status': statusInf, }, };
+                            infApi1 = { ...methodHeadersBody, 'url': 'https://estrelar-n8n.muugtk.easypanel.host/webhook/425f8226-fd8b-4920-9627-4c9aefbba10f', }; retApi1 = await api(infApi1);
+                            infApi2 = { ...methodHeadersBody, 'url': 'https://estrelar-n8n.muugtk.easypanel.host/webhook/consultoreschatwoot', }; retApi2 = await api(infApi2);
+                            await api({
                                 'method': 'POST', 'code': true, 'object': true, 'url': `https://ntfy.sh/N8N_TESTE`, 'headers': { 'Content-Type': 'application/json', },
-                                'body': JSON.stringify({ 'hora': dateHourOk, 'url': `${urlN8n}`, 'respostaN8n': resOk.res.code || false, 'body': infApi, }, null, 2),
+                                'body': { 'hora': dateHourOk, 'respostaN8n1': retApi1.res.code || false, 'respostaN8n2': retApi2.res.code || false, 'body1': infApi1, 'body2': infApi2, },
                             });
                         }
 

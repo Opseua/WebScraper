@@ -6,84 +6,67 @@ async function moveLeadsMaquinas(inf = {}) {
 
         let infGoogleSheets, retGoogleSheets, maquinaManualCnpjsRes;
 
-        let idScript2 = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; let idMaquinas = '1Rj_eyyhJtwY-XyEoNYeOAQ_nESrtmskPNyCLO0bTRak'; let leadsMax = 5;
-
-        // MANTER APENAS NÚMERO MAIORES QUE ZERO E ÚNICOS
-        function cleanNumbers(arrayMaster, ...otherArrays) {
-            let seen = new Set(); let excludeSet = new Set(); for (let arr of otherArrays) { arr.forEach(v => { let n = Number(v); if (Number.isFinite(n) && n > 0) { excludeSet.add(n); } }); } return arrayMaster
-                .map(v => Number(v)).filter(v => {
-                    if (!Number.isFinite(v)) { return false; } if (v <= 0) { return false; } if (seen.has(v)) { return false; } if (excludeSet.has(v)) { return false; } seen.add(v); return true;
-                });
-        }
+        let idScript2 = '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8'; let idMaquinas = '1Rj_eyyhJtwY-XyEoNYeOAQ_nESrtmskPNyCLO0bTRak';
 
         // --- --- --- --- --- --- --- --- --- --- [SCRIPT2] --- --- --- --- --- --- --- --- --- ---
         // [MAQUINA_MANUAL] PEGAR RES (CONCAT)
-        infGoogleSheets = { e, 'action': 'get', 'id': `${idScript2}`, 'tab': `MAQUINA_MANUAL`, 'range': `P2:P${leadsMax + 1}`, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let maquinaManualRes = retGoogleSheets.res ? retGoogleSheets.res.flat() : [];
+        infGoogleSheets = { e, 'action': 'get', 'id': `${idScript2}`, 'tab': `MAQUINA_MANUAL`, 'range': `P2:P`, };
+        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let maquinaManualRes = retGoogleSheets.res ? retGoogleSheets.res.map(v => v[0] ?? '') : [];
+
+        // DECIDIR SE DEVE CONTINUAR
+        let qtdWithStatus = maquinaManualRes.filter(v => v !== '' && v !== undefined).length; await logConsole({ e, ee, 'txt': `${qtdWithStatus > 0 ? '✅' : '❌'} LEADS COM STATUS [MAQUINA_MANUAL]: ${qtdWithStatus}`, });
+        if (qtdWithStatus < 1) { return; }
 
         // [MAQUINA_MANUAL] PEGAR CNPJs
-        infGoogleSheets = { e, 'action': 'get', 'id': `${idScript2}`, 'tab': `MAQUINA_MANUAL`, 'range': `D2:D${leadsMax + 1}`, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let maquinaManualCnpjs = retGoogleSheets.res ? retGoogleSheets.res.flat() : [];
-        if (maquinaManualRes.length !== leadsMax && maquinaManualCnpjs.length !== 0 && (maquinaManualRes.length !== maquinaManualCnpjs.length)) {
-            console.log(`${maquinaManualRes.length || 0} LEADS PARA SEREM ENVIADOS PARA [MÁQUINAS 2025] ❌`); return;
-        }
-        console.log(`${maquinaManualRes.length} LEADS PARA SEREM ENVIADOS PARA [MÁQUINAS 2025] ✅`);
+        infGoogleSheets = { e, 'action': 'get', 'id': `${idScript2}`, 'tab': `MAQUINA_MANUAL`, 'range': `D2:D`, };
+        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let maquinaManualCnpjs = retGoogleSheets.res ? retGoogleSheets.res.map(v => v[0] ?? '') : [];
 
         // JUNTAR CNPJ E RES
-        maquinaManualCnpjsRes = maquinaManualCnpjs.map((v, i) => { return [Number(v), maquinaManualRes[i],]; });
-        let lastIndex = -1; for (let i = 0; i < maquinaManualCnpjsRes.length; i++) { if (maquinaManualCnpjsRes[i][1] && maquinaManualCnpjsRes[i][1].toString().trim() !== '') { lastIndex = i; } }
-        maquinaManualCnpjsRes = maquinaManualCnpjsRes.slice(0, lastIndex + 1); // console.log(maquinaManualCnpjsRes);
+        maquinaManualCnpjsRes = maquinaManualRes.map((v, i) => [maquinaManualCnpjs[i], ...(v ? v.split('-:-').slice(1) : []),]);
+
+        // FILTRAR APENAS POR LINHAS QUE TÊM O CNPJ E STATUS
+        maquinaManualCnpjsRes = maquinaManualCnpjsRes.filter(v => v.length >= 7 && v.every(x => x !== '' && x !== undefined));
+
+        // DECIDIR SE DEVE CONTINUAR
+        let qtdSend = maquinaManualCnpjsRes.length; await logConsole({ e, ee, 'txt': `${qtdSend > 0 ? '✅✅' : '❌❌'} LEADS PRONTOS PRA ENVIAR PARA [MÁQUINAS 2025]: ${qtdSend}`, });
+        if (qtdSend < 1) { return; }
 
         // --- --- --- --- --- --- --- --- --- --- [MÁQUINAS 2025] --- --- --- --- --- --- --- --- --- ---
-        // [MÁQUINAS] PEGAR CNPJs
-        infGoogleSheets = { e, 'action': 'get', 'id': `${idMaquinas}`, 'tab': `INDICAÇÕES`, 'range': `B2:B`, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let leadsMaquinas = cleanNumbers(retGoogleSheets.res ? retGoogleSheets.res.flat() : []);
-        // console.log(leadsMaquinas);
+        // [MÁQUINAS] PEGAR {DATA DO IMPUT} E {CNPJ} 
+        infGoogleSheets = { e, 'action': 'get', 'id': `${idMaquinas}`, 'tab': `INDICAÇÕES`, 'range': `A2:B`, };
+        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let leadsIndicacoes = retGoogleSheets.res || []; let leadsMaquinaManual = maquinaManualCnpjsRes;
 
-        // →→→ LEADS QUE PRECISAM SER ENVIADOS DA [SCRIPT 2] PARA [MÁQUINAS 2025] | FORMATAR DADOS E MANDAR
-        if (maquinaManualCnpjsRes.length > 0) {
-            maquinaManualCnpjsRes = maquinaManualCnpjsRes.filter(row => { return !leadsMaquinas.includes(row[0]) && row[1].includes('INDICAÇÃO MÁQUINA OK'); });
-            maquinaManualCnpjsRes = maquinaManualCnpjsRes.map(row => {
-                let cnpj = row[0]; let partes = row[1].split('-:-');
-                return [
-                    { 'value': `${partes[1].split(' ')[0]}/2025`, }, // DATA SCRIPT
-                    { 'value': `${cnpj}`, },                         // CNPJ
-                    { 'value': `${partes[4]}`, },                    // RAZÃO SOCIAL
-                    { 'value': `${partes[5]}`, },                    // TELEFONE
-                    { 'value': `${partes[6]}`, },                    // TELEFONE MASTER
-                ];
-            }); // console.log(maquinaManualCnpjsRes);
-            infGoogleSheets = { e, 'action': 'addInNewLine', 'id': `${idMaquinas}`, 'tab': `INDICAÇÕES`, 'values': maquinaManualCnpjsRes, };
-            retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; }
-        }
+        // FILTRAR APENAS POR LEADS CUJO A DATA E CNPJ NÃO SÃO INVÁLIDOS
+        leadsIndicacoes = leadsIndicacoes.filter(l => /^\d{2}\/\d{2}/.test(l[0])).map(l => {
+            let cnpj = String(l[1]).replace(/\D/g, ''); while (cnpj.length < 14) { cnpj = '0' + cnpj; } return [l[0], cnpj,];
+        }).filter(l => /^\d{14}$/.test(l[1]));
 
-        // LIMPAR LEADS JÁ PROCESSADOS NA [SCRIPT 2]
-        infGoogleSheets = { e, 'action': 'send', 'id': `${idScript2}`, 'range': `MAQUINA_MANUAL!D2`, 'values': Array.from({ 'length': leadsMax, }, () => ['',]), 'isCol': true, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; }
+        // FILTRAR APENAS POR LINHAS QUE O LEAD (CNPJ+DATA) AINDA NÃO ESTÁ EM [MÁQUINAS 2025] E O STATUS DA INDICAÇÃO É 'INDICAÇÃO MÁQUINA OK'
+        let leadsSend = leadsMaquinaManual.filter(m => {
+            let cnpj = m[0];
+            let diaMes = m[1].slice(0, 5); // ex: '21/10'
+            return m[2] === 'INDICAÇÃO MÁQUINA OK' &&
+                !leadsIndicacoes.some(i => {
+                    let diaMesInd = i[0].slice(0, 5);
+                    return i[1] === cnpj && diaMes.includes(diaMesInd);
+                });
+        });
 
-        infGoogleSheets = { e, 'action': 'send', 'id': `${idScript2}`, 'range': `MAQUINA_MANUAL!P2`, 'values': Array.from({ 'length': leadsMax, }, () => ['',]), 'isCol': true, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; }
+        // DECIDIR SE DEVE CONTINUAR
+        let qtdLeadsSend = leadsSend.length; await logConsole({ e, ee, 'txt': `${qtdLeadsSend > 0 ? '✅✅✅' : '❌❌❌'} LEADS QUE VÃO SER ENVIADOS PARA [MÁQUINAS 2025]: ${qtdLeadsSend}`, });
+        if (qtdLeadsSend < 1) { return; }
 
-        // PEGAR [CNPJs]
-        infGoogleSheets = { e, 'action': 'get', 'id': `${idMaquinas}`, 'tab': `CNPJs`, 'range': `A2:A${leadsMax + 1}`, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let maquinasCnpjs = cleanNumbers(retGoogleSheets.res ? retGoogleSheets.res.flat() : []);
-        if (maquinasCnpjs.length === 0) { return; }
-
-        // PEGAR LEADS [MÁQUINAS]
-        infGoogleSheets = { e, 'action': 'get', 'id': `${idMaquinas}`, 'tab': `INDICAÇÕES`, 'range': `B2:B`, };
-        retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; }
-        let newLeads = cleanNumbers(maquinasCnpjs, retGoogleSheets.res ? retGoogleSheets.res.flat() : []).map(v => [v,]);
-        console.log(`NOVAS MÁQUINAS PARA INDICAR ${newLeads.length}`);
-
-        // --- --- --- --- --- --- --- --- --- --- [SCRIPT2] --- --- --- --- --- --- --- --- --- ---
-        // MANDAR NOVOS LEADS PARA SEREM INDICADOS
-        if (newLeads.length !== 0) {
-            infGoogleSheets = { e, 'action': 'send', 'id': `${idScript2}`, 'range': `MAQUINA_MANUAL!D2`, 'values': newLeads, 'isCol': true, };
-            retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; }
-        }
-
-        // REMOVER CNPJS QUE JÁ FORAM VERIFICADOS
-        infGoogleSheets = { e, 'action': 'deleteLines', 'linStart': 2, 'linesQtd': leadsMax, 'id': `${idMaquinas}`, 'tab': '4152275', };
+        // FORMATAR DADOS E MANDAR
+        leadsSend = leadsSend.map(row => {
+            return [
+                { 'value': `${row[1].split(' ')[0]}/2025`, }, // DATA SCRIPT
+                { 'value': `${row[0].padStart(14, '0')}`, },  // CNPJ
+                { 'value': `${row[4]}`, },                    // RAZÃO SOCIAL
+                { 'value': `${row[6]}`, },                    // TELEFONE MASTER
+                { 'value': `${row[5]}`, },                    // TELEFONE
+            ];
+        });
+        infGoogleSheets = { e, 'action': 'addInNewLine', 'id': `${idMaquinas}`, 'tab': `INDICAÇÕES`, 'values': leadsSend, };
         retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; }
 
         ret['msg'] = `MOVE LEADS MAQUINAS`;
