@@ -34,7 +34,7 @@ async function newAccounts(inf = {}) {
 
         params = { // 'Coluna Conta'
             'paramId': `Coluna Conta`, 'element': {
-                'maxAwaitMil': 2000, 'maxElements': `${maxElements}`, 'tag': 'lightning-primitive-cell-factory',
+                'maxAwaitMil': 20000, 'maxElements': `${maxElements}`, 'tag': 'lightning-primitive-cell-factory',
                 'properties': [{ 'attributeName': 'data-label', 'attributeValue': 'Conta', }, { 'attributeName': 'class', 'attributeValue': 'slds-cell-wrap', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);

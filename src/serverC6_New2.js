@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 // await import('./resources/@export.js'); // NÃO HABILITAR!!!
 
 let e = import.meta.url, ee = e;
