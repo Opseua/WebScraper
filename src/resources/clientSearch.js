@@ -65,7 +65,7 @@ async function clientSearch(inf = {}) {
         // PEGAR DATA (SE FOR LEAD)
         if (['ENCONTRADO_EXPIRADO', 'ENCONTRADO_LEAD',].includes(leadStatus)) {
             params = { // [DIV] 'Resultado lupa (lead encontrado)'
-                'paramId': `Resultado lupa (lead encontrado)`, 'element': {
+                'paramId': `Resultado lupa (lead encontrado) 2`, 'element': {
                     'maxAwaitMil': 250, 'tag': 'span',
                     'properties': [{ 'attributeName': 'class', 'attributeValue': 'uiOutputDateTime', }, { 'attributeName': 'data-aura-class', 'attributeValue': 'uiOutputDateTime', },],
                 }, 'actions': [

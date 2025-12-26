@@ -42,7 +42,7 @@ async function clientInput(inf = {}) {
 
         // ESPERAR O FORMULÁRIO APARECER
         await new Promise(r => { setTimeout(r, 1500); }); params = { // [input] 'Razão Social'
-            'paramId': `Resultado lupa (lead encontrado)`, 'element': {
+            'paramId': `Resultado lupa (lead encontrado) 1`, 'element': {
                 'maxAwaitMil': 5000, 'tag': 'input',
                 'properties': [{ 'attributeName': 'name', 'attributeValue': 'RazaoSocial__c', },],
             }, 'actions': [{ 'action': 'elementGetValue', },],

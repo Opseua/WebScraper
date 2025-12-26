@@ -45,6 +45,10 @@ async function maquinaInput(inf = {}) {
 
         await new Promise(r => { setTimeout(r, 2000); }); // REMOVER ISSO
 
+        console.log(`RECARREGANDO PÁGINA`);
+        await page.reload({ 'waitUntil': 'networkidle0', 'timeout': (120 * 1000), });
+        console.log(`RECARREGANDO PÁGINA: CONCLUÍDO`);
+
         params = { // [LI] 'C6 Pay'
             'paramId': `[LI] 'C6 Pay'`, 'element': {
                 'maxAwaitMil': 15000, 'tag': 'span', 'content': 'C6 Pay',
@@ -52,7 +56,7 @@ async function maquinaInput(inf = {}) {
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
-        await new Promise(r => { setTimeout(r, 2000); });
+        await new Promise(r => { setTimeout(r, 10000); });
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dados`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Novo'
@@ -93,7 +97,10 @@ async function maquinaInput(inf = {}) {
                 }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[0]}`, },],
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
-            if (res.length === 0 || !res[0].ret) { await screenshotAndStop({ 'err': `Não achou a tela das taxas`, 'screenshot': '11', }); } // NÃO ACHOU A TELA COM AS TAXAS (FORÇAR PARADA)
+            if (res.length === 0 || !res[0].ret) {
+                await new Promise(r => { setTimeout(r, 30999); });
+                await screenshotAndStop({ 'err': `Não achou a tela das taxas`, 'screenshot': '11', });
+            } // NÃO ACHOU A TELA COM AS TAXAS (FORÇAR PARADA)
         }
 
         // await new Promise(r => { setTimeout(r, 1000); }); // REMOVER ISSO

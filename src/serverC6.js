@@ -9,7 +9,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = time.hou, houMinSecMil = `${hou}.${time.min}.${time.sec}.${time.mil}`, serverWeb, chromeDestiny;
-        let pathWork = `logs/Registros/${mon}/${day}/${hou}.00-${hou}.59/${gW.cloneProject.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
+        let pathWork = `logs/Registros/${mon}/${day}/${hou}.00_${hou}.59/${gW.cloneProject.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
         function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
@@ -24,17 +24,17 @@ async function serverRun(inf = {}) {
         } function stringToObj(t, s) { let o = {}; try { let p = t.split(s); for (let i = 0; i < p.length; i += 2) { o[p[i]] = p[i + 1] !== undefined ? p[i + 1] : ''; } } catch { o = false; } return o; }
 
         let coldList, err, browser, page, pageValue, autRange, leadStatus, json, retGoogleSheets, retCliGetDat, retClientInput, retClientSearch, retMaquinaInput, range = 'A2'; gO.inf['stop'] = false;
-        let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); gW.cloneProject = 'serverC6_New2'; // TESTES
+        let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); // gW.cloneProject = 'serverC6_New2'; // TESTES
 
         // DEFINIR O ID DA PLANILHA E ATALHO
-        gO.inf['shortcut'] = `z_OUTROS_${gW.cloneProject}`; gO.inf[`screenshot`] = `${gW.cloneProject.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let message, sheetsMap = {
+        gO.inf['shortcut'] = `z_OUTROS-${gW.cloneProject}`; gO.inf[`screenshot`] = `${gW.cloneProject.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let message, sheetsMap = {
             'serverC6': '1UzSX3jUbmGxVT4UbrVIB70na3jJ5qYhsypUeDQsXmjc',
             // 'serverC6': '1ysKgg_TZ-b1mzYXN1UAMUtpVWL3DXwk0fPNtApfXwes', // TESTES
 
             'serverC6_New2': '1wEiSgZHeaUjM6Gl1Y67CZZZ7UTsDweQhRYKqaTu3_I8',
         }; gO.inf['sheetId'] = sheetsMap[gW.cloneProject]; let width = 1280, height = 1024, infCL = { e, 'awaitFinish': true, }, ppOk = `${pp}/logs/resolution.txt`, infFl = { e, 'action': 'read', 'path': ppOk, };
 
-        moveLeadsMaquinas(); setInterval(() => { moveLeadsMaquinas(); }, (3 * 60 * 1000));
+        if (gW.cloneProject.includes(`New2`)) { moveLeadsMaquinas(); setInterval(() => { moveLeadsMaquinas(); }, (3 * 60 * 1000)); }
 
         // DADOS GLOBAIS DA PLANILHA E FAZER O PARSE
         retGoogleSheets = await googleSheets({ e, 'action': 'get', 'id': gO.inf.sheetId, 'tab': gO.inf.sheetTab, range, }); if (!retGoogleSheets.ret) {
@@ -64,7 +64,7 @@ async function serverRun(inf = {}) {
                 '--disable-breakpad', '--disable-logging', '--disable-popup-blocking', '--disable-notifications', '--mute-audio', '--disable-cache', '--dns-prefetch-disable', '--renderer-process-limit=1',
                 '--disable-download-notification', '--disable-download-resumption', '--disable-touch-drag-drop', `--window-size=${width},${height}`, `--window-position=0,0`, '--disable-extensions', '--no-zygote',
             ], 'ignoreDefaultArgs': ['--disable-extensions',],
-        }; browser = await _puppeteer.launch({ ...pars, 'userDataDir': `./${pathWork}/${houMinSecMil}_node${gW.project}_${gO.inf.shortcut.replace('z_OUTROS_', '')}_`, });
+        }; browser = await _puppeteer.launch({ ...pars, 'userDataDir': `./${pathWork}/${houMinSecMil}-node-${gW.project}-${gO.inf.shortcut.replace('z_OUTROS-', '')}`, });
         page = await browser.newPage(); await (await browser.pages())[0].close();
 
         // COOKIE [SET] | ABRIR PÁGINA DE BUSCA GLOBAL
