@@ -10,7 +10,7 @@ async function serverRun(inf = {}) {
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = time.hou, houMinSecMil = `${hou}.${time.min}.${time.sec}.${time.mil}`, serverWeb, chromeDestiny;
         let pathWork = `logs/Registros/${mon}/${day}/${hou}.00_${hou}.59/${gW.cloneProject.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
-        function nowFun() { return Math.floor(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
+        function nowFun() { return Math.trunc(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
         gO.inf['indicationUrl'] = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default'; serverWeb = gW.serverWeb; serverWeb = gW.serverWebEstrelar;
@@ -41,7 +41,7 @@ async function serverRun(inf = {}) {
             err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]', }); // FORÇAR PARADA DO SCRIPT
         } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
-        catch (c) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } let resize = function (a, b) { return Math.floor(parseInt(a, 10) * b); }; // '0' → APARECE | '1' → OCULTO
+        catch (c) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } let resize = function (a, b) { return Math.trunc(parseInt(a, 10) * b); }; // '0' → APARECE | '1' → OCULTO
         let { tabsWork, autC6: aut, conSpl, randomNames: leadRandomNames, scriptHourWebScraper: scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
         tabsInf.names = [...new Set([...tabsWork,]),].filter(v => v !== '' && v !== null); chromiumHeadless = chromiumHeadless === '1' ? 'new' : false; scriptHour = scriptHour.split('|'); if (tabsInf.names.length === 0) {
             let text = `'tabsWork' VAZIA`; await logConsole({ e, ee, txt: text, }); await notification({ e, legacy: true, title: `ERRO ${gW.cloneProject}`, text, }); await processForceStop({ origin: text, });
@@ -128,9 +128,9 @@ async function serverRun(inf = {}) {
                         if (!lead.includes('KEY_VALUE')) {
                             lead = lead.split(conSpl); leadLinha = lead[0].replace(/^\s+/g, '').replace('LINHA_', ''); leadCnpj = lead[2].replace(/^\s+/g, '');
                             leadTelefone = `55${lead[3].replace(/^\s+/g, '')}`; leadEmail = lead[5].length > 4 ? lead[5] : 'semEmail@gmail.com'; leadRazaoSocial = lead[6];
-                            leadAdministrador = lead[4].length > 4 && lead[4].includes(' ') ? lead[4] : lead[6].length > 4 ? lead[6] : leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)];
+                            leadAdministrador = lead[4].length > 4 && lead[4].includes(' ') ? lead[4] : lead[6].length > 4 ? lead[6] : leadRandomNames[Math.trunc(Math.random() * leadRandomNames.length)];
                             leadAdministrador = leadAdministrador.replace(/^\s+/g, '').replace(' ', '###').split('###'); if (leadAdministrador.length < 2) {
-                                leadAdministrador = leadRandomNames[Math.floor(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###');
+                                leadAdministrador = leadRandomNames[Math.trunc(Math.random() * leadRandomNames.length)]; leadAdministrador = leadAdministrador.replace(' ', '###').split('###');
                             } leadPrimeiroNome = leadAdministrador[0]; leadSobrenome = leadAdministrador[1]; leadOrigem = lead[7]; leadUrl = lead[8] || ''; coldList = leadOrigem.includes('JSF');
                             leadTelefone = coldList ? '887766' : leadTelefone;
                         } else {
@@ -152,7 +152,7 @@ async function serverRun(inf = {}) {
                         // CALCULAR DIFERENÇA DE DATA (LEAD OU CONTA)
                         if (leadDate) { // ANO-MÊS-DIA 00:00:00 | DIFERENÇA JÁ EM DIAS (ARREDONDADO)
                             let data = leadDate.split('/'); let dataDay = parseInt(data[0], 10).toString().padStart(2, '0'); let dataMon = (parseInt(data[1], 10) - 1).toString().padStart(2, '0');
-                            let dataYea = parseInt(data[2], 10).toString().padStart(4, '0'); dif = new Date(dataYea, dataMon, dataDay, 0, 0, 0); dif = Math.round((new Date().getTime() - dif.getTime()) / 1000 / 86400);
+                            let dataYea = parseInt(data[2], 10).toString().padStart(4, '0'); dif = new Date(dataYea, dataMon, dataDay, 0, 0, 0); dif = Math.trunc((new Date().getTime() - dif.getTime()) / 1000 / 86400);
                         }
 
                         if (['INDICAR_MANUAL', 'INDICAR_AUTOMATICO',].includes(sheetTab) && (leadStatus === 'NADA_ENCONTRADO' || (leadStatus === 'ENCONTRADO_EXPIRADO' && (dif > 0)))) { // ERA 45
