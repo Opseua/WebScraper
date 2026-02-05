@@ -3,7 +3,7 @@
 // retNewAccounts = await newAccounts(infNewAccounts);
 // console.log(retNewAccounts);
 
-let e = import.meta.url, ee = e; let rate = rateLimiter({ 'max': 1, 'sec': 600, });
+let e = import.meta.url, ee = e; let rate = rateLimiter({ 'max': 1, 'sec': (20 * 60), }); // A CADA x MINUTOS
 async function newAccounts(inf = {}) {
     let ret = { 'ret': false, }; e = inf.e || e;
     try {
@@ -68,8 +68,9 @@ async function newAccounts(inf = {}) {
 
         // CHECAR SE O CNPJ DA CONTA JÁ ESTÁ NAS BOAS VINDAS
         for (let [index, value,] of cnpjs.entries()) {
-            let lead = Number(value.res); if (!leadsObj[`_${lead}`] && !contas[index].res.replaceAll('.', '').includes(`${stringGet(value.res, '>', 8)}`)) {
-                // APENAS CLIENTES QUE NÃO ESTÃO NA PLANILHA E NÃO CONTÉM OS 8 PRIMEIROS DÍGITOS DO CNPJ NA RAZÃO SOCIAL ('50.258.269 MASCLEIDE ALVES DE OLIVEIRA')
+            let lead = Number(value.res); let date = dateHour(`${datasDeCriacao[index].res}`).res; let difDays = (Math.floor(Math.abs(Date.now() - date.tim * 1000) / 86400000) < 91);
+            if (!leadsObj[`_${lead}`] && !contas[index].res.replaceAll('.', '').includes(`${stringGet(value.res, '>', 8)}`) && difDays) {
+                // APENAS CLIENTES QUE NÃO ESTÃO NA PLANILHA, TEM MENOS DE 90 DIAS DE ABERTURA E NÃO CONTÉM OS 8 PRIMEIROS DÍGITOS DO CNPJ NA RAZÃO SOCIAL ('50.258.269 MASCLEIDE ALVES DE OLIVEIRA')
 
                 // CLIENTE: BUSCAR NA LUPA
                 let leadCnpj = `${lead}`, telefone1, telefone2; let retClientSearch = (await clientSearch({ page, browser, leadCnpj, })).res;
@@ -81,7 +82,8 @@ async function newAccounts(inf = {}) {
                 }
 
                 // ENVIAR OS DADOS NA NOVA CONTA PARA BOAS VINDAS
-                let date = dateHour(`${datasDeCriacao[index].res}`).res; date = `${date.day}/${date.mon}/${date.yea}`; retGoogleSheets = await googleSheets({
+                date = `${date.day}/${date.mon}/${date.yea}`;
+                retGoogleSheets = await googleSheets({
                     e, 'action': 'addLines', 'id': `${id2}`, 'tab': `${tabContas}`, 'values': [
                         [
                             `${contas[index].res}`, // RAZAO SOCIAL
@@ -97,7 +99,7 @@ async function newAccounts(inf = {}) {
         }
 
         // [STATUS 1]
-        status1 = `Nada pendente, esperando 10 minutos...`; logConsole({ e, ee, 'txt': `${status1}`, }); await sendData({ e, 'stop': false, 'status1': `${status1}`, 'id': `${id1}`, });
+        status1 = `Nada pendente, esperando 20 minutos...`; logConsole({ e, ee, 'txt': `${status1}`, }); await sendData({ e, 'stop': false, 'status1': `${status1}`, 'id': `${id1}`, });
 
         await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `newAccounts`, 'awaitPageFinish': false, });
 

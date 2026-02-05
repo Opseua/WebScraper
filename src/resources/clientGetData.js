@@ -37,9 +37,10 @@ async function clientGetData(inf = {}) {
             }, 'actions': [{ 'action': 'elementGetValue', },],
         };
         res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
-        await page.waitForFunction(() => {
-            let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
-        }, { 'timeout': 30000, });
+        // await page.waitForFunction(() => {
+        //     let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
+        // }, { 'timeout': 30000, });
+        // COMENTEI AS LINHAS 40<>42
 
         // [P] {RAZÃO SOCIAL}
         // params = {
@@ -53,7 +54,7 @@ async function clientGetData(inf = {}) {
         // let razaoSocial = res?.[0]?.[0]?.res?.split('="" class="slds-truncate">')?.[1]?.split('<')?.[0] || 'VAZIO'; razaoSocial = razaoSocial.replace('&amp;', '&'); await logConNew(razaoSocial || 'x');
         params = {
             'paramId': `TESTE`, 'element': {
-                'maxAwaitMil': 1000, 'tag': `div`, // 'content': `Enviar`,
+                'maxAwaitMil': 30000, 'tag': `div`, // 'content': `Enviar`,
                 'direction': -1, 'maxElements': 1, 'indexTarget': 2, 'properties': [
                     { 'attributeName': `class`, 'attributeValue': `slds-col slds-size_1-of-5`, },
                     { 'attributeName': `c-c6businesshighlightsinformation_c6businesshighlightsinformation`, 'attributeValue': ``, },
@@ -67,7 +68,8 @@ async function clientGetData(inf = {}) {
         });
 
         // EXTRAIR DATA
-        let m = leadDateAndMaster.match(/Início Relacionamento(\d{2}\/\d{2}\/\d{4})/);
+        console.log(leadDateAndMaster.includes(`Início Relacionamento`), leadDateAndMaster.includes(`Início Relacionamento2025`));
+        let m; m = leadDateAndMaster.match(/Início Relacionamento\s*(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})/); // m = leadDateAndMaster.match(/Início Relacionamento(\d{2}\/\d{2}\/\d{4})/);
         leadDate = `${m[1]} 00:00`;
 
         // EXTRAIR MASTER

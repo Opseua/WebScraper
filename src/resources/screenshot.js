@@ -8,6 +8,8 @@ async function screenshot(inf = {}) {
     try {
         let { page = false, fullPage = true, fileName = false, awaitPageFinish = true, } = inf;
 
+        return ret;
+
         if (!page) {
 
             ret['msg'] = `SCREENSHOT: ERRO | INFORMAR O 'page'`;

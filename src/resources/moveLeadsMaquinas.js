@@ -59,7 +59,7 @@ async function moveLeadsMaquinas(inf = {}) {
         // FORMATAR DADOS E MANDAR
         leadsSend = leadsSend.map(row => {
             return [
-                { 'value': `${row[1].split(' ')[0]}/2025`, }, // DATA SCRIPT
+                { 'value': `${row[1].split(' ')[0]}/2026`, }, // DATA SCRIPT
                 { 'value': `${row[0].padStart(14, '0')}`, },  // CNPJ
                 { 'value': `${row[4]}`, },                    // RAZÃO SOCIAL
                 { 'value': `${row[6]}`, },                    // TELEFONE MASTER

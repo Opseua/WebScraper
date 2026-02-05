@@ -56,7 +56,7 @@ async function maquinaInput(inf = {}) {
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
-        await new Promise(r => { setTimeout(r, 10000); });
+        await new Promise(r => { setTimeout(r, 5000); });
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dados`, 'awaitPageFinish': false, });
         params = { // [BUTTON] 'Novo'

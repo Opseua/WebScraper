@@ -103,6 +103,10 @@ async function serverRun(inf = {}) {
                 // if (sheetTab === 'BOAS_VINDAS') { continue; }
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
 
+                // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
+                // if (sheetTab.includes(`MAQUINA`)) { continue; }
+                // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
+
 
 
                 if ((tabsInf.lastCheck[tabsInf.index]) > now) {
