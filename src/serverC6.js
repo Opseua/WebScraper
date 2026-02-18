@@ -14,7 +14,7 @@ async function serverRun(inf = {}) {
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
         gO.inf['indicationUrl'] = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default'; serverWeb = gW.serverWeb; serverWeb = gW.serverWebEstrelar;
-        chromeDestiny = `ESTRELAR_MARCOS-CHROME-NAO_DEFINIDO`; // chromeDestiny = `OPSEUA-CHROME-CHROME_EXTENSION-USUARIO_0`; 
+        chromeDestiny = `ESTRELAR_MARCOS-CHROME-NAO_DEFINIDO`; // chromeDestiny = `OPSEUA-CHROME-EXTENSION-USUARIO_0`; 
         async function navigateUrl(p) { await p.goto(gO.inf.indicationUrl, { 'waitUntil': 'networkidle2', }); await screenshot({ e, 'page': p, 'fileName': `screenshot`, }); } async function processForceStop(inf = {}) {
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}`, });
             await commandLine({ e, 'command': `${pp}/src/${gO.inf.shortcut}/OFF.vbs FORCE_STOP`, }); await new Promise(r => { setTimeout(r, 7000); }); codeStop();
