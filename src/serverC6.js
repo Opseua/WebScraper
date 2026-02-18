@@ -9,7 +9,7 @@ async function serverRun(inf = {}) {
 
         // CRIAR PASTA DOS REGISTROS
         let time = dateHour().res, mon = `MES_${time.mon}_${time.monNam}`, day = `DIA_${time.day}`, hou = time.hou, houMinSecMil = `${hou}.${time.min}.${time.sec}.${time.mil}`, serverWeb, chromeDestiny;
-        let pathWork = `logs/Registros/${mon}/${day}/${hou}.00_${hou}.59/${gW.cloneProject.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
+        let pathWork = `logs/Registros/ANO_${time.yea}/${mon}/${day}/${hou}.00_${hou}.59/${gW.cloneProject.replace('server', '')}`; await file({ e, 'action': 'write', 'path': `${pathWork}/#_Z_#.txt`, 'content': 'x', });
         function nowFun() { return Math.trunc(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
@@ -42,9 +42,9 @@ async function serverRun(inf = {}) {
             await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [1]', }); // FORÇAR PARADA DO SCRIPT
         } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
         catch (c) { await errA2(`[2]`); /* FORÇAR PARADA DO SCRIPT */ } let resize = function (a, b) { return Math.trunc(parseInt(a, 10) * b); }; // '0' → APARECE | '1' → OCULTO
-        let { tabsWork, autC6: aut, conSpl, randomNames: leadRandomNames, scriptHourWebScraper: scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
+        let { tabsWork, 'autC6': aut, conSpl, 'randomNames': leadRandomNames, 'scriptHourWebScraper': scriptHour, chromiumHeadless, } = gO.inf.sheetKepp; autRange = gO.inf.sheetKepp.range.autC6;
         tabsInf.names = [...new Set([...tabsWork,]),].filter(v => v !== '' && v !== null); chromiumHeadless = chromiumHeadless === '1' ? 'new' : false; scriptHour = scriptHour.split('|'); if (tabsInf.names.length === 0) {
-            let text = `'tabsWork' VAZIA`; await logConsole({ e, ee, txt: text, }); await notification({ e, legacy: true, title: `ERRO ${gW.cloneProject}`, text, }); await processForceStop({ origin: text, });
+            let text = `'tabsWork' VAZIA`; await logConsole({ e, ee, 'txt': text, }); await notification({ e, 'legacy': true, 'title': `ERRO ${gW.cloneProject}`, text, }); await processForceStop({ 'origin': text, });
         }
 
         // STATUS1 [Iniciando script, aguarde]
@@ -104,7 +104,11 @@ async function serverRun(inf = {}) {
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
 
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
-                // if (sheetTab.includes(`MAQUINA`)) { continue; }
+                if (sheetTab.includes(`MAQUINA`)) { continue; }
+                // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
+
+                // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
+                if (sheetTab.includes(`NOME_MASTER`)) { continue; }
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
 
 
@@ -117,7 +121,7 @@ async function serverRun(inf = {}) {
                         err = `$ Erro ao pegar-enviar dados para planilha`; logConsole({ e, ee, 'txt': `${err}`, }); await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': retGoogleSheets, });
                         await processForceStop({ 'origin': 'serverC6 DADOS GLOBAIS DA PLANILHA E FAZER O PARSE [3]', }); // FORÇAR PARADA DO SCRIPT
                     } try { json = retGoogleSheets.res[0][0]; json = json.replace(/"{/g, '{').replace(/}"/g, '}').replace(/""/g, '"').replace(/^\s+/g, '').replace(/	/g, ''); gO.inf['sheetKepp'] = JSON.parse(json); }
-                    catch (c) { await errA2(`[1]`); /* FORÇAR PARADA DO SCRIPT */ } let { colC6: col, leadsQtd, leads: lead, } = gO.inf.sheetKepp; tabsInf['leadsQtd'][tabsInf.index] = Number(leadsQtd);
+                    catch (c) { await errA2(`[1]`); /* FORÇAR PARADA DO SCRIPT */ } let { 'colC6': col, leadsQtd, 'leads': lead, } = gO.inf.sheetKepp; tabsInf['leadsQtd'][tabsInf.index] = Number(leadsQtd);
 
                     logConsole({ e, ee, 'txt': `LEADS: ${tabsInf.leadsQtd[tabsInf.index]} | ${sheetTab}`, }); if (tabsInf.leadsQtd[tabsInf.index] === 0) {
                         tabsInf.lastCheck[tabsInf.index] = now + secAwaitNewCheck; await sendData({ e, 'stop': false, 'status1': `Nada pendente, esperando 2 minutos...`, }); // NADA PENDENTE
@@ -139,8 +143,8 @@ async function serverRun(inf = {}) {
                             leadTelefone = coldList ? '887766' : leadTelefone;
                         } else {
                             ({
-                                linha: leadLinha, cnpj: leadCnpj, dadosIniciais: leadDadosIniciais, produtos: leadProdutos, taxas: leadTaxas, modelo: leadModelo, quantidade: leadQuantidade, operadora: leadOperadora,
-                                cep: leadCep, numero: leadNumero, complemento: leadComplemento, referencia: leadReferencia,
+                                'linha': leadLinha, 'cnpj': leadCnpj, 'dadosIniciais': leadDadosIniciais, 'produtos': leadProdutos, 'taxas': leadTaxas, 'modelo': leadModelo, 'quantidade': leadQuantidade, 'operadora': leadOperadora,
+                                'cep': leadCep, 'numero': leadNumero, 'complemento': leadComplemento, 'referencia': leadReferencia,
                             } = stringToObj(lead, conSpl));
                         }
 

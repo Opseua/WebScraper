@@ -18,7 +18,7 @@ input(text, totalTime := 1000) {
     }
 }
 
-; INTERVALO DE PRESSIONAMENTO EM MILESSEGUNDOS
+; INTERVALO DE PRESSIONAMENTO EM MILISSEGUNDOS
 ; input('Olá, mundo!', 2000) 
 
 ; CTRL + A

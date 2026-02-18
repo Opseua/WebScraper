@@ -1,7 +1,7 @@
 ; #Include "D:\ARQUIVOS\PROJETOS\WebScraper\src\ahk\Lib\OCR.ahk"
 ; #Include "D:\ARQUIVOS\PROJETOS\WebScraper\src\ahk\resources\findTextOnScreen.ahk"
 
-; if findTextOnScreen("PROCURAR ISSO 10 VEZES A CADA 250 MILESSEGUNDOS", 10) {
+; if findTextOnScreen("PROCURAR ISSO 10 VEZES A CADA 250 MILISSEGUNDOS", 10) {
 ; 	  MsgBox("ACHOU [SIM]")
 ; } else {
 ;     MsgBox("ACHOU [NAO]")

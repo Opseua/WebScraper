@@ -68,7 +68,7 @@ async function clientGetData(inf = {}) {
         });
 
         // EXTRAIR DATA
-        console.log(leadDateAndMaster.includes(`Início Relacionamento`), leadDateAndMaster.includes(`Início Relacionamento2025`));
+        // console.log(leadDateAndMaster.includes(`Início Relacionamento`), leadDateAndMaster.includes(`Início Relacionamento2025`));
         let m; m = leadDateAndMaster.match(/Início Relacionamento\s*(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})/); // m = leadDateAndMaster.match(/Início Relacionamento(\d{2}\/\d{2}\/\d{4})/);
         leadDate = `${m[1]} 00:00`;
 
