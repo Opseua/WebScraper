@@ -28,10 +28,10 @@ async function moveLeadsMaquinas(inf = {}) {
         maquinaManualCnpjsRes = maquinaManualCnpjsRes.filter(v => v.length >= 7 && v.every(x => x !== '' && x !== undefined));
 
         // DECIDIR SE DEVE CONTINUAR
-        let qtdSend = maquinaManualCnpjsRes.length; await logConsole({ e, ee, 'txt': `${qtdSend > 0 ? '✅✅' : '❌❌'} LEADS PRONTOS PRA ENVIAR PARA [MÁQUINAS 2025]: ${qtdSend}`, });
+        let qtdSend = maquinaManualCnpjsRes.length; await logConsole({ e, ee, 'txt': `${qtdSend > 0 ? '✅✅' : '❌❌'} LEADS PRONTOS PRA ENVIAR PARA [MÁQUINAS 2026]: ${qtdSend}`, });
         if (qtdSend < 1) { return; }
 
-        // --- --- --- --- --- --- --- --- --- --- [MÁQUINAS 2025] --- --- --- --- --- --- --- --- --- ---
+        // --- --- --- --- --- --- --- --- --- --- [MÁQUINAS 2026] --- --- --- --- --- --- --- --- --- ---
         // [MÁQUINAS] PEGAR {DATA DO IMPUT} E {CNPJ} 
         infGoogleSheets = { e, 'action': 'get', 'id': `${idMaquinas}`, 'tab': `INDICAÇÕES`, 'range': `A2:B`, };
         retGoogleSheets = await googleSheets(infGoogleSheets); if (!retGoogleSheets.ret) { return retGoogleSheets; } let leadsIndicacoes = retGoogleSheets.res || []; let leadsMaquinaManual = maquinaManualCnpjsRes;
@@ -41,19 +41,35 @@ async function moveLeadsMaquinas(inf = {}) {
             let cnpj = String(l[1]).replace(/\D/g, ''); while (cnpj.length < 14) { cnpj = '0' + cnpj; } return [l[0], cnpj,];
         }).filter(l => /^\d{14}$/.test(l[1]));
 
-        // FILTRAR APENAS POR LINHAS QUE O LEAD (CNPJ+DATA) AINDA NÃO ESTÁ EM [MÁQUINAS 2025] E O STATUS DA INDICAÇÃO É 'INDICAÇÃO MÁQUINA OK'
+        // FILTRAR APENAS POR LINHAS QUE O LEAD (CNPJ+DATA) AINDA NÃO ESTÁ EM [MÁQUINAS 2026] E O STATUS DA INDICAÇÃO É 'INDICAÇÃO MÁQUINA OK' (SE JÁ ESTIVER SÓ MANDA SE A DATA DE INDICAÇÃO FOR MAIS NOVA)
+        // let leadsSend = leadsMaquinaManual.filter(m => {
+        //     let cnpj = m[0];
+        //     let diaMes = m[1].slice(0, 5); // ex: '21/10'
+        //     return m[2] === 'INDICAÇÃO MÁQUINA OK' &&
+        //         !leadsIndicacoes.some(i => {
+        //             let diaMesInd = i[0].slice(0, 5);
+        //             return i[1] === cnpj && diaMes.includes(diaMesInd);
+        //         });
+        // });
         let leadsSend = leadsMaquinaManual.filter(m => {
             let cnpj = m[0];
             let diaMes = m[1].slice(0, 5); // ex: '21/10'
+            let [d, m_,] = diaMes.split('/').map(Number);
+            let dataAtual = new Date(new Date().getFullYear(), m_ - 1, d);
+
             return m[2] === 'INDICAÇÃO MÁQUINA OK' &&
                 !leadsIndicacoes.some(i => {
-                    let diaMesInd = i[0].slice(0, 5);
-                    return i[1] === cnpj && diaMes.includes(diaMesInd);
+                    let [dInd, mInd,] = i[0].slice(0, 5).split('/').map(Number);
+                    let dataExistente = new Date(new Date().getFullYear(), mInd - 1, dInd);
+
+                    // Se CNPJ igual E data de lá for igual ou mais nova que a atual, bloqueia o envio
+                    return i[1] === cnpj && dataExistente >= dataAtual;
                 });
         });
 
+
         // DECIDIR SE DEVE CONTINUAR
-        let qtdLeadsSend = leadsSend.length; await logConsole({ e, ee, 'txt': `${qtdLeadsSend > 0 ? '✅✅✅' : '❌❌❌'} LEADS QUE VÃO SER ENVIADOS PARA [MÁQUINAS 2025]: ${qtdLeadsSend}`, });
+        let qtdLeadsSend = leadsSend.length; await logConsole({ e, ee, 'txt': `${qtdLeadsSend > 0 ? '✅✅✅' : '❌❌❌'} LEADS QUE VÃO SER ENVIADOS PARA [MÁQUINAS 2026]: ${qtdLeadsSend}`, });
         if (qtdLeadsSend < 1) { return; }
 
         // FORMATAR DADOS E MANDAR

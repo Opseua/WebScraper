@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 let startup = new Date(); globalThis['firstFileCall'] = new Error(); await import('./resources/@export.js'); let e = firstFileCall, ee = e; let libs = { 'puppeteer': {}, };
 
 async function serverRun(inf = {}) {
@@ -13,7 +15,7 @@ async function serverRun(inf = {}) {
         function nowFun() { return Math.trunc(Date.now() / 1000); } let secAwaitNewCheck = 30, startupTab = nowFun(), startupTabCookie = startupTab, infSendData, pp = `${fileProjetos}/${gW.project}`;
 
         // FORÇAR PARADA DO SCRIPT_NTFY | ERRO A2 | FAZER PARSE DA STRING
-        gO.inf['indicationUrl'] = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default'; serverWeb = gW.serverWeb; serverWeb = gW.serverWebEstrelar;
+        gO.inf['indicationUrl'] = 'https://c6bank.my.site.com/partners/s/lead/Lead/Default'; serverWeb = gW.serverWeb;
         chromeDestiny = `ESTRELAR_MARCOS-CHROME-NAO_DEFINIDO`; // chromeDestiny = `OPSEUA-CHROME-EXTENSION-USUARIO_0`; 
         async function navigateUrl(p) { await p.goto(gO.inf.indicationUrl, { 'waitUntil': 'networkidle2', }); await screenshot({ e, 'page': p, 'fileName': `screenshot`, }); } async function processForceStop(inf = {}) {
             await log({ e, 'folder': 'Registros', 'path': `${err}.txt`, 'text': `${inf.origin || ''}\n\n${pageValue}`, });
@@ -24,7 +26,7 @@ async function serverRun(inf = {}) {
         } function stringToObj(t, s) { let o = {}; try { let p = t.split(s); for (let i = 0; i < p.length; i += 2) { o[p[i]] = p[i + 1] !== undefined ? p[i + 1] : ''; } } catch { o = false; } return o; }
 
         let coldList, err, browser, page, pageValue, autRange, leadStatus, json, retGoogleSheets, retCliGetDat, retClientInput, retClientSearch, retMaquinaInput, range = 'A2'; gO.inf['stop'] = false;
-        let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); // gW.cloneProject = 'serverC6_New2'; // TESTES
+        let tabsInf = { 'index': -1, 'names': ['INDICAR_MANUAL',], }; tabsInf['leadsQtd'] = tabsInf.names.map(() => 1); tabsInf['lastCheck'] = tabsInf.names.map(() => 0); gW.cloneProject = 'serverC6_New2'; // TESTES
 
         // DEFINIR O ID DA PLANILHA E ATALHO
         gO.inf['shortcut'] = `z_OUTROS-${gW.cloneProject}`; gO.inf[`screenshot`] = `${gW.cloneProject.replace('server', '')}`; gO.inf['sheetTab'] = tabsInf.names[0]; let message, sheetsMap = {
@@ -104,13 +106,12 @@ async function serverRun(inf = {}) {
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
 
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
-                if (sheetTab.includes(`MAQUINA`)) { continue; }
+                // if (sheetTab.includes(`MAQUINA`)) { continue; }
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
 
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
                 if (sheetTab.includes(`NOME_MASTER`)) { continue; }
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵
-
 
 
                 if ((tabsInf.lastCheck[tabsInf.index]) > now) {

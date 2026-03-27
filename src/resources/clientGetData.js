@@ -37,21 +37,8 @@ async function clientGetData(inf = {}) {
             }, 'actions': [{ 'action': 'elementGetValue', },],
         };
         res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
-        // await page.waitForFunction(() => {
-        //     let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element && element.textContent.trim() !== 'Carregando';
-        // }, { 'timeout': 30000, });
-        // COMENTEI AS LINHAS 40<>42
 
         // [P] {RAZÃO SOCIAL}
-        // params = {
-        //     'newAction': true, 'paramId': `TESTE`, 'element': {
-        //         'maxAwaitMil': 1000, 'tag': `article`, // 'content': `Enviar`,
-        //         'directionA': -1, 'maxElements': 2, 'properties': [
-        //             { 'attributeName': `class`, 'attributeValue': `slds-card`, }, { 'attributeName': `part`, 'attributeValue': `card`, },
-        //         ],
-        //     }, 'actions': [{ 'action': `elementGet`, },],
-        // }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params);
-        // let razaoSocial = res?.[0]?.[0]?.res?.split('="" class="slds-truncate">')?.[1]?.split('<')?.[0] || 'VAZIO'; razaoSocial = razaoSocial.replace('&amp;', '&'); await logConNew(razaoSocial || 'x');
         params = {
             'paramId': `TESTE`, 'element': {
                 'maxAwaitMil': 30000, 'tag': `div`, // 'content': `Enviar`,
@@ -67,28 +54,24 @@ async function clientGetData(inf = {}) {
             let element = document.evaluate('/html/body/div[3]/div[2]/div/div[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; return element ? element.textContent.trim() : null;
         });
 
+        params = { // PEGAR BODY (para identifica a DATA e MASTER)
+            'paramId': `PEGAR BODY`, 'element': {
+                'maxAwaitMil': 3000,
+            }, 'actions': [{ 'action': 'getBody', },],
+        }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+        logConsole({ e, ee, 'txt': `Início Relacionamento MODO 1: [${!!leadDateAndMaster}] | MODO 2: [${!!res?.[0]?.res}] → [${leadDateAndMaster?.includes(`Início Relacionamento`)}] [${res?.[0]?.res?.includes(`Início Relacionamento`)}]`, });
+        leadDateAndMaster = res?.[0]?.res;
+
         // EXTRAIR DATA
-        // console.log(leadDateAndMaster.includes(`Início Relacionamento`), leadDateAndMaster.includes(`Início Relacionamento2025`));
         let m; m = leadDateAndMaster.match(/Início Relacionamento\s*(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})/); // m = leadDateAndMaster.match(/Início Relacionamento(\d{2}\/\d{2}\/\d{4})/);
         leadDate = `${m[1]} 00:00`;
 
         // EXTRAIR MASTER
         infRegex = { e, 'pattern': `Informações do Master(.*?)Telefone`, 'text': leadDateAndMaster, };
         retRegex = regex(infRegex); if (!retRegex.ret || !retRegex.res['1']) { pageResult = 'ERRO'; } else { pageResult = retRegex.res['1']; } nameMaster = pageResult;
-        // params = {
-        //     'paramId': `TESTE`, 'element': {
-        //         'maxAwaitMil': 1000, 'tag': `p`, // 'content': `Enviar`,
-        //         'directionA': -1, 'maxElementsA': 1, 'indexTargetA': 2, 'properties': [
-        //             { 'attributeName': `c-c6businesshighlightsinformation_c6businesshighlightsinformation`, 'attributeValue': ``, },
-        //             { 'attributeName': `class`, 'attributeValue': `slds-truncate slds-text-link hover-cursor`, },
 
-        //         ],
-        //     }, 'actions': [{ 'action': `elementGetValue`, },],
-        // }; res = await runElementAction({ e, page, 'paramsArr': [params,], }); res = res?.res || res; nameMaster = res?.[0]?.[0]?.res || 'NAO_ENCONTRADO'; // console.log(res);
-
-        // // EXTAIR TELEFONE (APENAS SE NECESSÁRIO)
+        // EXTAIR TELEFONE (APENAS SE NECESSÁRIO)
         let tel = 'xxxxxxxxxxx', telefone1, telefone2;
-        // if (['newAccounts', 'maquinaInput',].includes(origin)) {
 
         params = {
             'paramId': `TESTE`, 'element': {
@@ -128,26 +111,6 @@ async function clientGetData(inf = {}) {
         let telefone1Temp = telefone1 || telefone2 || tel; let telefone2Temp = telefone2 || telefone1 || tel; telefone1 = extrairTelefone(telefone1Temp); telefone2 = extrairTelefone(telefone2Temp);
 
         console.log(`✅✅✅ '${telefone1}' '${telefone2}'`); // await new Promise(r => setTimeout(r, 9999999));
-
-        // // TELEFONE MASTER
-        // params = {
-        //     'paramId': `TESTE`, 'element': {
-        //         'maxAwaitMil': 1000, 'tag': `div`, // 'content': `Enviar`,
-        //         'direction': -3, 'maxElements': 8, 'indexTarget': 0, 'properties': [
-        //             { 'attributeName': `class`, 'attributeValue': `slds-p-horizontal_small slds-size_1-of-2 slds-p-bottom_x-small`, },
-        //         ],
-        //     }, 'actions': [{ 'action': `elementGetValue`, },],
-        // }; res = await runElementAction({ e, page, 'paramsArr': [params,], }); res = res?.res || res; let telefone1 = res ? res?.[0]?.[0]?.res?.replace(/\D/g, '')?.slice(2) : 'NAO_ENCONTRADO'; // console.log(res);
-
-        // // TELEFONE NORMAL
-        // params = {
-        //     'paramId': `TESTE`, 'element': {
-        //         'maxAwaitMil': 1000, 'tag': `lightning-formatted-phone`, // 'content': `Enviar`,
-        //         'directionA': -1, 'maxElementsA': 8, 'indexTarget': 1, 'properties': [
-        //             { 'attributeName': `c-c6businesshighlightsinformation_c6businesshighlightsinformation`, 'attributeValue': ``, },
-        //         ],
-        //     }, 'actions': [{ 'action': `elementGetValue`, },],
-        // }; res = await runElementAction({ e, page, 'paramsArr': [params,], }); res = res?.res || res; let telefone2 = res ? res?.[0]?.[0]?.res?.replace(/\D/g, '')?.slice(2) : 'NAO_ENCONTRADO'; // console.log(res);
 
         await screenshot({ e, page, 'fileName': `screenshot`, }); await screenshot({ e, page, 'fileName': `${leadCnpj}_clientGetData_1`, 'awaitPageFinish': false, });
 

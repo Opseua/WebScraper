@@ -17,6 +17,12 @@ async function maquinaInput(inf = {}) {
             await new Promise(r => { setTimeout(r, 5000); }); browser.close(); codeStop();
         }
 
+
+        if (['63316692000100', '61474196000140',].includes(leadCnpj)) { // 60573793000160 | 63285804000102 NÃO INDICOU!!!
+            console.log(`PULANDO`, leadCnpj); ret['res'] = { 'inputRes': `NÃO ELEGÍVEL`, }; ret['ret'] = true; ret['msg'] = `MAQUINA INPUT: ERRO`; return ret;
+        }
+
+
         // STATUS1 [Indicando máquina...]
         infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Indicando máquina...`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
 
@@ -31,7 +37,7 @@ async function maquinaInput(inf = {}) {
             }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[2]?.msg || 'x');
             cep1 = res?.[2]?.res || false; if (cep1) { cep1 = (cep1.split('Informações do Master')?.[1].split('<br>BRA')?.[0].split('- BRA')?.[0].split('Endereço')?.[1].trim().match(/\d{8}$/) || [])[0] || '0'; }
 
-            await new Promise(r => { setTimeout(r, 2000); }); // REMOVER ISSO
+            // await new Promise(r => { setTimeout(r, 2000); }); // REMOVER ISSO
 
             params = { // [P] {CEP} (GERAL)
                 'paramId': `[P] {CEP} (GERAL)`, 'element': {
@@ -43,41 +49,62 @@ async function maquinaInput(inf = {}) {
             await logConNew(`CEPS: ${cep1} - ${cep2}`);
         }
 
-        await new Promise(r => { setTimeout(r, 2000); }); // REMOVER ISSO
+        // await new Promise(r => { setTimeout(r, 2000); }); // REMOVER ISSO
 
         console.log(`RECARREGANDO PÁGINA`);
         await page.reload({ 'waitUntil': 'networkidle0', 'timeout': (120 * 1000), });
         console.log(`RECARREGANDO PÁGINA: CONCLUÍDO`);
 
+        // PEGAR NÚMERO DO INDEX DO XPATH
         params = { // [LI] 'C6 Pay'
-            'paramId': `[LI] 'C6 Pay'`, 'element': {
+            'paramId': `[LI] 'C6 Pay' [PEGAR INDEX XPATH]`, 'element': {
                 'maxAwaitMil': 15000, 'tag': 'span', 'content': 'C6 Pay',
                 'properties': [{ 'attributeName': 'class', 'attributeValue': 'title', }, { 'attributeName': 'data-aura-rendered-by', },],
+            }, 'actions': [{ 'action': 'elementGetXpath', },],
+        }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+        let xpathNumber = `${res?.[0]?.res?.split('/html/body/div[')?.[1]?.split(']')?.[0]}`; let xpathRoot = `/html/body/div[${xpathNumber}]/div[2]/div/div[2]/div[1]/div/div/div`;
+
+        params = { // [LI] 'C6 Pay'
+            'paramId': `[LI] 'C6 Pay'`, 'element': {
+                'maxAwaitMil': 1000, 'xpath': `${xpathRoot}/div/ul/li[6]/a/span[2]`,
             }, 'actions': [{ 'action': 'elementClick', },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
-        await new Promise(r => { setTimeout(r, 5000); });
+        // STATUS1 [Fazendo simulação...]
+        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Fazendo simulação...`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
+
+        let qtd = 10; let isClickable = false; for (let i = 0; i < qtd; i++) {
+            params = { // [BUTTON] 'Novo/Simular' (esperar liberar)
+                'paramId': `[BUTTON] 'Novo/Simular' (esperar liberar)`, 'element': {
+                    'maxAwaitMil': 20000, 'xpath': `${xpathRoot}/section[2]/div/div[2]`,
+                }, 'actions': [{ 'action': `elementGet`, },],
+            }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+            res = res?.[0]?.res; let text1 = res?.includes(`Estamos gerando sua simulação`), text2 = res?.includes(`"button">Simular</button>`), text3 = res?.includes(`"button">Novo</button>`);
+            isClickable = (!text1 && (text2 || text3)) ? text2 ? 'Simular' : 'Novo' : false; if (isClickable) { break; } await new Promise(r => { setTimeout(r, 1000); });
+        }
+
+        await new Promise(r => { setTimeout(r, 3000); });
+
+        params = { // [BUTTON] 'Novo/Simular' (clicar)
+            'paramId': `[BUTTON] 'Novo/Simular'`, 'element': {
+                'maxAwaitMil': 100, 'xpath': `${xpathRoot}/section[2]/div/div[2]/c-commercial-card-machine-sales/lightning-card/article/div[1]/header/div[2]/slot/lightning-button/button`,
+            }, 'actions': [{ 'action': 'elementClick', },],
+        }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
 
         await screenshot({ e, page, 'fileName': `${leadCnpj}_maquinaInput_dados`, 'awaitPageFinish': false, });
-        params = { // [BUTTON] 'Novo'
-            'paramId': `[BUTTON] 'Novo'`, 'element': {
-                'maxAwaitMil': 10000, 'tag': 'button', 'content': 'Novo',
-                'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-button slds-button_neutral', }, { 'attributeName': 'aria-disabled', 'attributeValue': 'false', },
-                { 'attributeName': 'type', 'attributeValue': 'button', }, { 'attributeName': 'part', 'attributeValue': 'button', },],
-            }, 'actions': [{ 'action': 'awaitMil', 'time': 500, }, { 'action': 'elementClick', },],
-        }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[1]?.msg || 'x');
-
-        await new Promise(r => { setTimeout(r, 2000); });
 
         // ******************** {Dados iniciais}
 
         params = { // [INPUT] 'Débito'
             'paramId': `[INPUT] 'Débito'`, 'element': {
-                'maxAwaitMil': 4500, 'tag': 'input', 'indexTarget': 0,
+                'maxAwaitMil': (30 * 1000), 'tag': 'input', 'indexTarget': 0,
                 'properties': [{ 'attributeName': 'class', 'attributeValue': 'slds-input', }, { 'attributeName': 'part', 'attributeValue': 'input', },
                 { 'attributeName': 'inputmode', 'attributeValue': 'decimal', }, { 'attributeName': 'type', 'attributeValue': 'text', },],
             }, 'actions': [{ 'action': 'elementSetValue', 'elementValue': `${leadDadosIniciais[0]}`, },],
         }; res = await page.evaluate(async (fun, pars) => { let run = new Function('return ' + fun)(); run = await run(pars); return run; }, elementAction.toString(), params); await logConNew(res?.[0]?.msg || 'x');
+
+        // STATUS1 [Definindo Dados iniciais]
+        infSendData = { e, 'stop': false, 'status1': `${leadCnpj} | Definindo Dados iniciais`, }; logConsole({ e, ee, 'txt': `${infSendData.status1}`, }); await sendData(infSendData);
 
         if (res.length === 0 || !res[0].ret) {
             // NÃO ACHOU A TELA COM AS TAXAS (TENTAR NOVAMENTE)

@@ -1,48 +1,55 @@
-// await import('./resources/@export.js'); // NÃO HABILITAR!!!
-
-let e = import.meta.url, ee = e;
 async function serverRunNew() {
-    let _fs_2 = await import('fs'); let { spawn, } = await import('child_process'); let _spawn_2 = spawn;
-
-    // ARQUIVO ATUAL/TEMP: PATH
-    let fileCurrentTemp = /\/src\/(.+)$/.exec(e)[1]; fileCurrentTemp = fileCurrentTemp.split('_New'); fileCurrentTemp = [fileCurrentTemp[0], fileCurrentTemp[1].replace('.js', ''),];
-
-    // ALTERAR LOCAL DO TERMINAL PARA A PASTA ROOT DO PROJETO
-    process.chdir(process.cwd().split('\\src')[0].replace(/\\/g, '/'));
-
-    // CONTEÚDO server: LER
-    let fileServer = await _fs_2.promises.readFile(`./src/${fileCurrentTemp[0]}.js`, 'utf8');
-
-    // CONTEÚDO server: ESCREVER
-    fileCurrentTemp = `./src/${fileCurrentTemp[0]}_New${fileCurrentTemp[1]}_TEMP.js`;
-    await _fs_2.promises.writeFile(fileCurrentTemp, fileServer, { 'flag': 'w', });
+    let _fs_2 = await import('fs');
 
     // ARQUIVO TEMP: APAGAR
-    function delFileCurrentTemp() {
+    function delFileCurrentTemp(inf) {
         (async () => {
-            await new Promise(resolve => { setTimeout(resolve, 2000); });
-            await _fs_2.promises.unlink(fileCurrentTemp);
+            try {
+                await new Promise(resolve => { setTimeout(resolve, 2000); });
+                await _fs_2.promises.unlink(inf);
+            } catch { }
         })();
     }
 
-    // ARQUIVO TEMP: EXECUTAR
-    let newProcess = _spawn_2('node', [fileCurrentTemp,]);
+    let argvs = process.argv;
 
-    // ARQUIVO TEMP: CONSOLES
-    newProcess.stdout.on('data', (data) => {
-        console.log(`${data}`);
-    });
+    // → d:\ARQUIVOS\PROJETOS\WebScraper\src\serverC6_New2.js
+    let fileCurrentPath = argvs[1];
 
-    // ARQUIVO TEMP: ERRO
-    newProcess.stderr.on('error', (data) => {
-        console.error(`ERRO:\n${data}`);
-        delFileCurrentTemp();
-    });
+    // → serverC6_New2
+    let fileCurrentWithoutExtension = fileCurrentPath.split('\\').reverse()[0].replace('.js', '');
+
+    // → serverC6
+    let fileTargetWithoutExtension = fileCurrentWithoutExtension.split('_New')[0];
+
+    // → \src
+    let folderTarget = `\\src`;
+
+    // → \src\serverC6
+    let fileTargetPathRelativeWithoutExtension = `${folderTarget}\\${fileTargetWithoutExtension}`;
+
+    // → serverC6_New2_TEMP.js
+    let fileTempWithExtension = `${fileCurrentWithoutExtension}_TEMP.js`;
+
+    // → \src\serverC6_New2_TEMP.js
+    let fileTempPathRelativeWithExtension = `${folderTarget}\\${fileTempWithExtension}`;
+
+    // -----------------------------------
+
+    // CONTEÚDO DO ARQUIVO ALGO: LER
+    let fileTargetContent = await _fs_2.promises.readFile(`.\\${fileTargetPathRelativeWithoutExtension}.js`, 'utf8');
+
+    // CONTEÚDO DO ARQUIVO ALVO: ESCREVER
+    await _fs_2.promises.writeFile(`.\\${fileTempPathRelativeWithExtension}`, fileTargetContent, { 'flag': 'w', });
+
+    // ARQUIVO TEMPORÁRIO: EXECUTAR (COM O CONTÉUDO DO ARQUIVO ALVO)
+    await import(`./${fileTempWithExtension}`);
 
     // ARQUIVO TEMP: x SEGUNDOS
     setTimeout(() => {
-        delFileCurrentTemp();
+        delFileCurrentTemp(`.\\${fileTempPathRelativeWithExtension}`);
     }, 3000);
+
 }
 // TODAS AS FUNÇÕES PRIMÁRIAS DO 'server.js' / 'serverC6.js' / 'serverJsf.js' DEVEM SE CHAMAR 'serverRun'!!!
 serverRunNew();

@@ -73,7 +73,7 @@ async function newAccounts(inf = {}) {
                 // APENAS CLIENTES QUE NÃO ESTÃO NA PLANILHA, TEM MENOS DE 90 DIAS DE ABERTURA E NÃO CONTÉM OS 8 PRIMEIROS DÍGITOS DO CNPJ NA RAZÃO SOCIAL ('50.258.269 MASCLEIDE ALVES DE OLIVEIRA')
 
                 // 🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵 (PULAR LEAD COM ERRO AO EXIBIR INFORMAÇÕES)
-                if (['64751912000188', '65095552000176xxx',].includes(`${lead}`)) { console.log(lead, `PULANDO`); continue; }
+                if (['XXXXXXXXX',].includes(`${lead}`)) { console.log(lead, `PULANDO`); continue; }
 
                 // CLIENTE: BUSCAR NA LUPA
                 let leadCnpj = `${lead}`, telefone1, telefone2; let retClientSearch = (await clientSearch({ page, browser, leadCnpj, })).res;
